@@ -122,13 +122,7 @@ do_speed_test()
 DatabaseConnectionFixture::DatabaseConnectionFixture():
 	db_filepath("Testfile_01")
 {
-	if (filesystem::exists(filesystem::status(db_filepath)))
-	{
-		cerr << "File named \"" << db_filepath.string()
-		     << "\" already exists. Test aborted."
-			 << endl;
-		abort();
-	}
+	abort_if_exists(db_filepath);
 	dbc.open(db_filepath);
 	assert (dbc.is_valid());
 }
@@ -145,13 +139,7 @@ DerivedPOFixture::DerivedPOFixture():
 	db_filepath("Testfile_dpof"),
 	pdbc(new DerivedDatabaseConnection)
 {
-	if (filesystem::exists(filesystem::status(db_filepath)))
-	{
-		cerr << "File named \"" << db_filepath.string()
-		     << "\" already exists. Test aborted."
-			 << endl;
-		abort();
-	}
+	abort_if_exists(db_filepath);
 	pdbc->open(db_filepath);
 	assert (pdbc->is_valid());
 	DerivedPO::setup_tables(*pdbc);
