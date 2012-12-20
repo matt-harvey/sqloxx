@@ -12,8 +12,6 @@
  * \date 04 July 2012.
  *
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
- *
- * @todo Move sqloxx code to a separate library.
  */
 
 

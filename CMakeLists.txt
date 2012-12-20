@@ -56,8 +56,10 @@ install(FILES
 		reader.hpp
 		sql_statement.hpp
 		sqloxx_exceptions.hpp
-		detail/sql_statement_impl.hpp
-		detail/sqlite_dbconn.hpp
+		DESTINATION
+		/home/matthew/lib/sqloxx)
+install(DIRECTORY
+		detail
 		DESTINATION
 		/home/matthew/lib/sqloxx)
 		
