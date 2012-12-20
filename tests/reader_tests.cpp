@@ -1,9 +1,9 @@
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/handle.hpp"
-#include "sqloxx/reader.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
+#include "../database_connection.hpp"
+#include "../handle.hpp"
+#include "../reader.hpp"
+#include "../sqloxx_exceptions.hpp"
 #include <unittest++/UnitTest++.h>
 
 #include <iostream>  // For logging

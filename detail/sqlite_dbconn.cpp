@@ -15,7 +15,7 @@
 
 
 #include "sqlite_dbconn.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
+#include "../sqloxx_exceptions.hpp"
 #include <boost/cstdint.hpp>
 #include <boost/filesystem.hpp>
 #include <sqlite3.h>

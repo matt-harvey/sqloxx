@@ -12,7 +12,7 @@
  * than specific to any particular class).
  */
 
-#include "sqloxx/database_connection.hpp"
+#include "../database_connection.hpp"
 #include <unittest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
 #include <iostream>

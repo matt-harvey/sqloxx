@@ -1,9 +1,9 @@
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/handle.hpp"
-#include "sqloxx/sql_statement.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
+#include "../database_connection.hpp"
+#include "../handle.hpp"
+#include "../sql_statement.hpp"
+#include "../sqloxx_exceptions.hpp"
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <jewel/exception.hpp>

@@ -1,9 +1,9 @@
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/handle.hpp"
-#include "sqloxx/persistent_object.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "../database_connection.hpp"
+#include "../handle.hpp"
+#include "../persistent_object.hpp"
+#include "../sql_statement.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
 

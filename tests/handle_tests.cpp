@@ -1,7 +1,7 @@
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
-#include "sqloxx/handle.hpp"
-#include "jewel/optional.hpp"
+#include "../handle.hpp"
+#include <jewel/optional.hpp>
 #include <unittest++/UnitTest++.h>
 
 using jewel::UninitializedOptionalException;

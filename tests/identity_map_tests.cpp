@@ -1,6 +1,6 @@
-#include "sqloxx/handle.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
-#include "sqloxx/identity_map.hpp"
+#include "../handle.hpp"
+#include "../sqloxx_exceptions.hpp"
+#include "../identity_map.hpp"
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
 #include <cassert>

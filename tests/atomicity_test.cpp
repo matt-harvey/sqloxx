@@ -1,7 +1,7 @@
 #include "atomicity_test.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/database_transaction.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "../database_connection.hpp"
+#include "../database_transaction.hpp"
+#include "../sql_statement.hpp"
 #include <boost/filesystem.hpp>
 #include <cassert>
 #include <fstream>

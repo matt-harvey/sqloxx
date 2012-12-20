@@ -1,7 +1,7 @@
 #include "sqloxx_tests_common.hpp"
-#include "sqloxx/database_transaction.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
-#include "sqloxx/sql_statement.hpp"
+#include "../database_transaction.hpp"
+#include "../sqloxx_exceptions.hpp"
+#include "../sql_statement.hpp"
 #include <unittest++/UnitTest++.h>
 
 namespace sqloxx

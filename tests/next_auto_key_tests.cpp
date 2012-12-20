@@ -1,6 +1,6 @@
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/next_auto_key.hpp"
-#include "sqloxx/tests/sqloxx_tests_common.hpp"
+#include "../database_connection.hpp"
+#include "../next_auto_key.hpp"
+#include "sqloxx_tests_common.hpp"
 #include <unittest++/UnitTest++.h>
 #include <limits>
 

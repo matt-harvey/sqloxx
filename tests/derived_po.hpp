@@ -5,9 +5,9 @@
 /// @cond
 
 #include "sqloxx_tests_common.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/identity_map.hpp"
-#include "sqloxx/persistent_object.hpp"
+#include "../database_connection.hpp"
+#include "../identity_map.hpp"
+#include "../persistent_object.hpp"
 #include <boost/shared_ptr.hpp>
 #include <string>
 

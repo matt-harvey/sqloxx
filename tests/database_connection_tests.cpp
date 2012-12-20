@@ -1,8 +1,8 @@
 #include "sqloxx_tests_common.hpp"
-#include "sqloxx/database_connection.hpp"
-#include "sqloxx/sql_statement.hpp"
-#include "sqloxx/sqloxx_exceptions.hpp"
-#include "sqloxx/detail/sql_statement_impl.hpp"
+#include "../database_connection.hpp"
+#include "../sql_statement.hpp"
+#include "../sqloxx_exceptions.hpp"
+#include "../detail/sql_statement_impl.hpp"
 #include <unittest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
