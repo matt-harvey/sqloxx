@@ -691,7 +691,7 @@ IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 	// call a different function if it had no id. This would prevent
 	typename CacheKeyMap::const_iterator const it =
 		cache_key_map().find(p_cache_key);
-	assert (it != cache_key_map.end()); // Assert precondition
+	assert (it != cache_key_map().end()); // Assert precondition
 	if (  !it->second->has_id()  ||  !is_caching()  )
 	{
 		uncache_object(p_cache_key);
