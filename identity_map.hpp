@@ -687,7 +687,9 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 {
-	typename CacheKeyMap::const_iterator it =
+	// TODO It would be much more efficient if the T instance could
+	// call a different function if it had no id. This would prevent
+	typename CacheKeyMap::const_iterator const it =
 		cache_key_map().find(p_cache_key);
 	assert (it != cache_key_map.end()); // Assert precondition
 	if (  !it->second->has_id()  ||  !is_caching()  )
