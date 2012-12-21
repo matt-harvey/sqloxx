@@ -687,9 +687,10 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 {
-	// todo This should be a require not an assert	
-	assert (cache_key_map().find(p_cache_key) != cache_key_map().end());
-	if (!is_caching())
+	typename CacheKeyMap::const_iterator it =
+		cache_key_map().find(p_cache_key);
+	assert (it != cache_key_map.end()); // Assert precondition
+	if (  !it->second->has_id()  ||  !is_caching()  )
 	{
 		uncache_object(p_cache_key);
 	}
