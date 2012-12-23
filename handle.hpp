@@ -17,6 +17,12 @@ namespace sqloxx
  * memory at any one time, in relation to any given record in a given
  * database.
  *
+ * T should be associated with a instance of Connection, where Connection
+ * is a subclass of sqloxx::DatabaseConnection, with a member function
+ * identity_map<T>() that returns an instance of IdentityMap<T, Connection>
+ * unique to that database connection, for managing instances of T. (See
+ * separate documentation for IdentityMap.)
+ *
  * @todo Testing.
  */
 template <typename T>
@@ -41,13 +47,41 @@ public:
 	~Handle();
 
 	/**
-	 * @todo Documentation and testing.
+	 * Preconditions:\n
+	 * Connection should be a subclass of sqloxx::DatabaseConnection and
+	 * should define identity_map<T>().
+	 *
+	 * Constructs a Handle to a new instance of T, which has \e not yet
+	 * been persisted to the database represented by p_connection. Connection
+	 * should be derived from sqloxx::DatabaseConnection. The handled object
+	 * will be persisted to p_connection if and when it is saved. The
+	 * object will be managed by the IdentityMap<T, Connection> associated
+	 * with p_connection (returned by p_connection.identity_map<T>()).
+	 *
+	 * @throws sqloxx::OverflowException in the extremely unlikely event that
+	 * the in-memory cache already has so many objects loaded that an
+	 * additional object could not be cached without causing arithmetic
+	 * overflow in the process of assigning it a key.
+	 *
+	 * @throws std::bad_allocation in the unlikely event of memory allocation
+	 * failure during the creating and caching of the instance of T.
+	 *
+	 * <em>In addition</em>, any exceptions thrown from the T constructor
+	 * of the form T(IdentityMap<T, Connection>&) may also be thrown
+	 * from this Handle constructor.
+	 *
+	 * Exception safety: depends on the constructor for T. If this constructor
+	 * offers the strong guarantee, then the Handle constructor will also
+	 * offer the <em>strong guarantee</em> (although in the case of an
+	 * exception, the internal state of the IdentityMap may be altered in a
+	 * way that temporarily affects performance or size of allocated memory,
+	 * but not program logic).
 	 */
 	template <typename Connection>
 	explicit Handle(Connection& p_connection);
 
 	/**
-	 * @todo Documentation and testing.
+	 * @todo Documentation.
 	 */
 	template <typename Connection>
 	Handle(Connection& p_connection, Id p_id);

@@ -11,6 +11,20 @@ namespace sqloxx
 namespace tests
 {
 
+TEST_FIXTURE(DerivedPOFixture, handle_constructors)
+{
+	Handle<DerivedPO> dpo1(*pdbc);
+	dpo1->set_x(10);
+	CHECK_EQUAL(dpo1->x(), 10);
+	dpo1->set_y(50000.9812);
+	CHECK_EQUAL(dpo1->y(), 50000.9812);
+	dpo1->save();
+
+	Handle<DerivedPO> dpo1b(*pdbc, 1);
+	CHECK_EQUAL(dpo1b->x(), 10);
+	CHECK_EQUAL(dpo1b->y(), 50000.9812);
+}
+
 
 TEST_FIXTURE(DerivedPOFixture, handle_copy_constructor_and_indirection)
 {

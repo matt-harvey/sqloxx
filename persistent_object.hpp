@@ -906,47 +906,6 @@ private:
 };
 
 
-/**
- * Controls access to functions used
- * by Handle<T> to notify the underlying object of
- * various events for "bookkeeping" purposes.
-template <typename T>
-class PersistentObjectHandleAttorney
-{
-// This class would have been better nested in PersistentObject,
-// were it not for the presence of the template parameter Connection
-// of PersistentObject, which makes this problematic.
-public:
-	friend class Handle<T>;
-private:
-	static void notify_handle_construction(T& p_obj)
-	{
-		p_obj.notify_handle_construction();
-		return;
-	}
-	static void notify_handle_copy_construction(T& p_obj)
-	{
-		p_obj.notify_handle_copy_construction();
-		return;
-	}
-	static void notify_lhs_assignment_operation(T& p_obj)
-	{
-		p_obj.notify_lhs_assignment_operation();
-		return;
-	}
-	static void notify_rhs_assignment_operation(T& p_obj)
-	{
-		p_obj.notify_rhs_assignment_operation();
-		return;
-	}
-	static void notify_handle_destruction(T& p_obj)
-	{
-		p_obj.notify_handle_destruction();
-		return;
-	}
-};  // PersistentObjectAttorney
-*/
-
 
 
 template
