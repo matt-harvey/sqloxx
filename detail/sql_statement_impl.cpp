@@ -232,6 +232,13 @@ const
 	);
 	if (ret == 0) 
 	{
+		try
+		{
+			JEWEL_DEBUG_LOG << parameter_name << endl;
+		}
+		catch (...)
+		{
+		}
 		throw SQLiteException("Could not find parameter index.");
 	}
 	assert (ret > 0);
