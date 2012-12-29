@@ -4,6 +4,7 @@
 #include "general_typedefs.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
+#include <boost/cstdint.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
@@ -149,7 +150,26 @@ public:
 	 */
 	iterator end();
 
+protected:
+
+	/**
+	 * Bind \e x to the parameter named \e x in the SQLStatement
+	 * within the Reader.
+	 *
+	 * @todo Document and test.
+	 */
+	void bind(std::string const& parameter_name, int x);
+	void bind(std::string const& parameter_name, boost::int64_t x);
+	void bind(std::string const& parameter_name, double x);
+	void bind(std::string const& parameter_name, std::string const& x);
+
 private:	
+
+	// Deliberately unimplemented, to capture types not explicitly catered
+	// for by the proteced \e bind functions.
+	template <typename ParameterType>
+	void bind(std::string const& parameter_name, ParameterType x);
+
 	/**
 	 * Advances the Reader to the next row into the result set.
 	 * When the Reader
@@ -298,6 +318,39 @@ Reader<T, Connection>::end()
 
 
 template <typename T, typename Connection>
+void
+SQLStatement::bind(string const& parameter_name, int x)
+{
+	m_statement->bind(parameter_name, x);
+	return;
+}
+
+template <typename T, typename Connection>
+void
+SQLStatement::bind(string const& parameter_name, boost::int64_t x)
+{
+	m_statement->bind(parameter_name, x);
+	return;
+}
+
+template <typename T, typename Connection>
+void
+SQLStatement::bind(string const& parameter_name, double x)
+{
+	m_statement->bind(parameter_name, x);
+}
+
+template <typename T, typename Connection>
+void
+SQLStatement::bind(string const& parameter_name, string const& x)
+{
+	m_statement->bind(parameter_name, x);
+	return;
+}
+
+
+
+template <typename T, typename Connection>
 bool
 Reader<T, Connection>::read()
 {
@@ -326,7 +379,6 @@ Reader<T, Connection>::item() const
 	assert (!m_is_valid);
 	throw InvalidReader("Reader is not at a result row.");
 }
-
 	
 
 }  // namespace sqloxx
