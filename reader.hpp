@@ -153,17 +153,15 @@ public:
 
 protected:
 	/**
-	 * @todo Document and test this constructor, and reflect in the
-	 * general class documentation as well.
-	 *
-	 * @todo It seems sucky that SQLStatement is a non-const ref.
-	 * If SQLStatement had a copy constructor, it would probably fix
-	 * this.
-	 */
-	Reader
+	  * This constructor commented out unless/until required.
+	  * Note, in order for it to compile, we have to make
+	  * SQLStatement copy-constructible. This I am reluctant to do...
+	  *
+	  *	Reader
 	(	Connection& p_database_connection,
 		SQLStatement const& p_statement
 	);
+	*/
 
 private:	
 
@@ -279,11 +277,10 @@ Reader<T, Connection>::Reader
 	m_is_valid(false)
 {
 	populate_container();
-
-
 }
 
 
+/*
 template <typename T, typename Connection>
 Reader<T, Connection>::Reader
 (	Connection& p_database_connection,
@@ -295,6 +292,7 @@ Reader<T, Connection>::Reader
 {
 	populate_container();
 }
+*/
 
 
 
