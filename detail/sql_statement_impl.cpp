@@ -234,7 +234,9 @@ const
 	{
 		try
 		{
-			JEWEL_DEBUG_LOG << parameter_name << endl;
+			#ifdef DEBUG
+				JEWEL_DEBUG_LOG << parameter_name << endl;
+			#endif
 		}
 		catch (...)
 		{

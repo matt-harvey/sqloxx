@@ -454,8 +454,9 @@ public:
 	Id id() const;
 
 	/**
-	 * @returns \e true if this instance of PersistentObject has
-	 * an valid id; otherwise returns \e false.
+	 * @returns \e true if and only if this instance of PersistentObject has
+	 * a valid id; otherwise returns \e false. Note valid id is merely one
+	 * that has been initialised. It need not actually exist in the database.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
@@ -1258,6 +1259,8 @@ PersistentObject<Derived, Connection>::has_id() const
 	// will convert to true if and only if it has been initialized.
 	return m_id;
 }
+
+
 
 template
 <typename Derived, typename Connection>
