@@ -319,32 +319,38 @@ Reader<T, Connection>::end()
 
 template <typename T, typename Connection>
 void
-SQLStatement::bind(string const& parameter_name, int x)
+Reader<T, Connection>::bind(std::string const& parameter_name, int x)
 {
-	m_statement->bind(parameter_name, x);
+	m_statement.bind(parameter_name, x);
 	return;
 }
 
 template <typename T, typename Connection>
 void
-SQLStatement::bind(string const& parameter_name, boost::int64_t x)
+Reader<T, Connection>::bind
+(	std::string const& parameter_name,
+	boost::int64_t x
+)
 {
-	m_statement->bind(parameter_name, x);
+	m_statement.bind(parameter_name, x);
 	return;
 }
 
 template <typename T, typename Connection>
 void
-SQLStatement::bind(string const& parameter_name, double x)
+Reader<T, Connection>::bind(std::string const& parameter_name, double x)
 {
-	m_statement->bind(parameter_name, x);
+	m_statement.bind(parameter_name, x);
 }
 
 template <typename T, typename Connection>
 void
-SQLStatement::bind(string const& parameter_name, string const& x)
+Reader<T, Connection>::bind
+(	std::string const& parameter_name,
+	std::string const& x
+)
 {
-	m_statement->bind(parameter_name, x);
+	m_statement.bind(parameter_name, x);
 	return;
 }
 
