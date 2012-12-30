@@ -4,7 +4,6 @@
 #include "database_connection.hpp"
 #include "detail/sql_statement_impl.hpp"
 #include <boost/cstdint.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
 
@@ -34,9 +33,12 @@ namespace sqloxx
  * prevents SQLStatementImpl instances that are in an invalid state
  * from being used unless used
  * via the very same SQLStatement that triggered the invalid state.
+ *
+ * Note, the copy constructor does a \e shallow copy. Proceed with caution!
+ * 
+ * @todo Test copying behaviour. Look for pitfalls.
  */
-class SQLStatement:
-	private boost::noncopyable
+class SQLStatement
 {
 public:
 

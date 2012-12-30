@@ -160,7 +160,10 @@ protected:
 	 * If SQLStatement had a copy constructor, it would probably fix
 	 * this.
 	 */
-	Reader(Connection& p_database_connection, SQLStatement& p_statement);
+	Reader
+	(	Connection& p_database_connection,
+		SQLStatement const& p_statement
+	);
 
 private:	
 
@@ -284,7 +287,7 @@ Reader<T, Connection>::Reader
 template <typename T, typename Connection>
 Reader<T, Connection>::Reader
 (	Connection& p_database_connection,
-	SQLStatement& p_statement
+	SQLStatement const& p_statement
 ):
 	m_database_connection(p_database_connection),
 	m_statement(p_statement),
