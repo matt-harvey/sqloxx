@@ -42,10 +42,11 @@ namespace sqloxx
  * (1) Use the Reader class as is, instantiating for a particular
  * type T and database connection type Connection. A Reader can be
  * constructed using the default constructor, or by passing a
- * different string to the p_selector parameter of the constructor;\n or
+ * different string to the p_statement_text parameter of the constructor;\n or
  * (2) Inherit from Reader<T, Connection>, but provide an alternative
  * constructor, that takes a Connection parameter, which it passes up to
- * the base Reader constructor, along with a custom string for p_selector
+ * the base Reader constructor, along with a custom string for
+ * p_statement_text
  * that is fixed for that derived class. This enables a given derived Reader
  * class to use a fixed selection statement for all instances of
  * that class.
@@ -119,7 +120,7 @@ public:
 	 */
 	explicit Reader
 	(	Connection& p_database_connection,
-		std::string const& p_selector =
+		std::string const& p_statement_text =
 		(	"select " + T::primary_key_name() +
 			" from " + T::primary_table_name()
 		)
@@ -151,24 +152,13 @@ public:
 	iterator end();
 
 protected:
-
 	/**
-	 * Bind \e x to the parameter named \e x in the SQLStatement
-	 * within the Reader.
-	 *
-	 * @todo Document and test.
+	 * @todo Document and test this constructor, and reflect in the
+	 * general class documentation as well.
 	 */
-	void bind(std::string const& parameter_name, int x);
-	void bind(std::string const& parameter_name, boost::int64_t x);
-	void bind(std::string const& parameter_name, double x);
-	void bind(std::string const& parameter_name, std::string const& x);
+	Reader(Connection& p_database_connection, SQLStatement p_statement);
 
 private:	
-
-	// Deliberately unimplemented, to capture types not explicitly catered
-	// for by the proteced \e bind functions.
-	template <typename ParameterType>
-	void bind(std::string const& parameter_name, ParameterType x);
 
 	/**
 	 * Advances the Reader to the next row into the result set.
@@ -249,6 +239,8 @@ private:
 	 */
 	T item() const;
 
+	void populate_container();
+
 	Container m_container;
 	Connection& m_database_connection;
 	SQLStatement mutable m_statement;
@@ -258,20 +250,45 @@ private:
 
 
 template <typename T, typename Connection>
-Reader<T, Connection>::Reader
-(	Connection& p_database_connection,
-	std::string const& p_selector
-):
-	m_database_connection(p_database_connection),
-	m_statement(p_database_connection, p_selector),
-	m_is_valid(false)
+void
+Reader<T, Connection>::populate_container()
 {
 	assert (m_container.empty());
 	while (this->read())
 	{
 		m_container.push_back(this->item());
 	}
+	return;
 }
+
+
+template <typename T, typename Connection>
+Reader<T, Connection>::Reader
+(	Connection& p_database_connection,
+	std::string const& p_statement_text
+):
+	m_database_connection(p_database_connection),
+	m_statement(p_database_connection, p_statement_text),
+	m_is_valid(false)
+{
+	populate_container();
+
+
+}
+
+
+template <typename T, typename Connection>
+Reader<T, Connection>::Reader
+(	Connection& p_database_connection,
+	SQLStatement p_statement
+):
+	m_database_connection(p_database_connection),
+	m_statement(p_statement),
+	m_is_valid(false)
+{
+	populate_container();
+}
+
 
 
 template <typename T, typename Connection>
@@ -314,44 +331,6 @@ typename Reader<T, Connection>::iterator
 Reader<T, Connection>::end()
 {
 	return m_container.end();
-}
-
-
-template <typename T, typename Connection>
-void
-Reader<T, Connection>::bind(std::string const& parameter_name, int x)
-{
-	m_statement.bind(parameter_name, x);
-	return;
-}
-
-template <typename T, typename Connection>
-void
-Reader<T, Connection>::bind
-(	std::string const& parameter_name,
-	boost::int64_t x
-)
-{
-	m_statement.bind(parameter_name, x);
-	return;
-}
-
-template <typename T, typename Connection>
-void
-Reader<T, Connection>::bind(std::string const& parameter_name, double x)
-{
-	m_statement.bind(parameter_name, x);
-}
-
-template <typename T, typename Connection>
-void
-Reader<T, Connection>::bind
-(	std::string const& parameter_name,
-	std::string const& x
-)
-{
-	m_statement.bind(parameter_name, x);
-	return;
 }
 
 
