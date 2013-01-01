@@ -202,6 +202,15 @@ public:
 	typedef sqloxx::HandleCounter HandleCounter;
 	typedef sqloxx::IdentityMap<Derived, Connection> IdentityMap;
 
+	/**
+	 * @returns a reference to the database connection with which
+	 * this instance of PersistentObject is associated. This is where the
+	 * object will be loaded from or saved to, as the case may be.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 */
+	Connection& database_connection() const;
+
 
 	/**
 	 * Destructor.
@@ -666,14 +675,6 @@ protected:
 	 */
 	void swap_base_internals(PersistentObject& rhs);
 
-	/**
-	 * @returns a reference to the database connection with which
-	 * this instance of PersistentObject is associated. This is where the
-	 * object will be loaded from or saved to, as the case may be.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	Connection& database_connection() const;
 
 	/**
 	 * @returns the id that would be assigned to this instance of
