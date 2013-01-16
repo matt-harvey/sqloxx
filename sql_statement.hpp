@@ -3,7 +3,6 @@
 
 #include "database_connection.hpp"
 #include "detail/sql_statement_impl.hpp"
-#include <boost/cstdint.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -104,7 +103,8 @@ public:
 	 * Exception safety: <em>basic guarantee</em>.
 	 */
 	void bind(std::string const& parameter_name, int x);
-	void bind(std::string const& parameter_name, boost::int64_t x);
+	void bind(std::string const& parameter_name, long x);
+	void bind(std::string const& parameter_name, long long x);
 	void bind(std::string const& parameter_name, double x);
 	void bind(std::string const& parameter_name, std::string const& x);
 
@@ -115,9 +115,10 @@ public:
 	 * counting at 0).
 	 *
 	 * Currently the following types for T are supported:\n
-	 *	boost::int64_t\n
 	 *	int\n
-	 *	double;\n
+	 *	long\n
+	 *	long long\n
+	 *	double\n
 	 *	std::string\n
 	 * 
 	 * @param index is the column number (starting at 0) from which to

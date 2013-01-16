@@ -18,9 +18,9 @@
 #include "../sqloxx_exceptions.hpp"
 #include <jewel/checked_arithmetic.hpp>
 #include <sqlite3.h>
-#include <boost/cstdint.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/static_assert.hpp>
 #include <cassert>
 #include <limits>
 #include <string>
@@ -40,6 +40,10 @@ class SQLiteDBConn;
  * Wrapper class for sqlite_stmt*. This class is should not be
  * used except internally by the Sqloxx library. SQLStatementImpl instances
  * are themselves encapsulated by SQLStatement instances.
+ *
+ * @todo Could long long overflow the SQLite 64-bit integer type on some
+ * platforms? Possibly. We have a static assertion (below) to break
+ * compilation on such platforms. This is unsatisfying though.
  */
 class SQLStatementImpl:
 	private boost::noncopyable
@@ -79,7 +83,8 @@ public:
 	 * 
 	 * Currently the following types for T are supported:\n
 	 * int\n
-	 * boost::int64_t\n
+	 * long\n
+	 * long long\n
 	 * double\n
 	 * std::string\n
 	 */
@@ -93,7 +98,8 @@ public:
 	 * counting at 0).
 	 *
 	 * Currently the following types for T are supported:\n
-	 *	\c boost::int64_t\n
+	 *	long\n
+	 *	long long\n
 	 *	int\n
 	 *	double\n
 	 *	std::string\n
@@ -210,7 +216,8 @@ private:
 	void check_column(int index, int value_type);
 
 	void do_bind(std::string const& parameter_name, int x);
-	void do_bind(std::string const& parameter_name, boost::int64_t x);
+	void do_bind(std::string const& parameter_name, long x);
+	void do_bind(std::string const& parameter_name, long long x);
 	void do_bind(std::string const& parameter_name, double x);
 	void do_bind(std::string const& parameter_name, std::string const& x);
 	// Not implemented for other types, so capture here to prevent compilation
@@ -258,8 +265,26 @@ SQLStatementImpl::extract<int>(int index)
 
 template <>
 inline
-boost::int64_t
-SQLStatementImpl::extract<boost::int64_t>(int index)
+long
+SQLStatementImpl::extract<long>(int index)
+{
+	check_column(index, SQLITE_INTEGER);
+	return sqlite3_column_int64(m_statement, index);
+}
+
+
+// long long is guaranteed to be at least 8 bytes. But
+// if it's \e greater than 8 bytes, this causes a danger
+// of overflow of SQLite's 64-bit integer type column - in
+// which we will want to store values of this type.
+// Compilation should fail in this case.
+BOOST_STATIC_ASSERT(sizeof(long long) == 8);
+
+
+template <>
+inline
+long long
+SQLStatementImpl::extract<long long>(int index)
 {
 	check_column(index, SQLITE_INTEGER);
 	return sqlite3_column_int64(m_statement, index);

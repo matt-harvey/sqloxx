@@ -5,7 +5,6 @@
 #include "../tests/sqloxx_tests_common.hpp"
 
 #include <unittest++/UnitTest++.h>
-#include <boost/cstdint.hpp>
 #include <jewel/debug_log.hpp>
 #include <jewel/exception.hpp>
 #include <iostream>
@@ -134,7 +133,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 	);
 	string const hello_01("hello");
 	int const x_01(30);
-	boost::int64_t y_01(999999983);
+	long long y_01(999999983);
 	double const z_01(-20987.9873);
 	statement_01.bind(":B", hello_01);
 	statement_01.bind(":C", x_01);
@@ -157,7 +156,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 		"select Col_B, Col_C, Col_D, Col_E from dummy where Col_A = 1"
 	);
 	selector_01.step();
-	CHECK_EQUAL(selector_01.extract<boost::int64_t>(2), y_01);
+	CHECK_EQUAL(selector_01.extract<long long>(2), y_01);
 	CHECK_EQUAL(selector_01.extract<string>(0), hello_01);
 	CHECK_EQUAL(selector_01.extract<int>(1), x_01);
 	CHECK_EQUAL(selector_01.extract<double>(3), z_01);

@@ -33,10 +33,17 @@ SQLStatement::extract<int>(int index)
 
 
 template <>
-boost::int64_t
-SQLStatement::extract<boost::int64_t>(int index)
+long
+SQLStatement::extract<long>(int index)
 {
-	return m_sql_statement->extract<boost::int64_t>(index);
+	return m_sql_statement->extract<long>(index);
+}
+
+template <>
+long long
+SQLStatement::extract<long long>(int index)
+{
+	return m_sql_statement->extract<long long>(index);
 }
 
 
@@ -69,7 +76,14 @@ SQLStatement::bind(string const& parameter_name, int x)
 
 
 void
-SQLStatement::bind(string const& parameter_name, boost::int64_t x)
+SQLStatement::bind(string const& parameter_name, long x)
+{
+	m_sql_statement->bind(parameter_name, x);
+	return;
+}
+
+void
+SQLStatement::bind(string const& parameter_name, long long x)
 {
 	m_sql_statement->bind(parameter_name, x);
 	return;

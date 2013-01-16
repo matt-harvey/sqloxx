@@ -16,7 +16,6 @@
 
 #include "sqlite_dbconn.hpp"
 #include "../sqloxx_exceptions.hpp"
-#include <boost/cstdint.hpp>
 #include <boost/filesystem.hpp>
 #include <sqlite3.h>
 #include <cassert>
@@ -26,7 +25,6 @@
 #include <string>
 #include <vector>
 
-using boost::int64_t;
 using std::abort;
 using std::clog;
 using std::endl;

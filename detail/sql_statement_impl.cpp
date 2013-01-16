@@ -128,7 +128,7 @@ SQLStatementImpl::do_bind(string const& parameter_name, int x)
 
 
 void
-SQLStatementImpl::do_bind(string const& parameter_name, boost::int64_t x)
+SQLStatementImpl::do_bind(string const& parameter_name, long x)
 {
 	throw_on_failure
 	(	sqlite3_bind_int64(m_statement, parameter_index(parameter_name), x)
@@ -136,6 +136,15 @@ SQLStatementImpl::do_bind(string const& parameter_name, boost::int64_t x)
 	return;
 }
 
+
+void
+SQLStatementImpl::do_bind(string const& parameter_name, long long x)
+{
+	throw_on_failure
+	(	sqlite3_bind_int64(m_statement, parameter_index(parameter_name), x)
+	);
+	return;
+}
 
 void
 SQLStatementImpl::do_bind(string const& parameter_name, double x)
