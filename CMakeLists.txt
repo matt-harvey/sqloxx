@@ -27,7 +27,7 @@ set (test_files
 	 tests/reader_tests.cpp)
 
 add_executable (sqloxx_test ${test_files})
-add_library (sqloxx MODULE ${library_files})
+add_library (sqloxx ${library_files})
 			
 set (libraries
 	 boost_filesystem
@@ -40,7 +40,7 @@ target_link_libraries (sqloxx ${libaries})
 target_link_libraries (sqloxx_test ${libraries})
 
 install(TARGETS sqloxx
-		LIBRARY DESTINATION lib)
+		ARCHIVE DESTINATION lib)
 
 install (DIRECTORY sqloxx DESTINATION include)
 install (DIRECTORY sqloxx/detail DESTINATION include/sqloxx)
