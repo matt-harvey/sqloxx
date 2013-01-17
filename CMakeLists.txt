@@ -43,6 +43,7 @@ install(TARGETS sqloxx
 		LIBRARY DESTINATION lib)
 
 install (DIRECTORY sqloxx DESTINATION include)
+install (DIRECTORY sqloxx/detail DESTINATION include/sqloxx)
 
 install(FILES
 		database_connection.hpp
@@ -55,10 +56,14 @@ install(FILES
 		reader.hpp
 		sql_statement.hpp
 		sqloxx_exceptions.hpp
+		DESTINATION
+		include/sqloxx)
+
+install(FILES
 		detail/sql_statement_impl.hpp
 		detail/sqlite_dbconn.hpp
 		DESTINATION
-		include/sqloxx)
+		include/sqloxx/detail)
 		
 					
 
