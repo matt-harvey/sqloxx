@@ -16,7 +16,7 @@
 
 puts "Building unit tests...\n"
 
-set make_result [catch { exec make test 2>@ stderr >@ stdout } ]
+set make_result [catch { exec make sqloxx_test 2>@ stderr >@ stdout } ]
 if { $make_result != 0 } {
 	exit $make_result
 }
@@ -31,11 +31,11 @@ if {[file exists $filename] || [file exists ${filename}-journal]} {
 }
 
 # This execution crashes, but we recover
-catch { exec ./test $filename 2>@ stderr >@ stdout }
+catch { exec ./sqloxx_test $filename 2>@ stderr >@ stdout }
 
 # And in this second execution we inspect the database to see that it
 # reacted as expected; and then we perform the other unit tests.
-catch { exec ./test $filename 2>@ stderr >@ stdout }
+catch { exec ./sqloxx_test $filename 2>@ stderr >@ stdout }
 
 # And clean up left over files
 catch { file delete $filename }

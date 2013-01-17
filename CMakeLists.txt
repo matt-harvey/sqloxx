@@ -1,8 +1,7 @@
 cmake_minimum_required (VERSION 2.6)
 
-project (test)
+project (sqloxx)
 
-include_directories (/home/matthew/lib)
 link_directories(/usr/local/lib)
 
 set (library_files
@@ -27,9 +26,8 @@ set (test_files
 	 tests/next_auto_key_tests.cpp
 	 tests/reader_tests.cpp)
 
-add_executable (test ${test_files})
-add_library (sqloxx
-			${library_files})
+add_executable (sqloxx_test ${test_files})
+add_library (sqloxx MODULE ${library_files})
 			
 set (libraries
 	 boost_filesystem
@@ -38,12 +36,13 @@ set (libraries
 	 unittest++
 	 sqlite3)
 
-target_link_libraries (test ${libraries})
+target_link_libraries (sqloxx ${libaries})
+target_link_libraries (sqloxx_test ${libraries})
 
-install(TARGETS
-	    sqloxx
-		DESTINATION
-		/home/matthew/lib/sqloxx)
+install(TARGETS sqloxx
+		LIBRARY DESTINATION lib)
+
+install (DIRECTORY sqloxx DESTINATION include)
 
 install(FILES
 		database_connection.hpp
@@ -56,12 +55,10 @@ install(FILES
 		reader.hpp
 		sql_statement.hpp
 		sqloxx_exceptions.hpp
+		detail/sql_statement_impl.hpp
+		detail/sqlite_dbconn.hpp
 		DESTINATION
-		/home/matthew/lib/sqloxx)
-install(DIRECTORY
-		detail
-		DESTINATION
-		/home/matthew/lib/sqloxx)
+		include/sqloxx)
 		
 					
 
