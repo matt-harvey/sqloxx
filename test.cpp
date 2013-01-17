@@ -17,7 +17,7 @@
 
 
 #include "tests/atomicity_test.hpp"
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 #include <stdexcept>
 #include <iostream>
 

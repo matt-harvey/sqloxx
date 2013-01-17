@@ -12,7 +12,7 @@
 #include <iostream>
 #include <limits>
 #include <typeinfo>
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 #include <stdexcept>
 
 using boost::shared_ptr;

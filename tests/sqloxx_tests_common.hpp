@@ -13,7 +13,7 @@
  */
 
 #include "../database_connection.hpp"
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
 #include <iostream>
 

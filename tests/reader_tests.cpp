@@ -4,7 +4,7 @@
 #include "../handle.hpp"
 #include "../reader.hpp"
 #include "../sqloxx_exceptions.hpp"
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 
 #include <iostream>  // For logging
 using std::cout;

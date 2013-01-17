@@ -1,7 +1,7 @@
 #include "../database_connection.hpp"
 #include "../next_auto_key.hpp"
 #include "sqloxx_tests_common.hpp"
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 #include <limits>
 
 using std::numeric_limits;

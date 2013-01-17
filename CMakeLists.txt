@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 2.6)
 project (test)
 
 include_directories (/home/matthew/lib)
-link_directories (/home/matthew/lib/jewel)
+link_directories(/usr/local/lib)
 
 set (library_files
 	 database_connection.cpp

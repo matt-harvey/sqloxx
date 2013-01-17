@@ -4,7 +4,7 @@
 #include "../sqloxx_exceptions.hpp"
 #include "../tests/sqloxx_tests_common.hpp"
 
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 #include <jewel/debug_log.hpp>
 #include <jewel/exception.hpp>
 #include <iostream>

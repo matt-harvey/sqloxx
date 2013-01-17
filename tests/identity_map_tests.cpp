@@ -4,7 +4,7 @@
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
 #include <cassert>
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 
 namespace sqloxx
 {

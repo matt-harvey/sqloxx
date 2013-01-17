@@ -2,7 +2,7 @@
 #include "../database_transaction.hpp"
 #include "../sqloxx_exceptions.hpp"
 #include "../sql_statement.hpp"
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 
 namespace sqloxx
 {

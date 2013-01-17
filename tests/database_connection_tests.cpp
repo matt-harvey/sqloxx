@@ -3,7 +3,7 @@
 #include "../sql_statement.hpp"
 #include "../sqloxx_exceptions.hpp"
 #include "../detail/sql_statement_impl.hpp"
-#include <unittest++/UnitTest++.h>
+#include <UnitTest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <cassert>
