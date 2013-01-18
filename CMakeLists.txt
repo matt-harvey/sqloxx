@@ -4,7 +4,7 @@ project (sqloxx)
 
 if (MSYS)
 	include_directories(C:/MSYS/1.0/local/include)
-	link_directories(C:/MSYS/1.0/lib C:/MSYS/1.0/local/lib)
+	link_directories(C:/MSYS/1.0/local/lib)
 else ()
 	link_directories(/usr/local/lib)
 endif ()
@@ -14,7 +14,8 @@ set (library_files
 	 database_transaction.cpp
 	 sql_statement.cpp
 	 detail/sqlite_dbconn.cpp
-	 detail/sql_statement_impl.cpp)
+	 detail/sql_statement_impl.cpp
+	 detail/sqlite3.c)
 
 set (test_files
 	${library_files}
@@ -38,8 +39,7 @@ set (libraries
 	 boost_filesystem
 	 boost_system
 	 jewel
-	 unittest++
-	 sqlite3)
+	 unittest++)
 
 target_link_libraries (sqloxx ${libaries})
 target_link_libraries (sqloxx_test ${libraries})
@@ -82,6 +82,8 @@ install(FILES
 install(FILES
 		detail/sql_statement_impl.hpp
 		detail/sqlite_dbconn.hpp
+		detail/sqlite3.h
+		detail/sqlite3ext.h
 		DESTINATION
 		"${inner_header_installation_dir}/detail")
 		

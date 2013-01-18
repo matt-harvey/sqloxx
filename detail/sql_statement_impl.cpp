@@ -1,7 +1,7 @@
 #include "sql_statement_impl.hpp"
 #include "sqlite_dbconn.hpp"
 
-#include <sqlite3.h>
+#include "sqlite3.h" // Compiling directly into build
 #include <string>
 
 using std::string;

@@ -37,7 +37,7 @@
 #include "../sqloxx_exceptions.hpp"
 #include "sql_statement_impl.hpp"
 #include <jewel/checked_arithmetic.hpp>
-#include <sqlite3.h>
+#include "sqlite3.h"  // Compiling directly into build
 #include <boost/cstdint.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>

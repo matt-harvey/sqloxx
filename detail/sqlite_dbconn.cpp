@@ -17,7 +17,7 @@
 #include "sqlite_dbconn.hpp"
 #include "../sqloxx_exceptions.hpp"
 #include <boost/filesystem.hpp>
-#include <sqlite3.h>
+#include "sqlite3.h" // Compiling directly into build
 #include <cassert>
 #include <cstdlib>
 #include <iostream>

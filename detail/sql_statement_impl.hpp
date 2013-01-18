@@ -17,7 +17,7 @@
 
 #include "../sqloxx_exceptions.hpp"
 #include <jewel/checked_arithmetic.hpp>
-#include <sqlite3.h>
+#include "sqlite3.h"  // Compiling directly into build
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/static_assert.hpp>
