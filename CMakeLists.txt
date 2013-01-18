@@ -4,7 +4,7 @@ project (sqloxx)
 
 if (MSYS)
 	include_directories(C:/MSYS/1.0/local/include)
-	link_directories(C:/MSYS/1.0/lib)
+	link_directories(C:/MSYS/1.0/lib C:/MSYS/1.0/local/lib)
 else ()
 	link_directories(/usr/local/lib)
 endif ()
