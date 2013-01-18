@@ -2,7 +2,12 @@ cmake_minimum_required (VERSION 2.6)
 
 project (sqloxx)
 
-link_directories(/usr/local/lib)
+if (MSYS)
+	include_directories(C:/MSYS/1.0/local/include)
+	link_directories(C:/MSYS/1.0/lib)
+else ()
+	link_directories(/usr/local/lib)
+endif ()
 
 set (library_files
 	 database_connection.cpp
@@ -39,11 +44,26 @@ set (libraries
 target_link_libraries (sqloxx ${libaries})
 target_link_libraries (sqloxx_test ${libraries})
 
-install(TARGETS sqloxx
-		ARCHIVE DESTINATION lib)
+if (MSYS)
+	set (lib_installation_dir C:/MSYS/1.0/local/lib)
+else ()
+	set (lib_installation_dir /usr/local/lib)
+endif ()
 
-install (DIRECTORY sqloxx DESTINATION include)
-install (DIRECTORY sqloxx/detail DESTINATION include/sqloxx)
+
+install(TARGETS sqloxx ARCHIVE DESTINATION ${lib_installation_dir})
+
+
+if (MSYS)
+	set (outer_header_installation_dir C:/MSYS/1.0/local/include)
+else ()
+	set (outer_header_installation_dir /usr/local/include)
+endif ()
+
+set (inner_header_installation_dir "${outer_header_installation_dir}/sqloxx")
+
+install (DIRECTORY sqloxx
+         DESTINATION ${outer_header_installation_dir})
 
 install(FILES
 		database_connection.hpp
@@ -57,13 +77,13 @@ install(FILES
 		sql_statement.hpp
 		sqloxx_exceptions.hpp
 		DESTINATION
-		include/sqloxx)
+		${inner_header_installation_dir})
 
 install(FILES
 		detail/sql_statement_impl.hpp
 		detail/sqlite_dbconn.hpp
 		DESTINATION
-		include/sqloxx/detail)
+		"${inner_header_installation_dir}/detail")
 		
 					
 
