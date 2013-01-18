@@ -6,7 +6,7 @@ if (MSYS)
 	include_directories(C:/MSYS/1.0/local/include)
 	link_directories(C:/MSYS/1.0/local/lib)
 else ()
-	link_directories(/usr/local/lib)
+	link_directories(/usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64)
 endif ()
 
 set (library_files
@@ -36,9 +36,14 @@ add_executable (sqloxx_test ${test_files})
 add_library (sqloxx ${library_files})
 			
 set (libraries
+	 c
 	 boost_filesystem
 	 boost_system
+	 dl
 	 jewel
+	 m
+	 pthread
+	 stdc++
 	 unittest++)
 
 target_link_libraries (sqloxx ${libaries})
