@@ -60,10 +60,10 @@ SQLStatement::extract<double>(int index)
 
 
 template <>
-std::string
-SQLStatement::extract<std::string>(int index)
+string
+SQLStatement::extract<string>(int index)
 {
-	return m_sql_statement->extract<std::string>(index);
+	return m_sql_statement->extract<string>(index);
 }
 
 
