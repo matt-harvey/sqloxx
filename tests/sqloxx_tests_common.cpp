@@ -7,17 +7,17 @@
 #include <boost/filesystem.hpp>
 #include <jewel/stopwatch.hpp>
 #include <cassert>
-#include <cstdlib>
+#include <exception>
 #include <iostream>
 #include <string>
 #include <vector>
 
 using jewel::Stopwatch;
-using std::abort;
 using std::cout;
 using std::cerr;
 using std::endl;
 using std::string;
+using std::terminate;
 using std::vector;
 using sqloxx::detail::SQLStatementImpl;
 using sqloxx::detail::SQLiteDBConn;
@@ -44,8 +44,8 @@ void abort_if_exists(filesystem::path const& filepath)
 	if (file_exists(filepath))
 	{
 		cerr << "File named \"" << filepath.string() << "\" already "
-			 << "exists. Test aborted." << endl;
-		std::abort();
+			 << "exists. Test terminated." << endl;
+		terminate();
 	}
 	return;
 }

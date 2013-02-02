@@ -4,6 +4,7 @@
 #include "../sql_statement.hpp"
 #include <boost/filesystem.hpp>
 #include <cassert>
+#include <exception>
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -12,7 +13,7 @@ using std::cout;
 using std::endl;
 using std::ofstream;
 using std::string;
-
+using std::terminate;
 
 namespace sqloxx
 {
@@ -78,7 +79,7 @@ setup_atomicity_test(DatabaseConnection& dbc)
 	);
 
 	// Crash!
-	abort();
+	terminate();
 	
 	// Execution never reaches here - transaction does not complete
 	assert (false);

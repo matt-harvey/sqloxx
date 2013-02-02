@@ -19,13 +19,13 @@
 #include <boost/filesystem.hpp>
 #include "sqlite3.h" // Compiling directly into build
 #include <cassert>
-#include <cstdlib>
+#include <exception>
 #include <iostream>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
-using std::abort;
+using std::terminate;
 using std::clog;
 using std::endl;
 using std::logic_error;
@@ -91,14 +91,14 @@ SQLiteDBConn::~SQLiteDBConn()
 			clog << "SQLite3 database connection could not be "
 			             "successfully "
 			             "closed in SQLiteDBConn destructor. " << endl;
-			abort();
+			terminate();
 		}
 	}
 	if (sqlite3_shutdown() != SQLITE_OK)
 	{
 		clog << "SQLite3 shutdown failed in SQLiteDBConn destructor."
 		     << endl;
-		abort();
+		terminate();
 	}
 }
 
