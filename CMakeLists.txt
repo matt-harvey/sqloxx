@@ -2,11 +2,18 @@ cmake_minimum_required (VERSION 2.6)
 
 project (sqloxx)
 
-if (MSYS)
-	include_directories(C:/MSYS/1.0/local/include)
-	link_directories(C:/MSYS/1.0/local/lib)
+if (WIN32)
+	include_directories(C:/Dev-Cpp
+					C:/include
+					C:/Dev-Cpp/include/common)
+	link_directories(C:/Dev-Cpp/lib
+					C:/Dev-Cpp/MinGW/lib
+					C:/lib)
 else ()
-	link_directories(/usr/local/lib /usr/lib /usr/local/lib64 /usr/lib64)
+	link_directories(/usr/local/lib
+	                 /usr/lib
+					 /usr/local/lib64
+					 /usr/lib64)
 endif ()
 
 set (library_files
@@ -35,22 +42,37 @@ set (test_files
 add_executable (sqloxx_test ${test_files})
 add_library (sqloxx ${library_files})
 			
-set (libraries
-	 c
-	 boost_filesystem
-	 boost_system
-	 dl
-	 jewel
-	 m
-	 pthread
-	 stdc++
-	 unittest++)
+if (WIN32)
+	set (libraries
+		boost_filesystem-mgw46-mt-1_53
+		boost_system-mgw46-mt-1_53
+		jewel
+		UnitTest++
+		 winmm
+		 shell32
+		 comctl32
+		 rpcrt4
+		 wsock32
+		 odbc32
+		 opengl32)
+else ()
+	set (libraries
+		 boost_filesystem
+		 c
+		 stdc++
+		 boost_system
+		 dl
+		 jewel
+		 m
+		 pthread
+		 unittest++)
+endif()
 
 target_link_libraries (sqloxx ${libaries})
 target_link_libraries (sqloxx_test ${libraries})
 
-if (MSYS)
-	set (lib_installation_dir C:/MSYS/1.0/local/lib)
+if (WIN32)
+	set (lib_installation_dir C:/lib)
 else ()
 	set (lib_installation_dir /usr/local/lib)
 endif ()
@@ -59,8 +81,8 @@ endif ()
 install(TARGETS sqloxx ARCHIVE DESTINATION ${lib_installation_dir})
 
 
-if (MSYS)
-	set (outer_header_installation_dir C:/MSYS/1.0/local/include)
+if (WIN32)
+	set (outer_header_installation_dir C:/include)
 else ()
 	set (outer_header_installation_dir /usr/local/include)
 endif ()
