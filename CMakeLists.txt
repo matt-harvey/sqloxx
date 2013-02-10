@@ -65,7 +65,7 @@ else ()
 		 jewel
 		 m
 		 pthread
-		 unittest++)
+		 UnitTest++)
 endif()
 
 target_link_libraries (sqloxx ${libaries})
