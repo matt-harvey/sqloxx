@@ -41,29 +41,25 @@ int main(int argc, char** argv)
 	try
 	{
 		// do_speed_test();
-		if (!(__WIN32__) && (argc != 2))
-		{
-			std::cout << "Incorrect number of arguments passed to main in "
-					  << "test.cpp." << endl;
-			terminate();
-		}
-		int failures = 0;
-		if (__WIN32__)
-		{
+		#ifdef __WIN32__ || WIN32 || __WIN32 || _WIN32
 			cout << "\nCould not perform atomicity test on Windows. "
 			     << "Test skipped." << endl;
-		}
-		else
-		{
+		#else
+			if (argc != 2)
+			{
+				std::cout << "Incorrect number of arguments passed to main in"
+						  << " test.cpp." << endl;
+				terminate();
+			}
+			int failures = 0;
 			cout << "Running atomicity test..." << endl;
 			failures += do_atomicity_test(argv[1]);
-		}
+		#endif
+
 		cout << "\nNow running various unit tests using UnitTest++..."
 		     << endl;
 		failures += UnitTest::RunAllTests();
 		cout << "There were " << failures << " failed tests." << endl;
-		cout << "UnitTest++ output should have provided information on any "
-		     << "failed tests" << endl;
 		return failures;
 	}
 	// This seems pointless but is necessary to guarantee the stack is
