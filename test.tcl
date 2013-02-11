@@ -10,17 +10,12 @@
 # existence of the crashed database file, check that the database state
 # is as expected given the crash, output the result of this check to
 # standard output, and then run the remaining unit tests.
-#
-# As a convenience, this script will also execute "make test" before
-# running the tests.
 
-puts "Building unit tests...\n"
-
-set make_result [catch { exec make sqloxx_test 2>@ stderr >@ stdout } ]
-if { $make_result != 0 } {
-	exit $make_result
+if {$tcl_platform(platform) == "windows"} {
+	puts "Test driver, test.tcl, does not work on Windows. Execute \
+the .exe test file directly to run tests.\n"
+	exit 1
 }
-puts "\nRunning unit tests..."
 
 set filename testfile9182734123.db
 
@@ -29,6 +24,7 @@ if {[file exists $filename] || [file exists ${filename}-journal]} {
 	puts "Test aborted as unsafe to proceed."
 	exit 1
 }
+
 
 # This execution crashes, but we recover
 catch { exec ./sqloxx_test $filename 2>@ stderr >@ stdout }

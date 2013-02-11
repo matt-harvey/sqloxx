@@ -152,6 +152,17 @@ public:
 	 */
 	T* operator->() const;
 
+	/**
+	 * Handles are equal if and only if they are handling the same
+	 * underlying object.
+	 * 
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Test.
+	 */
+	bool operator==(Handle const& rhs) const;
+	bool operator!=(Handle const& rhs) const;
+
 private:
 	
 	Handle(T* p_pointer);
@@ -280,6 +291,21 @@ Handle<T>::operator->() const
 	}
 	throw (UnboundHandleException("Unbound Handle."));
 }
+
+template <typename T>
+bool
+Handle<T>::operator==(Handle<T> const& rhs) const
+{
+	return m_pointer == rhs.m_pointer;
+}
+
+template <typename T>
+bool
+Handle<T>::operator!=(Handle<T> const& rhs) const
+{
+	return m_pointer != rhs.m_pointer;
+}
+
 
 template <typename T>
 Handle<T>::Handle(T* p_pointer):

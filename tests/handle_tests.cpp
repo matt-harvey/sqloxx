@@ -114,5 +114,25 @@ TEST_FIXTURE(DerivedPOFixture, handle_conversion_to_bool)
 	// operator->() implementations for Handle?
 }
 
+TEST_FIXTURE(DerivedPOFixture, handle_equality_and_inequality)
+{
+	Handle<DerivedPO> dpo1(*pdbc);
+	Handle<DerivedPO> dpo2(dpo1);
+	CHECK(dpo1 == dpo2);
+	CHECK_EQUAL(dpo2, dpo1);
+
+	Handle<DerivedPO> dpo3(*pdbc);
+	dpo3->set_x(109);
+	dpo3->set_y(.5);
+	dpo3->save();
+	CHECK(dpo3 != dpo1);
+	CHECK(dpo2 != dpo3);
+
+	Handle<DerivedPO> dpo4(*pdbc, 1);
+	CHECK(dpo4 == dpo3);
+	CHECK_EQUAL(dpo3, dpo4);
+}
+
+
 }  // namespace tests
 }  // namespace sqloxx
