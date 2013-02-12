@@ -1,0 +1,15 @@
+To run the tests, a Tcl interpreter is required.
+
+On Windows, the tests can be run by executing runtests.bat. The
+text of runtests.bat should be amended as required to call
+the Tcl interpreter available on the system.
+
+On Windows, if the test does not run at all, or if it appears to run but
+produces no output, it may be due to the interference of antivirus software,
+which sometimes prevents just-compiled executables from being run. Pausing
+the antivirus software, or else telling the software that the test
+executable is trustworthy, is the only known solution to this issue.
+
+On Unix-based systems, the tests can be run by executing
+test.tcl.
+

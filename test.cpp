@@ -33,30 +33,14 @@ using std::endl;
 using std::string;
 using std::terminate;
 
-
-// TODO The tests still don't run on Windows.
-
 int main(int argc, char** argv)
 {
 	try
 	{
 		// do_speed_test();
-		#ifdef __WIN32__ || WIN32 || __WIN32 || _WIN32
-			cout << "\nCould not perform atomicity test on Windows. "
-			     << "Test skipped." << endl;
-		#else
-			if (argc != 2)
-			{
-				std::cout << "Incorrect number of arguments passed to main in"
-						  << " test.cpp." << endl;
-				terminate();
-			}
-			int failures = 0;
-			cout << "Running atomicity test..." << endl;
-			failures += do_atomicity_test(argv[1]);
-		#endif
-
-		cout << "\nNow running various unit tests using UnitTest++..."
+		int failures = 0;
+		failures += do_atomicity_test(argv[1]);
+		cout << "Now running various unit tests using UnitTest++..."
 		     << endl;
 		failures += UnitTest::RunAllTests();
 		cout << "There were " << failures << " failed tests." << endl;

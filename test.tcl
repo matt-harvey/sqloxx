@@ -11,12 +11,6 @@
 # is as expected given the crash, output the result of this check to
 # standard output, and then run the remaining unit tests.
 
-if {$tcl_platform(platform) == "windows"} {
-	puts "Test driver, test.tcl, does not work on Windows. Execute \
-the .exe test file directly to run tests.\n"
-	exit 1
-}
-
 set filename testfile9182734123.db
 
 if {[file exists $filename] || [file exists ${filename}-journal]} {
@@ -25,6 +19,7 @@ if {[file exists $filename] || [file exists ${filename}-journal]} {
 	exit 1
 }
 
+puts "Running atomicity test..."
 
 # This execution crashes, but we recover
 catch { exec ./sqloxx_test $filename 2>@ stderr >@ stdout }

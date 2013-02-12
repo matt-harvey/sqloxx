@@ -21,7 +21,7 @@ namespace tests
 TEST_FIXTURE(DatabaseConnectionFixture, identity_map_constructors)
 {
 	// There's not a lot to test here
-	IdentityMap<DerivedPO, DatabaseConnection> idm(dbc);
+	IdentityMap<DerivedPO, DatabaseConnection> idm(*pdbc);
 
 	// Copy constuctor - check it's shallow
 	IdentityMap<DerivedPO, DatabaseConnection> idm2(idm);

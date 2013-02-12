@@ -68,7 +68,8 @@ TEST_FIXTURE
 {
 	setup_reader_test(*pdbc);
 	DerivedPOHandleReader reader1(*pdbc);
-	CHECK_EQUAL(reader1.size(), 5);
+	DerivedPOHandleReader::size_type const expected_size = 5;
+	CHECK_EQUAL(reader1.size(), expected_size);
 	int i = 0;
 	for
 	(	DerivedPOHandleReader::const_iterator it = reader1.begin();
@@ -101,7 +102,8 @@ TEST_FIXTURE
 {
 	setup_reader_test(*pdbc);
 	FiveReader reader1(*pdbc);
-	CHECK_EQUAL(reader1.size(), 2);
+	DerivedPOHandleReader::size_type const expected_size = 2;
+	CHECK_EQUAL(reader1.size(), expected_size);
 }
 
 TEST_FIXTURE
@@ -114,7 +116,8 @@ TEST_FIXTURE
 	(	*pdbc,
 		"select derived_po_id from derived_pos where y > 14.2"
 	);
-	CHECK_EQUAL(reader1.size(), 3);
+	DerivedPOHandleReader::size_type const expected_size = 3;
+	CHECK_EQUAL(reader1.size(), expected_size);
 }
 
 

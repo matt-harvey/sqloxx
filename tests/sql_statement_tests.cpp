@@ -25,6 +25,7 @@ namespace tests
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_shared_sql_statement_constructor)
 {
+	DatabaseConnection& dbc = *pdbc;
 	// Check behaviour with SQL syntax error
 	CHECK_THROW
 	(	SQLStatement unsyntactic(dbc, "unsyntactical gobbledigook"),
@@ -62,6 +63,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_shared_sql_statement_constructor)
 TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
 {
 	// These should be OK (note trailing whitespace and semicolons)
+	DatabaseConnection& dbc = *pdbc;
 	dbc.execute_sql
 	(	"create table planets(name text primary key not null, size text); "
 		"create table satellites(name text unique, "
@@ -121,6 +123,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_multi_statements_rejected)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 {
+	DatabaseConnection& dbc = *pdbc;
 	dbc.execute_sql
 	(	"create table dummy(Col_A integer primary key autoincrement, "
 		"Col_B text not null, Col_C integer not null, Col_D integer, "
@@ -173,6 +176,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_and_extract_normal)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_bind_exception)
 {
+	DatabaseConnection& dbc = *pdbc;
 	dbc.execute_sql("create table dummy(Col_A integer, Col_B text);");
 	SQLStatement insertion_statement
 	(	dbc,
@@ -203,6 +207,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_bind_exception)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_extract_value_type_exception)
 {
+	DatabaseConnection& dbc = *pdbc;
 	dbc.execute_sql("create table dummy(Col_A integer, Col_B text)");
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(3, 'hey');");
 	SQLStatement selection_statement
@@ -232,6 +237,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_value_type_exception)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_high)
 {
+	DatabaseConnection& dbc = *pdbc;
 	dbc.execute_sql("create table dummy(Col_A integer, Col_B integer)");
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values(3, 10);");
 	SQLStatement selection_statement
@@ -253,6 +259,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_high)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_low)
 {
+	DatabaseConnection& dbc = *pdbc;
 	dbc.execute_sql("create table dummy(Col_A text, Col_B integer)");
 	dbc.execute_sql("insert into dummy(Col_A, Col_B) values('Hello', 9)");
 	SQLStatement selection_statement
@@ -273,6 +280,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_extract_index_exception_low)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_step)
 {
+	DatabaseConnection& dbc = *pdbc;
 	// Create table
 	dbc.execute_sql
 	(	"create table planets(name text not null unique, size text)"
@@ -319,6 +327,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_step)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_step_final)
 {
+	DatabaseConnection& dbc = *pdbc;
 	// Create table
 	dbc.execute_sql
 	(	"create table planets(name text not null unique, size text)"
@@ -349,6 +358,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_step_final)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_reset)
 {
+	DatabaseConnection& dbc = *pdbc;
 	// Create table
 	dbc.execute_sql
 	(	"create table planets(name text not null unique, visited integer)"
@@ -388,6 +398,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_reset)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_01)
 {
+	DatabaseConnection& dbc = *pdbc;
 	// Create table
 	dbc.execute_sql
 	(	"create table planets(name text not null, visited integer)"
@@ -412,6 +423,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_01)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
 {
+	DatabaseConnection& dbc = *pdbc;
 	// Create table
 	dbc.execute_sql
 	(	"create table planets(name text, size text)"
@@ -445,6 +457,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_clear_bindings_02)
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_locking_mechanism)
 {
+	DatabaseConnection& dbc = *pdbc;
 	// Test that locking prevents two SQLStatements with the
 	// same text from sharing the same underlying SQLStatement when
 	// they are in the same scope.
@@ -468,6 +481,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_locking_mechanism)
 
 TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError1)
 {
+	DatabaseConnection& dbc = *pdbc;
 	// Setting up
 	dbc.execute_sql
 	(	"create table planets(name text primary key not null, size text); "
@@ -525,6 +539,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError1)
 
 TEST_FIXTURE(DatabaseConnectionFixture, ReuseSQLStatementAfterError2)
 {
+	DatabaseConnection& dbc = *pdbc;
 	// Setting up
 	dbc.execute_sql
 	(	"create table planets(name text primary key not null, size text); "

@@ -36,16 +36,16 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 {
 	// Note CHECK_EQUAL and CHECK get confused by multiple template args
 	bool ok =
-		(next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
+		(next_auto_key<DatabaseConnection, int>(*pdbc, "dummy_table") == 1);
 	CHECK(ok);
-	dbc.execute_sql
+	pdbc->execute_sql
 	(	"create table dummy_table(column_A text)"
 	);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(*pdbc, "dummy_table") == 1);
 	CHECK(ok);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(*pdbc, "dummy_table") == 1);
 	CHECK(ok);
-	dbc.execute_sql
+	pdbc->execute_sql
 	(	"create table test_table"
 		"("
 			"column_A integer not null unique, "
@@ -53,46 +53,46 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 			"column_C text not null"
 		")"
 	);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(*pdbc, "test_table") == 1);
 	CHECK(ok);
 	// This behaviour is strange but expected - see API docs.
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(*pdbc, "dummy_table") == 1);
 	CHECK(ok);
-	dbc.execute_sql
+	pdbc->execute_sql
 	(	"insert into test_table(column_A, column_C) "
 		"values(3, 'Hello')"
 	);
-	dbc.execute_sql
+	pdbc->execute_sql
 	(	"insert into test_table(column_A, column_C) "
 		"values(4, 'Red')"
 	);
-	dbc.execute_sql
+	pdbc->execute_sql
 	(	"insert into test_table(column_A, column_C) "
 		"values(10, 'Gold')"
 	);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 4);
+	ok = (next_auto_key<DatabaseConnection, int>(*pdbc, "test_table") == 4);
 	CHECK(ok);
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "dummy_table") == 1);
+	ok = (next_auto_key<DatabaseConnection, int>(*pdbc, "dummy_table") == 1);
 	CHECK(ok);
 	
 	// Test behaviour with gaps in numbering
-	dbc.execute_sql("delete from test_table where column_B = 2");
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 4);
+	pdbc->execute_sql("delete from test_table where column_B = 2");
+	ok = (next_auto_key<DatabaseConnection, int>(*pdbc, "test_table") == 4);
 	
 	// Key is not predicted to be reused once deleted
-	dbc.execute_sql("delete from test_table where column_B = 3");
-	ok = (next_auto_key<DatabaseConnection, int>(dbc, "test_table") == 4);
+	pdbc->execute_sql("delete from test_table where column_B = 3");
+	ok = (next_auto_key<DatabaseConnection, int>(*pdbc, "test_table") == 4);
 	CHECK(ok);
 	int const predicted_key =
-		next_auto_key<DatabaseConnection, int>(dbc, "test_table");
+		next_auto_key<DatabaseConnection, int>(*pdbc, "test_table");
 
 	// Check key is not actually reused once deleted
-	dbc.execute_sql
+	pdbc->execute_sql
 	(	"insert into test_table(column_A, column_C) "
 		"values(110, 'Red')"
 	);
 	SQLStatement statement2
-	(	dbc,
+	(	*pdbc,
 		"select column_B from test_table where column_A = 110"
 	);
 	statement2.step();
@@ -102,7 +102,7 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 
 	// Test behaviour in protecting against overflow
 	SQLStatement statement
-	(	dbc,
+	(	*pdbc,
 		"insert into test_table(column_A, column_B, column_C) "
 		"values(:A, :B, :C)"
 	);
@@ -114,15 +114,15 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_next_auto_key_normal)
 	// Have to do this as CHECK_THROW gets confused by multiple template args
 	try
 	{
-		next_auto_key<DatabaseConnection, int>(dbc, "test_table");
+		next_auto_key<DatabaseConnection, int>(*pdbc, "test_table");
 	}
 	catch (TableSizeException&)
 	{
 		ok = true;
 	}
 	CHECK(ok);
-	dbc.execute_sql("drop table dummy_table");
-	dbc.execute_sql("drop table test_table");
+	pdbc->execute_sql("drop table dummy_table");
+	pdbc->execute_sql("drop table test_table");
 }
 
 

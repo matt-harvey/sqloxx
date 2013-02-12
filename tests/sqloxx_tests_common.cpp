@@ -6,7 +6,9 @@
 #include "../sql_statement.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/stopwatch.hpp>
+#include <windows.h>  // For Sleep
 #include <cassert>
+#include <cstdlib>
 #include <exception>
 #include <iostream>
 #include <string>
@@ -16,6 +18,7 @@ using jewel::Stopwatch;
 using std::cout;
 using std::cerr;
 using std::endl;
+using std::remove;
 using std::string;
 using std::terminate;
 using std::vector;
@@ -23,6 +26,36 @@ using sqloxx::detail::SQLStatementImpl;
 using sqloxx::detail::SQLiteDBConn;
 
 namespace filesystem = boost::filesystem;
+
+
+namespace
+{
+	void windows_friendly_remove(string const& fp)
+	{
+		int const max_tries = 10000;
+		int const delay = 100;
+		char const* filename = fp.c_str();
+		int i;
+		for
+		(	i = 0;
+			(remove(filename) != 0) && (i != max_tries);
+			++i
+		)
+		{
+			Sleep(delay);
+		}
+		if (i == max_tries)
+		{
+			assert (filesystem::exists(fp));
+			cout << "Test file could not be removed. Terminating tests."
+			     << endl;
+			terminate();
+		}
+		assert (!filesystem::exists(fp));
+		return;
+	}
+
+}   // end anonymous namespace
 
 
 namespace sqloxx
@@ -94,7 +127,7 @@ do_speed_test()
 	}
 	sw1.log();
 	db.execute_sql("end");
-	boost::filesystem::remove(filename);
+	windows_friendly_remove(filename);
 
 
 	// With SQLStatementImpl
@@ -112,7 +145,7 @@ do_speed_test()
 	}
 	sw0.log();
 	sdbc.execute_sql("end");
-	boost::filesystem::remove(filename);
+	windows_friendly_remove(filename);
 	
 	return;
 }
@@ -120,25 +153,29 @@ do_speed_test()
 	
 
 DatabaseConnectionFixture::DatabaseConnectionFixture():
-	db_filepath("Testfile_01")
+	db_filepath("Testfile_01"),
+	pdbc(0)
 {
+	pdbc = new DatabaseConnection;
 	abort_if_exists(db_filepath);
-	dbc.open(db_filepath);
-	assert (dbc.is_valid());
+	pdbc->open(db_filepath);
+	assert (pdbc->is_valid());
 }
 
 
 DatabaseConnectionFixture::~DatabaseConnectionFixture()
 {
-	assert (dbc.is_valid());
-	filesystem::remove(db_filepath);
+	assert (pdbc->is_valid());
+	delete pdbc;
+	windows_friendly_remove(db_filepath.string());
 	assert (!file_exists(db_filepath));
 }
 
 DerivedPOFixture::DerivedPOFixture():
 	db_filepath("Testfile_dpof"),
-	pdbc(new DerivedDatabaseConnection)
+	pdbc(0)
 {
+	pdbc = new DerivedDatabaseConnection;
 	abort_if_exists(db_filepath);
 	pdbc->open(db_filepath);
 	assert (pdbc->is_valid());
@@ -148,7 +185,8 @@ DerivedPOFixture::DerivedPOFixture():
 DerivedPOFixture::~DerivedPOFixture()
 {
 	assert (pdbc->is_valid());
-	filesystem::remove(db_filepath);
+	delete pdbc;
+	windows_friendly_remove(db_filepath.string());
 	assert (!file_exists(db_filepath));
 }
 
