@@ -11,12 +11,13 @@
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
 #include <cassert>
+#include <jewel/debug_log.hpp>
 #include <jewel/optional.hpp>
 #include <exception>
 #include <string>
 
 #ifdef DEBUG
-	#include <jewel/debug_log.hpp>
+	#include <iomanip>
 	#include <iostream>
 #endif
 

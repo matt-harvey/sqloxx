@@ -165,7 +165,7 @@ SQLStatementImpl::do_bind(string const& parameter_name, string const& x)
 			parameter_index(parameter_name),
 			x.c_str(),
 			-1,
-			0
+			SQLITE_TRANSIENT
 		)
 	);
 	return;
@@ -243,9 +243,6 @@ const
 	{
 		try
 		{
-			#ifdef DEBUG
-				JEWEL_DEBUG_LOG << parameter_name << endl;
-			#endif
 		}
 		catch (...)
 		{

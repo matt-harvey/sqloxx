@@ -6,7 +6,18 @@
 #include "../sql_statement.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/stopwatch.hpp>
-#include <windows.h>  // For Sleep
+
+
+#if WIN32 || __WIN32__ || __WIN32 || _WIN32_ || WIN32_ || WIN32__
+#	define SQLOXX_ON_WINDOWS 1
+#else
+#	define SQLOXX_ON_WINDOWS 0
+#endif
+
+#if SQLOXX_ON_WINDOWS
+#	include <windows.h>  // for Sleep
+#endif
+
 #include <cassert>
 #include <cstdlib>
 #include <exception>
@@ -32,25 +43,29 @@ namespace
 {
 	void windows_friendly_remove(string const& fp)
 	{
-		int const max_tries = 10000;
-		int const delay = 100;
-		char const* filename = fp.c_str();
-		int i;
-		for
-		(	i = 0;
-			(remove(filename) != 0) && (i != max_tries);
-			++i
-		)
-		{
-			Sleep(delay);
-		}
-		if (i == max_tries)
-		{
-			assert (filesystem::exists(fp));
-			cout << "Test file could not be removed. Terminating tests."
-			     << endl;
-			terminate();
-		}
+#		if SQLOXX_ON_WINDOWS
+			int const max_tries = 10000;
+			int const delay = 100;
+			char const* filename = fp.c_str();
+			int i;
+			for
+			(	i = 0;
+				(remove(filename) != 0) && (i != max_tries);
+				++i
+			)
+			{
+					Sleep(delay);
+			}
+			if (i == max_tries)
+			{
+				assert (filesystem::exists(fp));
+				cout << "Test file could not be removed. Terminating tests."
+					 << endl;
+				terminate();
+			}
+#		else
+			filesystem::remove(fp);
+#		endif
 		assert (!filesystem::exists(fp));
 		return;
 	}

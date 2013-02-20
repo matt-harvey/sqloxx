@@ -20,6 +20,7 @@
 using boost::shared_ptr;
 using boost::unordered_map;
 using std::bad_alloc;
+using std::cout;
 using std::clog;
 using std::endl;
 using std::fprintf;
@@ -221,7 +222,6 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 void
 DatabaseConnection::unchecked_begin_transaction()
 {
-	// JEWEL_DEBUG_LOG << "Beginning SQL transaction." << endl;
 	SQLStatement statement(*this, "begin");
 	statement.step();
 	return;
@@ -230,7 +230,6 @@ DatabaseConnection::unchecked_begin_transaction()
 void
 DatabaseConnection::unchecked_end_transaction()
 {
-	// JEWEL_DEBUG_LOG << "Ending SQL transaction." << endl;
 	SQLStatement statement(*this, "end");
 	statement.step();
 	return;
@@ -239,7 +238,6 @@ DatabaseConnection::unchecked_end_transaction()
 void
 DatabaseConnection::unchecked_set_savepoint()
 {
-	// JEWEL_DEBUG_LOG << "Setting SQL savepoint." << endl;
 	SQLStatement statement(*this, "savepoint sp");
 	statement.step();
 	return;
@@ -248,7 +246,6 @@ DatabaseConnection::unchecked_set_savepoint()
 void
 DatabaseConnection::unchecked_release_savepoint()
 {
-	// JEWEL_DEBUG_LOG << "Releasing SQL savepoint." << endl;
 	SQLStatement statement(*this, "release sp");
 	statement.step();
 	return;
@@ -257,7 +254,6 @@ DatabaseConnection::unchecked_release_savepoint()
 void
 DatabaseConnection::unchecked_rollback_transaction()
 {
-	// JEWEL_DEBUG_LOG << "Rolling back entire SQL transaction." << endl;
 	SQLStatement statement(*this, "rollback");
 	statement.step();
 	return;
@@ -266,7 +262,6 @@ DatabaseConnection::unchecked_rollback_transaction()
 void
 DatabaseConnection::unchecked_rollback_to_savepoint()
 {
-	// JEWEL_DEBUG_LOG << "Rolling back to SQL savepoint." << endl;
 	SQLStatement statement(*this, "rollback to savepoint sp");
 	statement.step();
 	return;
