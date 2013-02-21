@@ -726,10 +726,6 @@ IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 {
 	typename CacheKeyMap::const_iterator it =
 		cache_key_map().find(p_cache_key);
-	if (it == cache_key_map().end())
-	{
-		std::cout << "Precondition violated here!" << std::endl;
-	}
 	assert (it != cache_key_map().end()); // Assert precondition
 	if (  !it->second->has_id()  ||  !is_caching()  )
 	{
