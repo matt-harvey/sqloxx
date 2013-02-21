@@ -935,12 +935,6 @@ PersistentObject<Derived, Connection>::PersistentObject
 	m_loading_status(ghost),
 	m_handle_counter(0)
 {
-#	ifdef DEBUG
-		JEWEL_DEBUG_LOG << "Constructing persistent object with id of "
-		                << p_id << " at "
-						<< std::hex << this << std::dec << std::endl;
-#	endif
-
 }
 
 template
@@ -955,20 +949,12 @@ PersistentObject<Derived, Connection>::PersistentObject
 	// of IdentityMap<Derived> to call set_cache_key after construction,
 	// before providing a Handle to a newly created Derived instance.
 {
-#	ifdef DEBUG
-		JEWEL_DEBUG_LOG << "Constructing persistent object without id "
-		                << "at " << std::hex << this << std::dec << std::endl;
-#	endif
 }
 
 template
 <typename Derived, typename Connection>
 PersistentObject<Derived, Connection>::~PersistentObject()
 {
-#	ifdef DEBUG
-		JEWEL_DEBUG_LOG << "Calling destructor of object at "
-	   		            << std::hex << this << std::dec << std::endl;
-#	endif
 }
 
 template
@@ -1000,11 +986,8 @@ template
 void
 PersistentObject<Derived, Connection>::load()
 {
-	LOG_POSITION;
-	std::cout << "Calling load on object at address " << std::hex << this << std::dec << std::endl;
-	while (m_loading_status == loading)  // WARNING temp comment - here's the invalid read
+	while (m_loading_status == loading)
 	{
-		LOG_POSITION;
 		// Wait
 	}
 	if (m_loading_status == ghost && has_id())
@@ -1112,17 +1095,12 @@ PersistentObject<Derived, Connection>::remove()
 			transaction.cancel();
 			throw;
 		}
-		LOG_POSITION;
 		// nothrow (conditional)
 		IdentityMap::PersistentObjectAttorney::partially_uncache_object
 		(	m_identity_map,
 			*m_cache_key
 		);
 
-#		ifdef DEBUG
-			JEWEL_DEBUG_LOG << "Clearing m_id of object at "
-			                << std::hex << this << std::dec << std::endl;
-#		endif
 		jewel::clear(m_id);  // nothrow
 	}
 	return;
@@ -1134,9 +1112,7 @@ template
 Id
 PersistentObject<Derived, Connection>::id() const
 {
-	LOG_POSITION;
 	return jewel::value(m_id);
-	LOG_POSITION;
 }
 
 template

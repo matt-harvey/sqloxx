@@ -17,7 +17,6 @@
 	#include <typeinfo>
 #endif
 
-#define LOG_POSITION std::cout << __FILE__ << ", line " << __LINE__ << std::endl
 
 namespace sqloxx
 {
@@ -498,7 +497,6 @@ private:
 	
 		~MapData()
 		{
-			LOG_POSITION;
 		}
 
 		// Provides index to all cached objects, including those not as yet
@@ -532,7 +530,6 @@ inline
 IdentityMap<T, Connection>::IdentityMap(Connection& p_connection):
 	m_map_data(new MapData(p_connection))	
 {
-	LOG_POSITION;
 }
 
 template <typename T, typename Connection>
@@ -540,14 +537,12 @@ inline
 IdentityMap<T, Connection>::IdentityMap(IdentityMap const& rhs):
 	m_map_data(rhs.m_map_data)
 {
-	LOG_POSITION;
 }
 
 template <typename T, typename Connection>
 inline
 IdentityMap<T, Connection>::~IdentityMap()
 {
-	LOG_POSITION;
 }
 
 template <typename T, typename Connection>
@@ -675,19 +670,14 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 		// However, we do want to remove the old object from the IdMap, and
 		// we also want to clear the old object's id, to avoid possible
 		// confusion between the two objects in client code.
-		LOG_POSITION;
 		T& old_obj = *(res.first->second);
 		partially_uncache_object
 		(	PersistentObject<T, Connection>::KeyAttorney::cache_key(old_obj)
 		);
 		PersistentObject<T, Connection>::KeyAttorney::clear_id(old_obj);
-		LOG_POSITION;
 		res = id_map().insert(Elem(p_id, finder->second));
-		LOG_POSITION;
 		assert (res.second);
-		LOG_POSITION;
 	}
-	LOG_POSITION;
 	return;
 }
 
@@ -707,14 +697,10 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::uncache_object(CacheKey p_cache_key)
 {
-	LOG_POSITION;
 	// Precondition
 	assert (cache_key_map().find(p_cache_key) != cache_key_map().end());
-	LOG_POSITION;
 	partially_uncache_object(p_cache_key);  // Erase from id_map()
-	LOG_POSITION;
 	cache_key_map().erase(p_cache_key);     // Erase from cache_key_map()
-	LOG_POSITION;
 	return;
 }
 
@@ -722,21 +708,14 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::partially_uncache_object(CacheKey p_cache_key)
 {
-	LOG_POSITION;
 	// Precondition
 	assert (cache_key_map().find(p_cache_key) != cache_key_map().end());
-	LOG_POSITION;
 	Record const record = cache_key_map().find(p_cache_key)->second;
-	LOG_POSITION;
 	if (record->has_id())
 	{
-		LOG_POSITION;
 		assert (id_map().find(record->id()) != id_map().end());
-		LOG_POSITION;
 		id_map().erase(record->id());
-		LOG_POSITION;
 	}
-	LOG_POSITION;
 	return;
 }
 
@@ -745,35 +724,17 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 {
-	// TODO It would be much more efficient if the T instance could
-	// call a different function if it had no id. This would prevent
-	LOG_POSITION;
-	typename CacheKeyMap::const_iterator it;  // WARNING temp
-	try  // WARNING temp
-	{
-		LOG_POSITION;
-		it =
-			cache_key_map().find(p_cache_key);
-	}
-	catch (...)
-	{
-		LOG_POSITION;
-		std::cout << "Exception caught and rethrown here." << std::endl;
-				throw;
-	}
-	LOG_POSITION;
+	typename CacheKeyMap::const_iterator it =
+		cache_key_map().find(p_cache_key);
 	if (it == cache_key_map().end())
 	{
 		std::cout << "Precondition violated here!" << std::endl;
 	}
-	LOG_POSITION;
 	assert (it != cache_key_map().end()); // Assert precondition
 	if (  !it->second->has_id()  ||  !is_caching()  )
 	{
-		LOG_POSITION;
-		uncache_object(p_cache_key);  // TODO Should this be partially_uncache_object?
+		uncache_object(p_cache_key);
 	}
-	LOG_POSITION;
 	return;
 }
 
@@ -788,10 +749,8 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::disable_caching()
 {
-	LOG_POSITION;
 	if (is_caching())
 	{
-		LOG_POSITION;
 		typename CacheKeyMap::iterator const endpoint = cache_key_map().end();
 		for
 		(	typename CacheKeyMap::iterator it = cache_key_map().begin();
@@ -799,22 +758,16 @@ IdentityMap<T, Connection>::disable_caching()
 			++it
 		)
 		{
-			LOG_POSITION;
 			if
 			(	PersistentObject<T, Connection>::HandleMonitorAttorney::
 					is_orphaned(*(it->second))
 			)
 			{
-				LOG_POSITION;
 				uncache_object(it->first);  // TODO Should this be partially_uncache_object?
 			}
-			LOG_POSITION;
 		}
-		LOG_POSITION;
 		is_caching() = false;
-		LOG_POSITION;
 	}
-	LOG_POSITION;
 	return;
 }
 

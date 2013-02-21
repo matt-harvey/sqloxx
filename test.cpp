@@ -39,7 +39,6 @@ int main(int argc, char** argv)
 	{
 		// do_speed_test();
 		int failures = 0;
-		// WARNING temp comment-out
 		failures += do_atomicity_test(argv[1]);
 		cout << "Now running various unit tests using UnitTest++..."
 		     << endl;
