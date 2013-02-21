@@ -21,6 +21,9 @@ using std::cerr;
 using std::endl;
 using std::numeric_limits;
 
+#define LOG_POSITION std::cout << __FILE__ << ", line " << __LINE__ << std::endl
+
+
 namespace sqloxx
 {
 namespace tests
@@ -143,102 +146,141 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 {
 	// Test interaction of save() with DatabaseTransaction
 
+	LOG_POSITION;
 	Handle<DerivedPO> dpo1(*pdbc);
 	dpo1->set_x(4000);
 	dpo1->set_y(0.13);
 	dpo1->save();
 
+	LOG_POSITION;
 	DatabaseTransaction transaction1(*pdbc);
+
 
 	Handle<DerivedPO> dpo2(*pdbc);
 	dpo2->set_x(-17);
 	dpo2->set_y(64.29382);
 	dpo2->save();
+	LOG_POSITION;
 	
 	Handle<DerivedPO> dpo2b(*pdbc, 2);
 	CHECK_EQUAL(dpo2b->x(), -17);
 	CHECK_EQUAL(dpo2b->y(), 64.29382);
 	dpo2b->save();
+	LOG_POSITION;
 
 	CHECK_EQUAL(dpo1->id(), 1);
 	CHECK_EQUAL(dpo2->id(), 2);
 	CHECK_EQUAL(dpo2b->id(), 2);
+	LOG_POSITION;
 
 	Handle<DerivedPO> dpo3(*pdbc);
+	LOG_POSITION;
 	dpo3->set_x(7834);
 	dpo3->set_y(521.520);
 	CHECK(!dpo3->has_id());
 	dpo3->save();
 	CHECK_EQUAL(dpo3->id(), 3);
+	LOG_POSITION;
 
 	Handle<DerivedPO> dpo4(*pdbc);
 	dpo4->set_y(1324.6);
 	dpo4->set_x(321);
 	dpo4->save();
 	CHECK_EQUAL(dpo4->id(), 4);
+	LOG_POSITION;
 
 	transaction1.cancel();
+	LOG_POSITION;
 
 	SQLStatement statement(*pdbc, "select * from derived_pos");
+	LOG_POSITION;
 	int rows = 0;
 	while (statement.step()) ++rows;
 	CHECK_EQUAL(rows, 1);
+	LOG_POSITION;
 
 	// The cache is not aware in itself that the save was cancelled...
+	/* THIS WOULD CAUSE UNDEFINED BEHAVIOUR
 	Handle<DerivedPO> dpo2c
 	(	Handle<DerivedPO>::create_unchecked(*pdbc, 2)
 	);
+	LOG_POSITION;
 	CHECK_EQUAL(dpo2c->id(), 2);
+	LOG_POSITION;
 	CHECK_EQUAL(dpo2c->x(), -17);
+	LOG_POSITION;
 	CHECK_EQUAL(dpo2c->y(), 64.29382);
+	LOG_POSITION;
+	*/
 
 	// ... That's why we should not use unchecked_get_handle unless
 	// we're sure we've got a valid id. The "normal" get_handle
 	// throws here.
 	bool ok = false;
+	LOG_POSITION;
 	try
 	{
+		LOG_POSITION;
 		Handle<DerivedPO> dpo2c_checked(*pdbc, 2);
+		LOG_POSITION;
 	}
 	catch (BadIdentifier&)
 	{
+		LOG_POSITION;
 		ok = true;
+		LOG_POSITION;
 	}
+	LOG_POSITION;
 	CHECK(ok);
 
-	// At least this will save over the top of the old
+	LOG_POSITION;
+	// This will save over the top of the old
 	// one...
+	LOG_POSITION;
 	Handle<DerivedPO> dpo5(*pdbc);
+	LOG_POSITION;
 	dpo5->set_x(12);
+	LOG_POSITION;
 	dpo5->set_y(19);
+	LOG_POSITION;
 	dpo5->save();
+	LOG_POSITION;
 
 	CHECK_EQUAL(dpo5->id(), 2);
+	LOG_POSITION;
 	CHECK_EQUAL(dpo5->x(), 12);
+	LOG_POSITION;
 	CHECK_EQUAL(dpo5->y(), 19);
+	LOG_POSITION;
 	
-	// The objects still have attributes that we can retrieve
+	// The old objects still exist in memory
 	CHECK_EQUAL(dpo2b->x(), -17);
+	LOG_POSITION;
 	CHECK_EQUAL(dpo2->y(), 64.29382);
+	LOG_POSITION;
 
 	Handle<DerivedPO> dpo2d(*pdbc, 2);
+	LOG_POSITION;
 	CHECK_EQUAL(dpo2d->x(), 12);
+	LOG_POSITION;
 	CHECK_EQUAL(dpo2d->y(), 19);
+	LOG_POSITION;
 
 	bool ok2 = false;
+	LOG_POSITION;
 	try
 	{
+		LOG_POSITION;
 		Handle<DerivedPO> dpo7(*pdbc, 7);
 	}
 	catch (BadIdentifier&)
 	{
+		LOG_POSITION;
 		ok2 = true;
 	}
+	LOG_POSITION;
 	CHECK(ok2);
-	
-	CHECK_EQUAL(dpo4->id(), 4);
-	CHECK_EQUAL(dpo4->x(), 321);
-	CHECK_EQUAL(dpo4->y(), 1324.6);
+	LOG_POSITION;
 	
 	bool ok3 = false;
 	try
@@ -251,21 +293,31 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_save_and_transactions)
 	}
 	CHECK(ok3);
 
-	// We can remove it dpo4 the cache like this - even though
-	// it has already been removed from the database
-	dpo4->remove();
-	CHECK_THROW(dpo4->id(), UninitializedOptionalException);
+	LOG_POSITION;
+	
+	/* If dpo4 still has a "residual id", then this results in
+	 * undefined behaviour.
+	// dpo4->remove();
+	LOG_POSITION;
+	*/
 	// But it still exists in memory with its attributes. That's OK.
 	CHECK_EQUAL(dpo4->x(), 321);
+	LOG_POSITION;
 	CHECK_EQUAL(dpo4->y(), 1324.6);
+	LOG_POSITION;
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_exists_and_remove)
 {
+	LOG_POSITION;
 	Handle<DerivedPO> dpo1(*pdbc);
+	LOG_POSITION;
 	dpo1->set_x(7);
+	LOG_POSITION;
 	dpo1->set_y(5.8);
+	LOG_POSITION;
 	dpo1->save();
+	LOG_POSITION;
 	SQLStatement selector
 	(	*pdbc,
 		"select derived_po_id from derived_pos"

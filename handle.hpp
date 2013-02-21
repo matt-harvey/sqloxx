@@ -87,6 +87,9 @@ public:
 	Handle(Connection& p_connection, Id p_id);
 
 	/**
+	 * Calling create_unchecked for an object that is NOT in the database with
+	 * the given id, causes UNDEFINED BEHAVIOUR.
+	 *
 	 * @todo Documentation and testing.
 	 */
 	template <typename Connection>
