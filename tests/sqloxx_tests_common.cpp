@@ -5,16 +5,11 @@
 #include "../detail/sqlite_dbconn.hpp"
 #include "../sql_statement.hpp"
 #include <boost/filesystem.hpp>
+#include <jewel/on_windows.hpp>
 #include <jewel/stopwatch.hpp>
 
 
-#if WIN32 || __WIN32__ || __WIN32 || _WIN32_ || WIN32_ || WIN32__
-#	define SQLOXX_ON_WINDOWS 1
-#else
-#	define SQLOXX_ON_WINDOWS 0
-#endif
-
-#if SQLOXX_ON_WINDOWS
+#if JEWEL_ON_WINDOWS
 #	include <windows.h>  // for Sleep
 #endif
 
@@ -43,7 +38,7 @@ namespace
 {
 	void windows_friendly_remove(string const& fp)
 	{
-#		if SQLOXX_ON_WINDOWS
+#		if JEWEL_ON_WINDOWS
 			int const max_tries = 10000;
 			int const delay = 100;
 			char const* filename = fp.c_str();
