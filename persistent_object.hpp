@@ -230,10 +230,30 @@ public:
 	 * of the database table in which instances of Derived are stored
 	 * by primary key.
 	 * 
-	 * CAUTION This ONLY checks in the table named by
+	 * @todo HIGH PRIORIY
+	 * This ONLY checks in the table named by
 	 * Derived::primary_table_name(). If the given ID exists in that
 	 * table in the column named by Derived::primary_key_name(), then
-	 * this function returns true; otherwise it returns false.
+	 * this function returns true; otherwise it returns false. This may
+	 * give misleading results in cases where Derived has as its
+	 * "primary table" a table that is shared with other classes
+	 * (which will generally be the case where Derived shares a base class
+	 * with other classes that are persisted in the database). Suppose
+	 * that in such a case, one of Derived's "sibling" classes has
+	 * an id of 53, stored in the primary table. Since this is also
+	 * Derived's "primary table" (and must be named by
+	 * Derived::primary_table() given an autoincrementing primary key
+	 * in this table), a call to
+	 * PersistentObject<Derived, ...>::exists(..., 53) will return
+	 * \e true, even though no Derived object with an id of 53 exists!
+	 * Thus the \e exists() function can return a highly
+	 * misleading result. To get around this, we need to require
+	 * Derived to define a function "exclusive_table_name()", and
+	 * have this be passed to the PersistentObject base class,
+	 * for this particular function, instead of "primary_table_name()".
+	 * (Though note primary_table_name() is still required elsewhere.)
+	 * We need to document clearly the difference between
+	 * primary_table_name() and exclusive_table_name().
 	 *
 	 * @returns true if and only if an object with p_id as its
 	 * primary key exists in
