@@ -187,6 +187,12 @@ DerivedPO::primary_table_name()
 }
 
 string
+DerivedPO::exclusive_table_name()
+{
+	return primary_table_name();
+}
+
+string
 DerivedPO::primary_key_name()
 {
 	return "derived_po_id";
