@@ -229,6 +229,11 @@ public:
 	 * for type Derived as it is stored in the database, and the name
 	 * of the database table in which instances of Derived are stored
 	 * by primary key.
+	 * 
+	 * CAUTION This ONLY checks in the table named by
+	 * Derived::primary_table_name(). If the given ID exists in that
+	 * table in the column named by Derived::primary_key_name(), then
+	 * this function returns true; otherwise it returns false.
 	 *
 	 * @returns true if and only if an object with p_id as its
 	 * primary key exists in
@@ -256,6 +261,10 @@ public:
 	 * a static function that, without side-effects, returns a
 	 * std::string beingthe name of the database table in which
 	 * instances of Derived are stored by primary key.
+	 *
+	 * CAUTION This ONLY checks in the table named by
+	 * Derived::primary_table_name(). If there are any records in that
+	 * table, then it returns false; otherwise it returns true.
 	 *
 	 * @returns true if and only if \e no object of type Derived
 	 * exists in the database to which p_database_connection is
