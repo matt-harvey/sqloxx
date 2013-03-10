@@ -252,6 +252,31 @@ public:
 	static bool exists(Connection& p_database_connection, Id p_id);
 
 	/**
+	 * Preconditions: Derived::primary_table_name() must be defined as
+	 * a static function that, without side-effects, returns a
+	 * std::string beingthe name of the database table in which
+	 * instances of Derived are stored by primary key.
+	 *
+	 * @returns true if and only if \e no object of type Derived
+	 * exists in the database to which p_database_connection is
+	 * connected. Note the database is always checked, not the cache.
+	 *
+	 * @throws InvalidConnection if the database connecton is
+	 * invalid.
+	 *
+	 * @throws std::bad_alloc in case of memory allocation failure
+	 * (very unlikely)
+	 *
+	 * @throws SQLiteException (or derivative thereof) in case of a
+	 * SQLite error during
+	 * execution. (This is extremely unlikely, but cannot be entirely
+	 * ruled out.)
+	 *
+	 * Exception safety: <em>strong guarantee</em>.
+	 */
+	static bool none_exists(Connection& p_database_connection);
+
+	/**
 	 * Preconditions:\n
 	 * The destructor of Derived must be non-throwing;\n
 	 * We have handled this object only via a Handle<Derived>, with
@@ -980,6 +1005,21 @@ PersistentObject<Derived, Connection>::exists
 	return statement.step();
 }
 
+template
+<typename Derived, typename Connection>
+bool
+PersistentObject<Derived, Connection>::none_exists
+(	Connection& p_database_connection
+)
+{
+	// Could throw std::bad_alloc
+	static std::string const text =
+		"select * from " + Derived::primary_table_name();
+	// Could throw InvalidConnection or SQLiteException
+	SQLStatement statement(p_database_connection, text);
+	// Could throw InvalidConnection or SQLiteException
+	return !statement.step();
+}
 
 template
 <typename Derived, typename Connection>
