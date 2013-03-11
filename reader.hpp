@@ -69,7 +69,7 @@ class Reader:
 public:
 
 
-	typedef typename std::list<T> Container;
+	typedef typename std::vector<T> Container;
 	typedef typename Container::const_iterator const_iterator;
 	typedef typename Container::iterator iterator;
 	typedef typename Container::size_type size_type;
@@ -130,6 +130,11 @@ public:
 	 * @todo Document and test.
 	 */
 	size_type size() const;
+
+	/**
+	 * @todo Document and test.
+	 */
+	bool empty() const;
 
 	/**
 	 * @todo Document and test.
@@ -304,6 +309,13 @@ Reader<T, Connection>::size() const
 	return m_container.size();
 }
 
+template <typename T, typename Connection>
+inline
+bool
+Reader<T, Connection>::empty() const
+{
+	return m_container.empty();
+}
 
 template <typename T, typename Connection>
 typename Reader<T, Connection>::const_iterator
