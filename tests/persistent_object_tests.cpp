@@ -327,52 +327,52 @@ TEST_FIXTURE(DerivedPOFixture, test_derived_po_exists_and_remove)
 	CHECK_EQUAL(dpo2c->x(), 10);
 }
 
-TEST_FIXTURE(DerivedPOFixture, test_derived_po_none_exists)
+TEST_FIXTURE(DerivedPOFixture, test_derived_po_none_saved)
 {
 	typedef PersistentObject<DerivedPO, DerivedDatabaseConnection> DPO;
-	bool none_exists = DPO::none_exists(*pdbc);
-	CHECK(none_exists);
+	bool none_saved = DPO::none_saved(*pdbc);
+	CHECK(none_saved);
 	Handle<DerivedPO> dpo1(*pdbc);
-	none_exists = DPO::none_exists(*pdbc);
+	none_saved = DPO::none_saved(*pdbc);
 
 	DatabaseTransaction transaction_a(*pdbc);
-	CHECK(none_exists);
+	CHECK(none_saved);
 	dpo1->set_x(10);
 	dpo1->set_y(3);
 	dpo1->save();
-	none_exists = DPO::none_exists(*pdbc);
-	CHECK(!none_exists);
+	none_saved = DPO::none_saved(*pdbc);
+	CHECK(!none_saved);
 	Handle<DerivedPO> dpo2(*pdbc);
 	dpo2->set_x(12);
 	dpo2->set_y(3.5);
 	dpo2->save();
-	none_exists = DPO::none_exists(*pdbc);
-	CHECK(!none_exists);
+	none_saved = DPO::none_saved(*pdbc);
+	CHECK(!none_saved);
 	transaction_a.cancel();
 
-	none_exists = DPO::none_exists(*pdbc);
-	CHECK(none_exists);
+	none_saved = DPO::none_saved(*pdbc);
+	CHECK(none_saved);
 	Handle<DerivedPO> dpo3(*pdbc);
 	dpo3->set_x(109383);
 	dpo3->set_y(-29834.6);
 	dpo3->save();
-	none_exists = DPO::none_exists(*pdbc);
-	CHECK(!none_exists);
+	none_saved = DPO::none_saved(*pdbc);
+	CHECK(!none_saved);
 
 	DatabaseTransaction transaction_b(*pdbc);
-	none_exists = DPO::none_exists(*pdbc);
-	CHECK(!none_exists);
+	none_saved = DPO::none_saved(*pdbc);
+	CHECK(!none_saved);
 	dpo3->remove();
-	none_exists = DPO::none_exists(*pdbc);
-	CHECK(none_exists);
+	none_saved = DPO::none_saved(*pdbc);
+	CHECK(none_saved);
 	transaction_b.cancel();
 
-	none_exists = DPO::none_exists(*pdbc);
-	CHECK(!none_exists);
+	none_saved = DPO::none_saved(*pdbc);
+	CHECK(!none_saved);
 	Handle<DerivedPO> dpo3b(*pdbc, 1);
 	dpo3b->remove();
-	none_exists = DPO::none_exists(*pdbc);
-	CHECK(none_exists);
+	none_saved = DPO::none_saved(*pdbc);
+	CHECK(none_saved);
 }
 
 TEST_FIXTURE(DerivedPOFixture, test_derived_po_id_getter)

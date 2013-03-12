@@ -273,8 +273,8 @@ public:
 	 * a sensible database design - there will be another table in
 	 * the database that is its exclusive table.
 	 * 
-	 * @returns true if and only if there no objects of type Derived
-	 * in the database.
+	 * @returns true if and only if there are no objects of type Derived
+	 * saved in the database.
 	 * Note the database is always checked, not the
 	 * cache.
 	 *
@@ -291,7 +291,7 @@ public:
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	static bool none_exists(Connection& p_database_connection);
+	static bool none_saved(Connection& p_database_connection);
 
 	/**
 	 * Preconditions:\n
@@ -1025,7 +1025,7 @@ PersistentObject<Derived, Connection>::exists
 template
 <typename Derived, typename Connection>
 bool
-PersistentObject<Derived, Connection>::none_exists
+PersistentObject<Derived, Connection>::none_saved
 (	Connection& p_database_connection
 )
 {
