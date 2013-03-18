@@ -122,7 +122,7 @@ public:
 	(	Connection& p_database_connection,
 		std::string const& p_statement_text =
 		(	"select " + T::primary_key_name() +
-			" from " + T::primary_table_name()
+			" from " + T::exclusive_table_name()
 		)
 	);
 

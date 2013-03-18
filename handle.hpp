@@ -32,6 +32,7 @@ public:
 
 	static std::string primary_key_name();
 	static std::string primary_table_name();
+	static std::string exclusive_table_name();
 
 	/**
 	 * Preconditions:\n
@@ -186,6 +187,13 @@ std::string
 Handle<T>::primary_table_name()
 {
 	return T::primary_table_name();
+}
+
+template <typename T>
+std::string
+Handle<T>::exclusive_table_name()
+{
+	return T::exclusive_table_name();
 }
 
 template <typename T>
