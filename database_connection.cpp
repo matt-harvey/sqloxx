@@ -61,6 +61,23 @@ DatabaseConnection::~DatabaseConnection()
 			"DatabaseConnection.\n"
 		);
 	}
+#	ifdef DEBUG
+		JEWEL_DEBUG_LOG << "\nThe following SQLStatements were cached during "
+						<< "the life of the sqloxx::DatabaseConnection "
+						<< "that is now being destructed:\n"
+						<< endl;
+		for
+		(	StatementCache::const_iterator it = m_statement_cache.begin();
+			it != m_statement_cache.end();
+			++it
+		)
+		{
+			JEWEL_DEBUG_LOG << "\"" << it->first << "\"" << endl;
+		}
+		JEWEL_DEBUG_LOG << "\nNumber of SQLStatements cached: "
+		                << m_statement_cache.size()
+						<< endl << endl;
+#	endif
 	m_statement_cache.clear();
 }
 
