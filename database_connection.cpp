@@ -61,7 +61,8 @@ DatabaseConnection::~DatabaseConnection()
 			"DatabaseConnection.\n"
 		);
 	}
-#	ifdef DEBUG
+/*
+#	ifdef SQLOXX_PRINT_CACHED_STATEMENTS_ON_EXIT
 		JEWEL_DEBUG_LOG << "\nThe following SQLStatements were cached during "
 						<< "the life of the sqloxx::DatabaseConnection "
 						<< "that is now being destructed:\n"
@@ -78,6 +79,7 @@ DatabaseConnection::~DatabaseConnection()
 		                << m_statement_cache.size()
 						<< endl << endl;
 #	endif
+*/
 	m_statement_cache.clear();
 }
 
