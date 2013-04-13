@@ -95,6 +95,7 @@ void
 DatabaseConnection::open(boost::filesystem::path const& filepath)
 {
 	m_sqlite_dbconn->open(filepath);
+	do_setup();
 	return;
 }
 
