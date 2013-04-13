@@ -116,6 +116,12 @@ DatabaseConnection::setup_boolean_table()
 	return;
 }
 
+void
+DatabaseConnection::do_setup()
+{
+	// Empty body - this is deliberate - see API documentation as to why.
+	return;
+}
 
 int
 DatabaseConnection::max_nesting()
