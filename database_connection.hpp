@@ -1,10 +1,9 @@
 #ifndef database_connection_hpp
 #define database_connection_hpp
 
-#include <boost/noncopyable.hpp>
-#include <boost/scoped_ptr.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
+#include <boost/optional.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
@@ -97,7 +96,7 @@ public:
 	 * foreign_keys is always executed immediately the file is opened, to
 	 * enable foreign key constraints.
 	 *
-	 * As a final step in this, function, do_setup(filepath) is called.
+	 * As a final step in this, function, do_setup() is called.
 	 * This is
 	 * a private virtual function which by default does nothing. Derived
 	 * classes may override it to provide their own initialization code.
@@ -133,7 +132,7 @@ public:
 	 * derived class overrides do_setup(), then this may affect exception
 	 * safety, since do_setup() is called by the open() function.
 	 */
-	void open(boost::filesystem::path const& filepath);
+	void open(boost::filesystem::path const& p_filepath);
 
 	/**
 	 * Executes a string as an SQL command on the database connection.
@@ -181,6 +180,16 @@ public:
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	static int max_nesting();
+
+	/**
+	 * @returns an absolute filepath corresponding to the filepath to
+	 * which the database connection was last opened.
+	 *
+	 * @throws InvalidConnection if the database connection
+	 * has not been opened to a file, or if the database connection
+	 * is otherwise invalid.
+	 */
+	boost::filesystem::path filepath() const;
 
 	/**
 	 * Controls access to DatabaseConnection::provide_sql_statement,
@@ -237,8 +246,12 @@ private:
 
 	/**
 	 * See documentation for open().
+	 *
+	 * Note, do_setup \e is able to call filepath() if required, as
+	 * m_filepath is initialized with open(...) prior to do_setup() being
+	 * entered.
 	 */
-	virtual void do_setup(boost::filesystem::path const& filepath);
+	virtual void do_setup();
 
 	/**
 	 * @returns a shared pointer to a SQLStatementImpl. This will	
@@ -366,6 +379,8 @@ private:
 
 	StatementCache m_statement_cache;
 	StatementCache::size_type m_cache_capacity;
+
+	boost::optional<boost::filesystem::path> m_filepath;
 };
 
 

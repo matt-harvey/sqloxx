@@ -4,9 +4,10 @@
 #include "sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "detail/sql_statement_impl.hpp"
-#include <boost/filesystem/path.hpp>
+#include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <jewel/optional.hpp>
 #include <iostream>
 #include <climits>
 #include <cstdio>
@@ -19,6 +20,7 @@
 
 using boost::shared_ptr;
 using boost::unordered_map;
+using jewel::value;
 using std::bad_alloc;
 using std::cout;
 using std::clog;
@@ -92,10 +94,11 @@ DatabaseConnection::is_valid() const
 
 
 void
-DatabaseConnection::open(boost::filesystem::path const& filepath)
+DatabaseConnection::open(boost::filesystem::path const& p_filepath)
 {
-	m_sqlite_dbconn->open(filepath);
-	do_setup(filepath);
+	m_sqlite_dbconn->open(p_filepath);
+	m_filepath = boost::filesystem::absolute(p_filepath);
+	do_setup();
 	return;
 }
 
@@ -118,10 +121,9 @@ DatabaseConnection::setup_boolean_table()
 }
 
 void
-DatabaseConnection::do_setup(boost::filesystem::path const& filepath)	
+DatabaseConnection::do_setup()
 {
 	// Empty body - this is deliberate - see API documentation as to why.
-	(void)filepath;  // To silence compiler warning about unused parameter
 	return;
 }
 
@@ -129,6 +131,26 @@ int
 DatabaseConnection::max_nesting()
 {
 	return s_max_nesting;
+}
+
+boost::filesystem::path
+DatabaseConnection::filepath() const
+{
+	if (!is_valid())
+	{
+		throw InvalidConnection
+		(	"Cannot return filepath of invalid DatabaseConnection."
+		);
+	}
+	assert (m_filepath);
+
+	// Filepath is absolute
+	assert
+	(	boost::filesystem::absolute(value(m_filepath)) ==
+		value(m_filepath)
+	);
+
+	return value(m_filepath);
 }
 
 
