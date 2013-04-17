@@ -95,7 +95,7 @@ void
 DatabaseConnection::open(boost::filesystem::path const& filepath)
 {
 	m_sqlite_dbconn->open(filepath);
-	do_setup();
+	do_setup(filepath);
 	return;
 }
 
@@ -118,9 +118,10 @@ DatabaseConnection::setup_boolean_table()
 }
 
 void
-DatabaseConnection::do_setup()
+DatabaseConnection::do_setup(boost::filesystem::path const& filepath)	
 {
 	// Empty body - this is deliberate - see API documentation as to why.
+	(void)filepath;  // To silence compiler warning about unused parameter
 	return;
 }
 

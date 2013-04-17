@@ -97,7 +97,8 @@ public:
 	 * foreign_keys is always executed immediately the file is opened, to
 	 * enable foreign key constraints.
 	 *
-	 * As a final step in this, function, do_setup() is called. This is
+	 * As a final step in this, function, do_setup(filepath) is called.
+	 * This is
 	 * a private virtual function which by default does nothing. Derived
 	 * classes may override it to provide their own initialization code.
 	 *
@@ -237,7 +238,7 @@ private:
 	/**
 	 * See documentation for open().
 	 */
-	virtual void do_setup();
+	virtual void do_setup(boost::filesystem::path const& filepath);
 
 	/**
 	 * @returns a shared pointer to a SQLStatementImpl. This will	
