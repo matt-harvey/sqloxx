@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "../database_connection.hpp"
 #include "../next_auto_key.hpp"
 #include "sqloxx_tests_common.hpp"

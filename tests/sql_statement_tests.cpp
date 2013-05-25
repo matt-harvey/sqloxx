@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "sqloxx_tests_common.hpp"
 #include "../database_connection.hpp"
 #include "../sql_statement.hpp"

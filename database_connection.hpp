@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef database_connection_hpp
 #define database_connection_hpp
 

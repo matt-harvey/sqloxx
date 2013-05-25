@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "sql_statement.hpp"
 #include "database_connection.hpp"
 #include "detail/sql_statement_impl.hpp"

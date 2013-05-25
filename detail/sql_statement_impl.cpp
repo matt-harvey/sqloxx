@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "sql_statement_impl.hpp"
 #include "sqlite_dbconn.hpp"
 

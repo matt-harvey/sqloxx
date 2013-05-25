@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "database_transaction.hpp"
 #include "database_connection.hpp"
 #include "sqloxx_exceptions.hpp"

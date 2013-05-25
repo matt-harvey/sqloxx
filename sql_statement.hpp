@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #ifndef sql_statement_hpp
 #define sql_statement_hpp
 

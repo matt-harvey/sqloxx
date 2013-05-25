@@ -1,3 +1,5 @@
+// Copyright (c) 2013, Matthew Harvey. All rights reserved.
+
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
 #include "../database_connection.hpp"
