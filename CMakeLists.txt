@@ -94,14 +94,17 @@ install (DIRECTORY sqloxx
 
 install(FILES
 		database_connection.hpp
+		database_connection_fwd.hpp
 		database_transaction.hpp
 		general_typedefs.hpp
 		handle.hpp
 		identity_map.hpp
+		identity_map_fwd.hpp
 		next_auto_key.hpp
 		persistent_object.hpp
 		reader.hpp
 		sql_statement.hpp
+		sql_statement_fwd.hpp
 		sqloxx_exceptions.hpp
 		DESTINATION
 		${inner_header_installation_dir})

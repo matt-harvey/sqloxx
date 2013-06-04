@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef database_connection_hpp
-#define database_connection_hpp
+#ifndef GUARD_database_connection_hpp
+#define GUARD_database_connection_hpp
 
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
@@ -46,8 +46,7 @@ namespace detail
  * Represents a SQLite3 database connection. Class can be extended to provide
  * representations of connections to application-specific databases.
  */
-class DatabaseConnection:
-	private boost::noncopyable
+class DatabaseConnection: private boost::noncopyable
 {
 public:
 
@@ -433,4 +432,4 @@ DatabaseConnection::TransactionAttorney::cancel_transaction
 
 }  // namespace sqloxx
 
-#endif  // database_connection_hpp
+#endif  // GUARD_database_connection_hpp
