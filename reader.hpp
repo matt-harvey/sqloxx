@@ -65,11 +65,9 @@ namespace sqloxx
  * Connection.
  */
 template <typename T, typename Connection>
-class Reader:
-	private boost::noncopyable
+class Reader: private boost::noncopyable
 {
 public:
-
 
 	typedef typename std::vector<T> Container;
 	typedef typename Container::const_iterator const_iterator;
@@ -129,6 +127,11 @@ public:
 	);
 
 	/**
+	 * Destructor is virtual - can act as polymorphic base class.
+	 */
+	virtual ~Reader();
+
+	/**
 	 * @todo Document and test.
 	 */
 	size_type size() const;
@@ -157,6 +160,7 @@ public:
 	 * @todo Document and test.
 	 */
 	iterator end();
+
 
 protected:
 	/**
@@ -286,6 +290,10 @@ Reader<T, Connection>::Reader
 	populate_container();
 }
 
+template <typename T, typename Connection>
+Reader<T, Connection>::~Reader()
+{
+}
 
 /*
 template <typename T, typename Connection>
