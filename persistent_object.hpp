@@ -214,7 +214,6 @@ public:
 	 */
 	Connection& database_connection() const;
 
-
 	/**
 	 * Destructor.
 	 *
@@ -259,7 +258,6 @@ public:
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	static bool exists(Connection& p_database_connection, Id p_id);
-
 
 	/**
 	 * Preconditions:\n
@@ -597,7 +595,6 @@ public:
 
 	friend class HandleMonitorAttorney;
 
-
 protected:
 
 	/**
@@ -645,7 +642,6 @@ protected:
 	PersistentObject
 	(	IdentityMap& p_identity_map
 	);
-
 
 	/**
 	 * Calls the derived class's implementation
@@ -725,7 +721,6 @@ protected:
 	 * Exception safety: <em>nothrow guarantee</em>
 	 */
 	void swap_base_internals(PersistentObject& rhs);
-
 
 	/**
 	 * @returns the id that would be assigned to this instance of
@@ -1070,7 +1065,6 @@ PersistentObject<Derived, Connection>::load()
 	return;
 }
 
-
 template
 <typename Derived, typename Connection>
 void
@@ -1165,7 +1159,6 @@ PersistentObject<Derived, Connection>::remove()
 	}
 	return;
 }
-
 
 template
 <typename Derived, typename Connection>
@@ -1309,7 +1302,6 @@ PersistentObject<Derived, Connection>::prospective_key() const
 	);
 }
 
-
 template
 <typename Derived, typename Connection>
 void
@@ -1332,7 +1324,6 @@ PersistentObject<Derived, Connection>::do_remove()
 	return;
 }
 
-
 template
 <typename Derived, typename Connection>
 bool
@@ -1342,8 +1333,6 @@ PersistentObject<Derived, Connection>::has_id() const
 	// will convert to true if and only if it has been initialized.
 	return m_id;
 }
-
-
 
 template
 <typename Derived, typename Connection>
@@ -1412,9 +1401,7 @@ PersistentObject<Derived, Connection>::swap_base_internals
 }
 
 
-
 }  // namespace sqloxx
-
 
 
 #endif  // GUARD_persistent_object_hpp
