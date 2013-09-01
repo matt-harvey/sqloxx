@@ -4,17 +4,12 @@
 #include "sqlite_dbconn.hpp"
 
 #include "sqlite3.h" // Compiling directly into build
+#include <jewel/log.hpp>
 #include <string>
 
 using std::string;
 
 
-// For debug logging
-#ifdef DEBUG
-	#include <jewel/debug_log.hpp>
-	#include <iostream>
-	using std::endl;
-#endif
 
 
 namespace sqloxx

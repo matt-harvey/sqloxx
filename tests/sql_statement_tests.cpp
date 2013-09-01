@@ -7,8 +7,8 @@
 #include "../tests/sqloxx_tests_common.hpp"
 
 #include <UnitTest++/UnitTest++.h>
-#include <jewel/debug_log.hpp>
 #include <jewel/exception.hpp>
+#include <jewel/log.hpp>
 #include <iostream>
 #include <string>
 #include <typeinfo>

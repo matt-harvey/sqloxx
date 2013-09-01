@@ -9,6 +9,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <iostream>
 #include <climits>
@@ -18,7 +19,6 @@
 #include <stdexcept>
 #include <string>
 
-#include <jewel/debug_log.hpp>
 
 using boost::shared_ptr;
 using boost::unordered_map;

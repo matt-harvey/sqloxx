@@ -8,16 +8,12 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <jewel/log.hpp>
 #include <cassert>
 #include <map>
 #include <stdexcept>
 #include <utility>
 
-#ifdef DEBUG
-	#include <jewel/debug_log.hpp>
-	#include <iostream>
-	#include <typeinfo>
-#endif
 
 
 namespace sqloxx

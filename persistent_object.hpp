@@ -12,9 +12,9 @@
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
-#include <cassert>
-#include <jewel/debug_log.hpp>
+#include <jewel/log.hpp>
 #include <jewel/optional.hpp>
+#include <cassert>
 #include <exception>
 #include <string>
 
