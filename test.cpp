@@ -35,6 +35,7 @@ using std::terminate;
 
 int main(int argc, char** argv)
 {
+	(void)argc;  // silence compiler warning re. unused parameter
 	try
 	{
 		// do_speed_test();
