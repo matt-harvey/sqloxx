@@ -4,6 +4,8 @@
 #include "sqlite_dbconn.hpp"
 
 #include "sqlite3.h" // Compiling directly into build
+#include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <string>
 
@@ -29,14 +31,15 @@ SQLStatementImpl::SQLStatementImpl
 {
 	if (!p_sqlite_dbconn.is_valid())
 	{
-		throw InvalidConnection
-		(	"Attempt to initialize SQLStatementImpl with invalid "
+		JEWEL_THROW
+		(	InvalidConnection,
+			"Attempt to initialize SQLStatementImpl with invalid "
 			"DatabaseConnection."
 		);
 	}
 	char const* cstr = str.c_str();
 	char const** tail = &cstr;
-	assert (p_sqlite_dbconn.is_valid());
+	JEWEL_ASSERT (p_sqlite_dbconn.is_valid());
 	throw_on_failure
 	(	sqlite3_prepare_v2
 		(	m_sqlite_dbconn.m_connection,
@@ -60,8 +63,9 @@ SQLStatementImpl::SQLStatementImpl
 			m_statement = 0;
 			// Note this will have thrown already if first statement is
 			// ungrammatical.
-			throw TooManyStatements
-			(	"Compound SQL statement passed to constructor of "
+			JEWEL_THROW
+			(	TooManyStatements,
+				"Compound SQL statement passed to constructor of "
 				"SQLStatementImpl - which can handle only single statements."
 			);
 		}
@@ -86,20 +90,21 @@ SQLStatementImpl::check_column(int index, int value_type)
 	int const num_columns = sqlite3_column_count(m_statement);
 	if (num_columns == 0)
 	{
-		throw NoResultRowException("Result row not available.");
+		JEWEL_THROW(NoResultRowException, "Result row not available.");
 	}
 	if (index >= num_columns)
 	{
-		throw ResultIndexOutOfRange("Index is out of range.");
+		JEWEL_THROW(ResultIndexOutOfRange, "Index is out of range.");
 	}
 	if (index < 0)
 	{
-		throw ResultIndexOutOfRange("Index is negative.");
+		JEWEL_THROW(ResultIndexOutOfRange, "Index is negative.");
 	}
 	if (value_type != sqlite3_column_type(m_statement, index))
 	{
-		throw ValueTypeException
-		(	"Value type at index does not match specified value type."
+		JEWEL_THROW
+		(	ValueTypeException,
+			"Value type at index does not match specified value type."
 		);
 	}
 	return;
@@ -174,7 +179,7 @@ SQLStatementImpl::step()
 {
 	if (!m_sqlite_dbconn.is_valid())
 	{
-		throw InvalidConnection("Invalid database connection.");
+		JEWEL_THROW(InvalidConnection, "Invalid database connection.");
 	}
 	int code = SQLITE_OK;
 	try
@@ -199,15 +204,15 @@ SQLStatementImpl::step()
 		#endif
 
 		return false;
-		assert (false);  // Execution never reaches here
+		JEWEL_HARD_ASSERT (false);  // Execution never reaches here
 	case SQLITE_ROW:
 		return true;
-		assert (false);  // Execution never reaches here
+		JEWEL_HARD_ASSERT (false);  // Execution never reaches here
 	default:
 		;
 		// Do nothing
 	}
-	assert (false);  // Execution should never reach here.
+	JEWEL_HARD_ASSERT (false);  // Execution should never reach here.
 	return false;  // Silence compiler re. return from non-void function. 
 }
 
@@ -218,8 +223,9 @@ SQLStatementImpl::step_final()
 	if (step())
 	{
 		reset();
-		throw UnexpectedResultRow
-		(	"Statement yielded a result set when none was expected."
+		JEWEL_THROW
+		(	UnexpectedResultRow,
+			"Statement yielded a result set when none was expected."
 		);
 	}
 	return;
@@ -244,9 +250,9 @@ const
 		catch (...)
 		{
 		}
-		throw SQLiteException("Could not find parameter index.");
+		JEWEL_THROW(SQLiteException, "Could not find parameter index.");
 	}
-	assert (ret > 0);
+	JEWEL_ASSERT (ret > 0);
 	return ret;
 }
 

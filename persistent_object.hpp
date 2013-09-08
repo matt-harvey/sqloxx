@@ -12,9 +12,10 @@
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
 #include <boost/shared_ptr.hpp>
+#include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
-#include <cassert>
 #include <exception>
 #include <string>
 
@@ -1070,7 +1071,7 @@ template
 void
 PersistentObject<Derived, Connection>::save()
 {
-	assert (m_cache_key);  // precondition
+	JEWEL_ASSERT (m_cache_key);  // precondition
 	if (has_id())  // nothrow
 	{
 		// strong guarantee, under preconditions of do_load (see load())
@@ -1238,8 +1239,9 @@ PersistentObject<Derived, Connection>::increment_handle_counter()
 {
 	if (m_handle_counter == std::numeric_limits<HandleCounter>::max())
 	{
-		throw OverflowException
-		(	"Handle counter for PersistentObject instance has reached "
+		JEWEL_THROW
+		(	OverflowException,
+			"Handle counter for PersistentObject instance has reached "
 			"maximum value and cannot be safely incremented."
 		);
 	}
@@ -1271,7 +1273,7 @@ PersistentObject<Derived, Connection>::decrement_handle_counter()
 		// Do nothing
 		break;
 	default:
-		assert (m_handle_counter > 1);
+		JEWEL_ASSERT (m_handle_counter > 1);
 		--m_handle_counter;
 	}
 	return;
@@ -1292,8 +1294,9 @@ PersistentObject<Derived, Connection>::prospective_key() const
 {
 	if (has_id())
 	{
-		throw LogicError
-		(	"Object already has id so prospective_key does not apply."
+		JEWEL_THROW
+		(	LogicError,
+			"Object already has id so prospective_key does not apply."
 		);
 	}
 	return next_auto_key<Connection, Id>

@@ -6,6 +6,7 @@
 #include "general_typedefs.hpp"
 #include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
+#include <jewel/exception.hpp>
 
 namespace sqloxx
 {
@@ -290,7 +291,7 @@ Handle<T>::operator*() const
 	{
 		return *m_pointer;  // nothrow
 	}
-	throw (UnboundHandleException("Unbound Handle."));
+	JEWEL_THROW(UnboundHandleException, "Unbound Handle.");
 }
 
 
@@ -302,7 +303,7 @@ Handle<T>::operator->() const
 	{
 		return m_pointer;  // nothrow
 	}
-	throw (UnboundHandleException("Unbound Handle."));
+	JEWEL_THROW(UnboundHandleException, "Unbound Handle.");
 }
 
 template <typename T>

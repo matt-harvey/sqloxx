@@ -15,7 +15,7 @@
 #	include <windows.h>  // for Sleep
 #endif
 
-#include <cassert>
+#include <jewel/assert.hpp>
 #include <cstdlib>
 #include <exception>
 #include <iostream>
@@ -55,7 +55,7 @@ namespace
 			}
 			if (i == max_tries)
 			{
-				assert (filesystem::exists(fp));
+				JEWEL_ASSERT (filesystem::exists(fp));
 				cout << "Test file could not be removed. Terminating tests."
 					 << endl;
 				terminate();
@@ -63,7 +63,7 @@ namespace
 #		else
 			filesystem::remove(fp);
 #		endif
-		assert (!filesystem::exists(fp));
+		JEWEL_ASSERT (!filesystem::exists(fp));
 		return;
 	}
 
@@ -171,16 +171,16 @@ DatabaseConnectionFixture::DatabaseConnectionFixture():
 	pdbc = new DatabaseConnection;
 	abort_if_exists(db_filepath);
 	pdbc->open(db_filepath);
-	assert (pdbc->is_valid());
+	JEWEL_ASSERT (pdbc->is_valid());
 }
 
 
 DatabaseConnectionFixture::~DatabaseConnectionFixture()
 {
-	assert (pdbc->is_valid());
+	JEWEL_ASSERT (pdbc->is_valid());
 	delete pdbc;
 	windows_friendly_remove(db_filepath.string());
-	assert (!file_exists(db_filepath));
+	JEWEL_ASSERT (!file_exists(db_filepath));
 }
 
 DerivedPOFixture::DerivedPOFixture():
@@ -190,16 +190,16 @@ DerivedPOFixture::DerivedPOFixture():
 	pdbc = new DerivedDatabaseConnection;
 	abort_if_exists(db_filepath);
 	pdbc->open(db_filepath);
-	assert (pdbc->is_valid());
+	JEWEL_ASSERT (pdbc->is_valid());
 	DerivedPO::setup_tables(*pdbc);
 }
 
 DerivedPOFixture::~DerivedPOFixture()
 {
-	assert (pdbc->is_valid());
+	JEWEL_ASSERT (pdbc->is_valid());
 	delete pdbc;
 	windows_friendly_remove(db_filepath.string());
-	assert (!file_exists(db_filepath));
+	JEWEL_ASSERT (!file_exists(db_filepath));
 }
 
 }  // namespace sqloxx

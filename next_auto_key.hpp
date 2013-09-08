@@ -5,6 +5,7 @@
 
 #include "sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
+#include <jewel/exception.hpp>
 #include <limits>
 #include <string>
 
@@ -91,8 +92,9 @@ next_auto_key(Connection& dbc, std::string const& table_name)
 		KeyType const max_key = statement.extract<KeyType>(0);
 		if (max_key == std::numeric_limits<KeyType>::max())
 		{
-			throw TableSizeException
-			(	"Key cannot be safely incremented with given type."
+			JEWEL_THROW
+			(	TableSizeException,
+				"Key cannot be safely incremented with given type."
 			);
 		}
 		return max_key + 1;

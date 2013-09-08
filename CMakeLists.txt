@@ -2,6 +2,10 @@ cmake_minimum_required (VERSION 2.6)
 
 project (sqloxx)
 
+add_definitions(-DJEWEL_ENABLE_LOGGING
+		        -DJEWEL_ENABLE_ASSERTION_LOGGING
+				-DJEWEL_ENABLE_EXCEPTION_LOGGING)
+
 if (WIN32)
 	include_directories(C:/Dev-Cpp
 					C:/include

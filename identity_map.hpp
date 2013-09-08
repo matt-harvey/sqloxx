@@ -8,8 +8,9 @@
 #include <boost/numeric/conversion/cast.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
-#include <cassert>
 #include <map>
 #include <stdexcept>
 #include <utility>
@@ -588,8 +589,9 @@ IdentityMap<T, Connection>::provide_pointer(Id p_id)
 {
 	if (!PersistentObject<T, Connection>::exists(connection(), p_id))
 	{
-		throw BadIdentifier
-		(	"The database does not contain a record of the "
+		JEWEL_THROW
+		(	BadIdentifier,
+			"The database does not contain a record of the "
 			"requested type with the requested id."
 		);
 	}
@@ -634,14 +636,15 @@ IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 		// newly loaded object.
 		return obj_ptr.get();
 	}
-	assert (it != id_map().end());
+	JEWEL_ASSERT (it != id_map().end());
 	if
 	(	PersistentObject<T, Connection>::HandleMonitorAttorney::
 			has_high_handle_count(*(it->second))
 	)
 	{
-		throw sqloxx::OverflowException
-		(	"Handle count for has reached dangerous level. "
+		JEWEL_THROW
+		(	sqloxx::OverflowException,
+			"Handle count for has reached dangerous level. "
 		);
 	}
 	return it->second.get();
@@ -653,7 +656,7 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 {
 	typename CacheKeyMap::const_iterator const finder =
 		cache_key_map().find(p_cache_key);
-	assert (finder != cache_key_map().end());  // Precondition
+	JEWEL_ASSERT (finder != cache_key_map().end());  // Precondition
 	typedef typename std::pair<typename IdMap::const_iterator, bool>
 		InsertionResult;
 	typedef typename IdMap::value_type Elem;
@@ -674,7 +677,7 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 		);
 		PersistentObject<T, Connection>::KeyAttorney::clear_id(old_obj);
 		res = id_map().insert(Elem(p_id, finder->second));
-		assert (res.second);
+		JEWEL_ASSERT (res.second);
 	}
 	return;
 }
@@ -684,7 +687,7 @@ void
 IdentityMap<T, Connection>::deregister_id(Id p_id)
 {
 	// Precondition
-	assert (id_map().find(p_id) != id_map().end());
+	JEWEL_ASSERT (id_map().find(p_id) != id_map().end());
 	
 	id_map().erase(p_id);
 	return;
@@ -696,7 +699,7 @@ void
 IdentityMap<T, Connection>::uncache_object(CacheKey p_cache_key)
 {
 	// Precondition
-	assert (cache_key_map().find(p_cache_key) != cache_key_map().end());
+	JEWEL_ASSERT (cache_key_map().find(p_cache_key) != cache_key_map().end());
 	partially_uncache_object(p_cache_key);  // Erase from id_map()
 	cache_key_map().erase(p_cache_key);     // Erase from cache_key_map()
 	return;
@@ -707,11 +710,11 @@ void
 IdentityMap<T, Connection>::partially_uncache_object(CacheKey p_cache_key)
 {
 	// Precondition
-	assert (cache_key_map().find(p_cache_key) != cache_key_map().end());
+	JEWEL_ASSERT (cache_key_map().find(p_cache_key) != cache_key_map().end());
 	Record const record = cache_key_map().find(p_cache_key)->second;
 	if (record->has_id())
 	{
-		assert (id_map().find(record->id()) != id_map().end());
+		JEWEL_ASSERT (id_map().find(record->id()) != id_map().end());
 		id_map().erase(record->id());
 	}
 	return;
@@ -724,7 +727,7 @@ IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 {
 	typename CacheKeyMap::const_iterator it =
 		cache_key_map().find(p_cache_key);
-	assert (it != cache_key_map().end()); // Assert precondition
+	JEWEL_ASSERT (it != cache_key_map().end()); // Assert precondition
 	if (  !it->second->has_id()  ||  !is_caching()  )
 	{
 		uncache_object(p_cache_key);
@@ -793,8 +796,9 @@ IdentityMap<T, Connection>::provide_cache_key()
 		// of any orphaned objects. But the emptying might take a long, long
 		// time. So we just throw.
 		// Avoid complication by not even considering negative numbers.
-		throw OverflowException
-		(	"No more cache keys are available for identifying objects "
+		JEWEL_THROW
+		(	OverflowException,
+			"No more cache keys are available for identifying objects "
 			"in the IdentityMap."
 		);
 	}
@@ -811,14 +815,14 @@ IdentityMap<T, Connection>::provide_cache_key()
 	// ready for the next call to provide_cache_key(). This relies on
 	// CacheKeyMap being, or behaving like, std::map, in that it keeps its
 	// elements ordered by key.
-	assert (cache_key_map().size() > 0);
+	JEWEL_ASSERT (cache_key_map().size() > 0);
 	while (ret == it->first)
 	{
 		if (ret == maximum) ret = 1;
 		else ++ret;
 		if (++it == endpoint) it = cache_key_map().begin();
 	}
-	assert (cache_key_map().find(ret) == cache_key_map().end());
+	JEWEL_ASSERT (cache_key_map().find(ret) == cache_key_map().end());
 	return last_cache_key() = ret;  // Intentional assignment
 }
 

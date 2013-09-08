@@ -5,7 +5,6 @@
 #include "../identity_map.hpp"
 #include "derived_po.hpp"
 #include "sqloxx_tests_common.hpp"
-#include <cassert>
 #include <UnitTest++/UnitTest++.h>
 
 namespace sqloxx

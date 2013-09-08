@@ -9,6 +9,8 @@
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/unordered_map.hpp>
+#include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <jewel/optional.hpp>
 #include <iostream>
@@ -121,14 +123,15 @@ DatabaseConnection::filepath() const
 {
 	if (!is_valid())
 	{
-		throw InvalidConnection
-		(	"Cannot return filepath of invalid DatabaseConnection."
+		JEWEL_THROW
+		(	InvalidConnection,
+			"Cannot return filepath of invalid DatabaseConnection."
 		);
 	}
-	assert (m_filepath);
+	JEWEL_ASSERT (m_filepath);
 
 	// Filepath is absolute
-	assert
+	JEWEL_ASSERT
 	(	boost::filesystem::absolute(value(m_filepath)) ==
 		value(m_filepath)
 	);
@@ -146,10 +149,13 @@ DatabaseConnection::begin_transaction()
 		unchecked_begin_transaction();
 		break;
 	case s_max_nesting:
-		throw TransactionNestingException("Maximum nesting level reached.");
-		assert (false);  // Execution never reaches here
+		JEWEL_THROW
+		(	TransactionNestingException,
+			"Maximum nesting level reached."
+		);
+		JEWEL_HARD_ASSERT (false);  // Execution never reaches here
 	default:
-		assert (m_transaction_nesting_level > 0);
+		JEWEL_ASSERT (m_transaction_nesting_level > 0);
 		unchecked_set_savepoint();
 		break;
 	}
@@ -167,16 +173,17 @@ DatabaseConnection::end_transaction()
 		unchecked_end_transaction();
 		break;
 	case 0:
-		throw TransactionNestingException
-		(	"Cannot end SQL transaction when there in none open."
+		JEWEL_THROW
+		(	TransactionNestingException,
+			"Cannot end SQL transaction when there in none open."
 		);
-		assert (false);  // Execution never reaches here
+		JEWEL_HARD_ASSERT (false);  // Execution never reaches here
 	default:
-		assert (m_transaction_nesting_level > 1);
+		JEWEL_ASSERT (m_transaction_nesting_level > 1);
 		unchecked_release_savepoint();
 		break;
 	}
-	assert (m_transaction_nesting_level > 0);
+	JEWEL_ASSERT (m_transaction_nesting_level > 0);
 	--m_transaction_nesting_level;
 	return;
 }
@@ -190,12 +197,13 @@ DatabaseConnection::cancel_transaction()
 		unchecked_rollback_transaction();
 		break;
 	case 0:
-		throw TransactionNestingException
-		(	"Cannot cancel SQL transaction when there is none open."
+		JEWEL_THROW
+		(	TransactionNestingException,
+			"Cannot cancel SQL transaction when there is none open."
 		);
-		assert (false);  // Execution never reaches here
+		JEWEL_HARD_ASSERT (false);  // Execution never reaches here
 	default:
-		assert (m_transaction_nesting_level > 1);
+		JEWEL_ASSERT (m_transaction_nesting_level > 1);
 		unchecked_rollback_to_savepoint();
 		unchecked_release_savepoint();
 		break;
@@ -209,7 +217,7 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 {
 	if (!is_valid())
 	{
-		throw InvalidConnection("Invalid database connection.");
+		JEWEL_THROW(InvalidConnection, "Invalid database connection.");
 	}
 	StatementCache::const_iterator const it
 	(	m_statement_cache.find(statement_text)
@@ -223,14 +231,14 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 			return existing_statement;
 		}
 	}
-	assert (it == m_statement_cache.end() || it->second->is_locked());
+	JEWEL_ASSERT (it == m_statement_cache.end() || it->second->is_locked());
 	shared_ptr<detail::SQLStatementImpl> new_statement
 	(	new detail::SQLStatementImpl(*m_sqlite_dbconn, statement_text)
 	);
 	new_statement->lock();
 	if (m_statement_cache.size() != m_cache_capacity)
 	{
-		assert (m_statement_cache.size() < m_cache_capacity);
+		JEWEL_ASSERT (m_statement_cache.size() < m_cache_capacity);
 		try
 		{
 			m_statement_cache[statement_text] = new_statement;
@@ -238,7 +246,7 @@ DatabaseConnection::provide_sql_statement(string const& statement_text)
 		catch (bad_alloc&)
 		{
 			m_statement_cache.clear();
-			assert (new_statement != 0);
+			JEWEL_ASSERT (new_statement != 0);
 		}
 	}
 	/*
@@ -303,7 +311,7 @@ int
 DatabaseConnection::self_test()
 {
 	int ret = 0;
-	assert (m_transaction_nesting_level == 0);
+	JEWEL_ASSERT (m_transaction_nesting_level == 0);
 	int const original_nesting = m_transaction_nesting_level;
 	m_transaction_nesting_level = max_nesting() - 1;
 	DatabaseTransaction transaction1(*this);  // Should be ok.

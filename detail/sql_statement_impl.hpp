@@ -21,7 +21,6 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/static_assert.hpp>
-#include <cassert>
 #include <limits>
 #include <string>
 #include <vector>

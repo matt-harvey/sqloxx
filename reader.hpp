@@ -10,7 +10,8 @@
 #include <boost/noncopyable.hpp>
 #include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
-#include <cassert>
+#include <jewel/assert.hpp>
+#include <jewel/exception.hpp>
 #include <list>
 #include <memory>
 #include <string>
@@ -269,7 +270,7 @@ template <typename T, typename Connection>
 void
 Reader<T, Connection>::populate_container()
 {
-	assert (m_container.empty());
+	JEWEL_ASSERT (m_container.empty());
 	while (this->read())
 	{
 		m_container.push_back(this->item());
@@ -388,8 +389,8 @@ Reader<T, Connection>::item() const
 		(	m_database_connection, m_statement.extract<Id>(0)
 		);
 	}
-	assert (!m_is_valid);
-	throw InvalidReader("Reader is not at a result row.");
+	JEWEL_ASSERT (!m_is_valid);
+	JEWEL_THROW(InvalidReader, "Reader is not at a result row.");
 }
 	
 

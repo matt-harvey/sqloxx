@@ -5,7 +5,7 @@
 #include "../database_transaction.hpp"
 #include "../sql_statement.hpp"
 #include <boost/filesystem.hpp>
-#include <cassert>
+#include <jewel/assert.hpp>
 #include <csignal>
 #include <fstream>
 #include <iostream>
@@ -84,7 +84,7 @@ setup_atomicity_test(DatabaseConnection& dbc)
 	raise(SIGABRT);
 	
 	// Execution never reaches here - transaction does not complete
-	assert (false);
+	JEWEL_HARD_ASSERT (false);
 	transaction.commit();
 	return;
 }
@@ -123,8 +123,8 @@ inspect_database_for_atomicity(DatabaseConnection& dbc)
 	{
 		// We have exactly one result row, which means the second insert
 		// was reversed as expected.
-		assert (first_step);
-		assert (!second_step);
+		JEWEL_ASSERT (first_step);
+		JEWEL_ASSERT (!second_step);
 		cout << "Atomicity test succeeded." << endl;
 	}
 	return ret;

@@ -10,7 +10,7 @@
 #include <boost/shared_ptr.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
-#include <cassert>
+#include <jewel/assert.hpp>
 #include <iostream>
 #include <limits>
 #include <typeinfo>
@@ -403,8 +403,8 @@ TEST_FIXTURE(DerivedPOFixture, test_load_indirectly)
 	double const b = 72973.2987300;
 	dpo1->set_x(a);
 	dpo1->set_y(b);
-	assert (dpo1->x() == a);
-	assert (dpo1->y() == b);
+	JEWEL_ASSERT (dpo1->x() == a);
+	JEWEL_ASSERT (dpo1->y() == b);
 	dpo1->save();
 
 	Handle<DerivedPO> dpo2(*pdbc, 1);

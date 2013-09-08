@@ -8,7 +8,7 @@
 #include <UnitTest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
 #include <boost/shared_ptr.hpp>
-#include <cassert>
+#include <jewel/assert.hpp>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -68,9 +68,9 @@ TEST(test_default_constructor_and_open)
 		// Test behaviour when calling open with some other filename
 		// corresponding to a file that does exist, but is not connected to
 		// with any database connection
-		assert (!file_exists(another_filepath));
+		JEWEL_ASSERT (!file_exists(another_filepath));
 		ofstream ifs(another_filepath.string().c_str());
-		assert (file_exists(another_filepath));
+		JEWEL_ASSERT (file_exists(another_filepath));
 		CHECK_THROW
 		(	dbc.open(another_filepath), MultipleConnectionException
 		);
@@ -84,7 +84,7 @@ TEST(test_default_constructor_and_open)
 	// Cleanup
 	boost::filesystem::remove(filepath);
 	boost::filesystem::remove(another_filepath);
-	assert (!boost::filesystem::exists(boost::filesystem::status(filepath)));
+	JEWEL_ASSERT (!boost::filesystem::exists(boost::filesystem::status(filepath)));
 }	
 
 TEST_FIXTURE(DatabaseConnectionFixture, test_is_valid)
