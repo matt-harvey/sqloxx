@@ -179,6 +179,11 @@ JEWEL_DERIVED_EXCEPTION(SQLiteException, DatabaseException);
  */
 JEWEL_DERIVED_EXCEPTION(SQLiteInitializationError, SQLiteException);
 
+/**
+ * Exception to be thrown when attempt is made to use an
+ * Invalid sqloxx::TableIterator.
+ */
+JEWEL_DERIVED_EXCEPTION(InvalidTableIterator, DatabaseException);
 
 /* NOT DOXYGEN AS DOXYGEN DOESN'T HANDLE
  * The following exceptions correspond to particular SQLite standard error

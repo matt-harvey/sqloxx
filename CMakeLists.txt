@@ -110,6 +110,7 @@ install(FILES
 		sql_statement.hpp
 		sql_statement_fwd.hpp
 		sqloxx_exceptions.hpp
+		table_iterator.hpp
 		DESTINATION
 		${inner_header_installation_dir})
 
