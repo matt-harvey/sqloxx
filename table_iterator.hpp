@@ -1,6 +1,7 @@
 #ifndef GUARD_table_iterator_hpp
 #define GUARD_table_iterator_hpp
 
+#include "general_typedefs.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
 #include <boost/noncopyable.hpp>
@@ -29,7 +30,7 @@ namespace sqloxx
  *
  *	<tt>
  *
- *	T::create_unchecked(connection, statement.extract<T::Id>(0));
+ *	T::create_unchecked(connection, statement.extract<sqloxx::Id>(0));
  *
  *	</tt>
  * 
@@ -92,7 +93,7 @@ public:
 	 * passes a custom statement to \e p_statement_text, it should be
 	 * a SELECT statement, and only the first column of results will
 	 * be relevant, where the first column should contain the primary
-	 * key for T, of type T::Id. See class-level documentation of
+	 * key for T, of type sqloxx::Id. See class-level documentation of
 	 * TableIterator for further requirements on T.
 	 *
 	 * When first constructed, the TableIterator will be "pointing" to
@@ -120,13 +121,13 @@ public:
 	 * acceptable SQL statements after the first one.
 	 *
 	 * Might also throw any exception that might be thrown by the function
-	 * <em>T::create_unchecked(Connection& T, T::Id)</em>, since this
+	 * <em>T::create_unchecked(Connection& T, sqloxx::Id)</em>, since this
 	 * function is invoked to initialize the iterator's internal instance
 	 * of T from the first row of the SQL result set.
 	 *
 	 * Exception safety: <em>strong guarantee</em>, providing that the
-	 * function <em>T::create_unchecked(Connection&, T::Id)</em> also offers
-	 * at least the strong guarantee.
+	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em> also
+	 * offers at least the strong guarantee.
 	 */
 	TableIterator
 	(	Connection& p_connection,
@@ -195,13 +196,13 @@ public:
 	 * should not be used again.
 	 *
 	 * Might also throw any exception that might be thrown by the function
-	 * <em>T::create_unchecked(Connection& T, T::Id)</em>, since this
+	 * <em>T::create_unchecked(Connection& T, sqloxx::Id)</em>, since this
 	 * function is invoked to construct the iterator's internal instance
 	 * of T from the next row of the SQL result set.
 	 *
 	 * Exception safety: <em>basic guarantee</em>, providing that the
-	 * function <em>T::create_unchecked(Connection&, T::Id)</em> also offers
-	 * at least the basic guarantee.
+	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em> also
+	 * offers at least the basic guarantee.
 	 */
 	TableIterator& operator++();
 
@@ -430,7 +431,7 @@ TableIterator<T, Connection>::Impl::make_object()
 {
 	return T::create_unchecked
 	(	m_connection,
-		m_sql_statement.template extract<typename T::Id>(0)
+		m_sql_statement.template extract<Id>(0)
 	);
 }
 
