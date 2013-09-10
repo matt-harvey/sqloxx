@@ -55,7 +55,7 @@ private:
 		T* object_ptr() const;
 	
 	private:
-		T create_unchecked();
+		T make_object();
 		Connection& m_connection;
 		SQLStatement m_sql_statement;
 		T* m_object;
@@ -196,7 +196,7 @@ TableIterator<T, Connection>::Impl::Impl
 	JEWEL_LOG_TRACE();
 	if (m_sql_statement.step())
 	{
-		m_object = new T(create_unchecked());
+		m_object = new T(make_object());
 	}
 }
 
@@ -217,7 +217,7 @@ TableIterator<T, Connection>::Impl::advance()
 	if (m_sql_statement.step())
 	{
 		m_object->~T();
-		new(m_object) T(create_unchecked());
+		new(m_object) T(make_object());
 	}
 	else
 	{
@@ -238,7 +238,7 @@ TableIterator<T, Connection>::Impl::object_ptr() const
 template <typename T, typename Connection>
 inline
 T
-TableIterator<T, Connection>::Impl::create_unchecked()
+TableIterator<T, Connection>::Impl::make_object()
 {
 	return T::create_unchecked
 	(	m_connection,
