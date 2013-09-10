@@ -155,6 +155,27 @@ TEST_FIXTURE
 
 TEST_FIXTURE
 (	DerivedPOFixture,
+	test_table_iterator_copy_constructor
+)
+{
+	setup_table_iterator_test(*pdbc);
+	DerivedPOHandleIter it(*pdbc);
+	++it;
+	CHECK_EQUAL((*it)->id(), 2);
+	DerivedPOHandleIter it2(it);
+	CHECK_EQUAL((*it2)->id(), 2);
+	++it2;
+	CHECK_EQUAL((*it)->id(), 2);
+	++it;
+	CHECK_EQUAL((*it)->id(), 4);
+
+	DerivedPOHandleIter null_iter;
+	DerivedPOHandleIter it3(null_iter);
+	CHECK(it3 == null_iter);
+}
+
+TEST_FIXTURE
+(	DerivedPOFixture,
 	test_table_iterator_increment_and_deref
 )
 {
@@ -204,38 +225,54 @@ TEST_FIXTURE
 		}
 	}
 }
-		
+
 TEST_FIXTURE
 (	DerivedPOFixture,
-	test_table_iterator_increment_and_deref_exceptions_1
+	test_table_iterator_cycling_through_results_set
 )
 {
 	setup_table_iterator_test(*pdbc);
-	DerivedPOHandleIter const null_it;
 	DerivedPOHandleIter it(*pdbc);
-	for ( ; it != null_it; ++it)
-	{
-	}
-	CHECK_THROW(*it, InvalidTableIterator);
-	CHECK_THROW(*null_it, InvalidTableIterator);
-	CHECK_THROW(null_it.operator->(), InvalidTableIterator);
-	CHECK_THROW((*null_it)->id(), InvalidTableIterator);
+	DerivedPOHandleIter const null_iter;
+	CHECK_EQUAL((*it)->id(), 1);
+	++it;
+	CHECK_EQUAL((*it)->id(), 2);
+	while (it != null_iter) ++it;
+	CHECK(it == DerivedPOHandleIter());
+	++it;
+	CHECK(it != null_iter);
+	CHECK_EQUAL((*it)->id(), 1);
+	++it;
+	CHECK_EQUAL((*it)->id(), 2);
 }
 
 TEST_FIXTURE
 (	DerivedPOFixture,
-	test_table_iterator_increment_and_deref_exceptions_2
+	test_table_iterator_postfix_increment
 )
 {
-	setup_table_iterator_test(*pdbc);
-	for (DerivedPOHandleIter it1(*pdbc); it1 != DerivedPOHandleIter(); ++it1)
-	{
-		(*it1)->remove();
-	}
+	DerivedPOHandleIter null_iter;
+	null_iter++;  // Does nothing
 
-	DerivedPOHandleIter it2(*pdbc);
-	CHECK_THROW(++it2, InvalidTableIterator);
-	CHECK_THROW(*it2, InvalidTableIterator);
+	setup_table_iterator_test(*pdbc);
+	DerivedPOHandleIter it(*pdbc);
+	CHECK_EQUAL((*it)->id(), 1);
+	it++;	
+	CHECK_EQUAL((*it)->id(), 2);
+	CHECK_EQUAL((*it++)->id(), 2);
+	CHECK_EQUAL((*it)->id(), 3);
+
+	DerivedPOHandleIter jt(*pdbc);
+	jt++;
+	CHECK_EQUAL((*jt)->id(), 2);
+	DerivedPOHandleIter jt2(jt++);
+	CHECK_EQUAL((*jt2)->id(), 2);
+	CHECK_EQUAL((*jt2)->id(), 2);
+	++jt2;
+
+	// because jt2 still references the same underlying
+	// SQLStatement as jt.
+	CHECK_EQUAL((*jt2)->id(), 4);
 }
 
 TEST_FIXTURE

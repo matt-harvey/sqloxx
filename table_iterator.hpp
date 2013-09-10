@@ -6,8 +6,10 @@
 #include "sql_statement.hpp"
 #include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
+#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/optional.hpp>
+#include <iterator>
 #include <string>
 
 namespace sqloxx
@@ -63,13 +65,16 @@ namespace sqloxx
  * 	);
  *
  * </tt>
- *
- * Note instances of this class template are not copyable. This means that
- * certain standard library algorithms, for example std::find_if, will
- * not compile if used with TableIterators.
  */
 template <typename T, typename Connection>
-class TableIterator: private boost::noncopyable
+class TableIterator:
+	public std::iterator
+	<	std::input_iterator_tag,
+		T,
+		ptrdiff_t,
+		const T*,
+		const T&
+	>
 {
 public:
 
@@ -98,7 +103,10 @@ public:
 	 *
 	 * When first constructed, the TableIterator will be "pointing" to
 	 * the first object it reads from the database table; dereferencing
-	 * it will yield a constant reference to that object.
+	 * it will yield a constant reference to that object. However, if
+	 * there are no result rows to read, then the TableIterator
+	 * will immediately be null (and deferencing it will yield undefined
+	 * behaviour).
 	 *
 	 * @throws InvalidConnection if p_database_connection is an
 	 * invalid database connection (i.e. if p_database_connection.is_valid()
@@ -138,13 +146,39 @@ public:
 	);
 
 	/**
-	 * Destructor is virtual, so an instantiation TableIterator might act as
-	 * a polymorphic base class.
+	 * Copy constructor.
+	 *
+	 * The newly created TableIterator will have its own instance
+	 * of T copied from the one held in \e rhs, or else will be
+	 * "null" (i.e. hold no instance of T) if rhs is null.
+	 *
+	 * If \e rhs is referencing a SQLStatement
+	 * (i.e. was not created with the default constructor),
+	 * then the newly created TableIterator will be referencing the
+	 * same underlying SQLStatement. This means that if either
+	 * TableIterator is incremented, then this will advance the
+	 * implicit \e next position of \e both TableIterators in the result
+	 * set. The lhs will continue to hold the same instance of T
+	 * as when it was constructed, but when incremented next, it will
+	 * go to whichever is the \e next position for the underlying
+	 * SQLStatement. This seems odd but is exactly analogous to the
+	 * behaviour of \e std::istream_iterator.
+	 *
+	 * Exceptions are the same as for the two-parameter constructor.
+	 *
+	 * Exception safety: <em>strong guarantee</em>, providing that the
+	 * copy constructor for T offers at least the strong guarantee.
+	 */
+	TableIterator(TableIterator const& rhs);
+
+	/**
+	 * Note destructor is virtual, TableIterator should not be used as a
+	 * polymorphic base class.
 	 *
 	 * Exception safety: will never throw, assuming the destructor for T will
 	 * never throw.
 	 */
-	virtual ~TableIterator();
+	~TableIterator();
 
 	/**
 	 * @returns a constant reference to the instance of T that is currently
@@ -152,11 +186,15 @@ public:
 	 * instance of T that is stored at the database table row that it
 	 * is currently "at".
 	 *
-	 * @throws InvalidTableIterator if the TableIterator is "null" (see the
-	 * default constructor documentation re. when an TableIterator is
-	 * "null").
+	 * Dereferencing a null iterator will result in undefined
+	 * behaviour.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * Precondition: TableIterator must not be null. (A TableIterator
+	 * is null if and only if it compares equal with a TableIterator
+	 * constructed with the default constructor.)
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>, providing precondition
+	 * is met.
 	 */
 	T const& operator*() const;
 
@@ -165,26 +203,27 @@ public:
 	 * T that is currently "pointed to" or "contained" within the
 	 * TableIterator.
 	 *
-	 * @throws InvalidTableIterator if the TableIterator is "null" (see the
-	 * default constructor documentation re. when an TableIterator is
-	 * "null".
+	 * Dereferencing a null iterator will result in undefined
+	 * behaviour.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * Precondition: TableIterator must not be null. (A TableIterator
+	 * is null if and only if it compares equal with a TableIterator
+	 * constructed with the default constructor.)
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>, providing precondition
+	 * is met.
 	 */
 	T const* operator->() const;
 
 	/**
-	 * Advance the TableIterator to the next row in the result set.
+	 * Advance the TableIterator to the next row in the result set, and
+	 * return a reference to the TableIterator at its new location.
+	 *
 	 * If the TableIterator is currently at the final row, then advancing
-	 * it will result in the TableIterator becoming "null".
-	 *
-	 * @returns a reference to the TableIterator itself, \e after
-	 * it has been advanced.
-	 *
-	 * @throws InvalidTableIterator if the TableIterator is already
-	 * "null".
-	 *
-	 * @throws InvalidConnection if the database connection is invalid.
+	 * it will result in the TableIterator becoming "null". Incrementing
+	 * it \e again will reset it to the beginning of the result set
+	 * again, providing there is at least one result row, in which
+	 * case it will become non-null again.
 	 *
 	 * @throws SQLiteException or some exception deriving therefrom, if an
 	 * error occurs while stepping to the next result row, that results in a
@@ -192,19 +231,57 @@ public:
 	 * This function should almost never occur, but it is
 	 * possible something will fail as the statement is being executed, in
 	 * which case the resulting SQLite error condition will trigger the
-	 * corresponding exception class. If this occurs, the TableIterator
-	 * should not be used again.
+	 * corresponding exception class.
 	 *
 	 * Might also throw any exception that might be thrown by the function
 	 * <em>T::create_unchecked(Connection& T, sqloxx::Id)</em>, since this
 	 * function is invoked to construct the iterator's internal instance
 	 * of T from the next row of the SQL result set.
 	 *
+	 * If an exception is thrown, the TableIterator
+	 * should not be used again, and neither should any other
+	 * TableIterator referencing the same underlying SQLStatement.
+	 * (Via application of the copy constructor, multiple
+	 * TableIterators may reference the same SQLStatement.)
+	 *
 	 * Exception safety: <em>basic guarantee</em>, providing that the
 	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em> also
 	 * offers at least the basic guarantee.
 	 */
 	TableIterator& operator++();
+
+	/**
+	 * Advance the TableIterator to the next row in the result set, but
+	 * return a copy of the TableIterator at its previous location.
+	 *
+	 * The returned copy will contain the object pointed to by this
+	 * TableIterator before it was advanced; however, the returned
+	 * TableIterator will still be referencing the \e same underlying
+	 * SQLStatement as the original iterator. Thus both iterators will
+	 * share the same underlying result set, and the same
+	 * \e position in that result set (which has now been advanced
+	 * by one), which will be the starting position next time
+	 * \e either iterator is called. This sounds odd but is exactly analogous
+	 * to the behaviour of \e std::istream_iterator.
+	 *
+	 * Exceptions are the same as for the previous
+	 * increment operator, however, this postfix operator, as well
+	 * as calling <em>T::create_unchecked(Connection&, sqloxx::Id)</em>,
+	 * also calls the copy constructor for T, so might also throw any
+	 * exceptions that are thrown by that copy constructor.
+	 *
+	 * If an exception is thrown, the TableIterator
+	 * should not be used again, and neither should any other
+	 * TableIterator referencing the same underlying SQLStatement.
+	 * (Via application of the copy constructor, multiple
+	 * TableIterators may reference the same SQLStatement.)
+	 *
+	 * Exception safety: <em>basic guarantee</em>, providing that the
+	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em>, as
+	 * well as the copy constructor for T, also offer the basic
+	 * guarantee.
+	 */
+	TableIterator operator++(int);
 
 	/**
 	 * @returns \e true if and \e only if the TableIterators on \e both sides
@@ -227,31 +304,30 @@ public:
 	bool operator!=(TableIterator const& rhs) const;
 
 private:
+
+	/**
+	 * NOT IMPLEMENTED.
+	 */
+	TableIterator& operator=(TableIterator const&);
 	
-	void assert_invariant() const;
-	void kill_impl_if_invalid();
+	void advance();
 
 	class Impl: boost::noncopyable
 	{
 	public:
 		Impl(Connection&, std::string const&);
 		~Impl();
-		void advance();
-
-		// Client will NOT own the pointer.
-		// Impl will take responsibility for managing memory.
-		// Pointer might be null.
-		T* object_ptr() const;
-	
+		void next(boost::optional<T>& out);
+			
 	private:
-		T make_object();
 		Connection& m_connection;
 		SQLStatement m_sql_statement;
-		T* m_object;
 
 	};  // class Impl
 
-	Impl* m_impl;
+	typedef boost::shared_ptr<Impl> Pimpl;
+	Pimpl mutable m_impl;
+	boost::optional<T> m_maybe_object;
 
 };  // class TableIterator
 
@@ -260,79 +336,73 @@ private:
 
 template <typename T, typename Connection>
 inline
-TableIterator<T, Connection>::TableIterator(): m_impl(0)
+TableIterator<T, Connection>::TableIterator()
 {
 	JEWEL_LOG_TRACE();
-	assert_invariant();
 }
 
 template <typename T, typename Connection>
+inline
 TableIterator<T, Connection>::TableIterator
 (	Connection& p_connection,
 	std::string const& p_statement_text
 ):
-	m_impl(0)
+	m_impl(new Impl(p_connection, p_statement_text))
 {
 	JEWEL_LOG_TRACE();
-	m_impl = new Impl(p_connection, p_statement_text);
-	kill_impl_if_invalid();
-	assert_invariant();
+	advance();
 }
 
 template <typename T, typename Connection>
+inline
+TableIterator<T, Connection>::TableIterator(TableIterator const& rhs):
+	m_impl(rhs.m_impl),  // never throws
+	m_maybe_object(rhs.m_maybe_object)  // might throw
+{
+	JEWEL_LOG_TRACE();
+}
+
+template <typename T, typename Connection>
+inline
 TableIterator<T, Connection>::~TableIterator()
 {
 	JEWEL_LOG_TRACE();
-	delete m_impl;
-	m_impl = 0;
-	assert_invariant();
 }
 
 template <typename T, typename Connection>
+inline
 T const&
 TableIterator<T, Connection>::operator*() const
 {
-	if (!m_impl)
-	{
-		JEWEL_THROW
-		(	InvalidTableIterator,
-			"Attempted to dereference an invalid TableIterator."
-		);
-	}
-	JEWEL_ASSERT (m_impl->object_ptr());
-	return *(m_impl->object_ptr());
+	JEWEL_ASSERT (m_maybe_object);  // precondition
+	return *m_maybe_object;
 }
 
 template <typename T, typename Connection>
+inline
 T const*
 TableIterator<T, Connection>::operator->() const
 {
-	if (!m_impl)
-	{
-		JEWEL_THROW
-		(	InvalidTableIterator,
-			"Attempted to dereference an invalid TableIterator."
-		);
-	}
-	JEWEL_ASSERT (m_impl->object_ptr());
-	return m_impl->object_ptr();
+	JEWEL_ASSERT (m_maybe_object);  // precondition
+	return m_maybe_object.operator->();
 }
 
 template <typename T, typename Connection>
+inline
 TableIterator<T, Connection>&
 TableIterator<T, Connection>::operator++()
 {
-	if (!m_impl)
-	{
-		JEWEL_THROW
-		(	InvalidTableIterator,
-			"Attempted to increment invalid TableIterator."
-		);
-	}
-	m_impl->advance();
-	kill_impl_if_invalid();
-	assert_invariant();
+	advance();
 	return *this;
+}
+
+template <typename T, typename Connection>
+TableIterator<T, Connection>
+TableIterator<T, Connection>::operator++(int)
+{
+	TableIterator ret(*this);
+	advance();
+	return ret;
 }
 
 template <typename T, typename Connection>
@@ -340,7 +410,7 @@ inline
 bool
 TableIterator<T, Connection>::operator==(TableIterator const& rhs) const
 {
-	return !rhs.m_impl && !m_impl;
+	return !(*this != rhs);
 }
 
 template <typename T, typename Connection>
@@ -348,27 +418,15 @@ inline
 bool
 TableIterator<T, Connection>::operator!=(TableIterator const& rhs) const
 {
-	return !(*this == rhs);
+	return m_maybe_object || rhs.m_maybe_object;
 }
 
 template <typename T, typename Connection>
 inline
 void
-TableIterator<T, Connection>::assert_invariant() const
+TableIterator<T, Connection>::advance()
 {
-	JEWEL_ASSERT ((m_impl == 0) || (m_impl->object_ptr() != 0));
-}
-
-template <typename T, typename Connection>
-inline
-void
-TableIterator<T, Connection>::kill_impl_if_invalid()
-{
-	if (m_impl && !m_impl->object_ptr())
-	{
-		delete m_impl;
-		m_impl = 0;
-	}
+	if (m_impl) m_impl->next(m_maybe_object);
 	return;
 }
 
@@ -379,60 +437,33 @@ TableIterator<T, Connection>::Impl::Impl
 	std::string const& p_statement_text
 ):
 	m_connection(p_connection),
-	m_sql_statement(p_connection, p_statement_text),
-	m_object(0)
+	m_sql_statement(p_connection, p_statement_text)
 {
-	JEWEL_LOG_TRACE();
-	if (m_sql_statement.step())
-	{
-		m_object = new T(make_object());
-	}
 }
 
 template <typename T, typename Connection>
 inline
 TableIterator<T, Connection>::Impl::~Impl()
 {
-	JEWEL_LOG_TRACE();
-	delete m_object;
-	m_object = 0;
 }
 
 template <typename T, typename Connection>
 void
-TableIterator<T, Connection>::Impl::advance()
+TableIterator<T, Connection>::Impl::next
+(	boost::optional<T>& out
+)
 {
-	JEWEL_ASSERT (m_object);
 	if (m_sql_statement.step())
 	{
-		m_object->~T();
-		new(m_object) T(make_object());
+		out = T::create_unchecked
+		(	m_connection,
+			m_sql_statement.template extract<Id>(0)
+		);
 	}
 	else
 	{
-		delete m_object;
-		m_object = 0;
+		out = boost::optional<T>();
 	}
-	return;
-}
-
-template <typename T, typename Connection>
-inline
-T*
-TableIterator<T, Connection>::Impl::object_ptr() const
-{
-	return m_object;
-}
-
-template <typename T, typename Connection>
-inline
-T
-TableIterator<T, Connection>::Impl::make_object()
-{
-	return T::create_unchecked
-	(	m_connection,
-		m_sql_statement.template extract<Id>(0)
-	);
 }
 
 
