@@ -65,8 +65,6 @@ namespace sqloxx
  * </tt>
  *
  * Note instances of this class template are not copyable.
- *
- * @todo HIGH PRIORITY Testing.
  */
 template <typename T, typename Connection>
 class TableIterator: private boost::noncopyable
@@ -157,6 +155,8 @@ public:
 	 * "null").
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
+	 *
+ 	 * @todo HIGH PRIORITY Testing.
 	 */
 	T const& operator*() const;
 
@@ -170,6 +170,8 @@ public:
 	 * "null".
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
+	 *
+	 * @todo HIGH PRIORITY Testing.
 	 */
 	T const* operator->() const;
 
@@ -203,6 +205,8 @@ public:
 	 * Exception safety: <em>basic guarantee</em>, providing that the
 	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em> also
 	 * offers at least the basic guarantee.
+	 *
+	 * @todo HIGH PRIORITY testing.
 	 */
 	TableIterator& operator++();
 
@@ -214,6 +218,8 @@ public:
 	 * result set.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo HIGH PRIORITY testing.
 	 */
 	bool operator==(TableIterator const& rhs);
 
@@ -223,6 +229,8 @@ public:
 	 * operator.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo HIGH PRIORITY testing.
 	 */
 	bool operator!=(TableIterator const& rhs);
 

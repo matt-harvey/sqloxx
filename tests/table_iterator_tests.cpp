@@ -63,6 +63,101 @@ void setup_table_iterator_test(DerivedDatabaseConnection& dbc)
 	dpo5->save();
 }
 
+TEST_FIXTURE
+(	DerivedPOFixture,
+	test_table_iterator_constructor_and_basic_functioning_1
+)
+{
+	setup_table_iterator_test(*pdbc);
+
+	DerivedPOHandleIter const null_iter;
+
+	size_t count = 0;
+	for (DerivedPOHandleIter it(*pdbc); it != null_iter; ++it) ++count;
+	CHECK_EQUAL(count, 5);
+
+	int max = 0;
+	for (DerivedPOHandleIter it(*pdbc); it != null_iter; ++it)
+	{
+		max =
+		(	((*it)->x() > max)?
+			(*it)->x():
+			max
+		);
+	}
+	CHECK_EQUAL(max, 10);
+}
+
+TEST_FIXTURE
+(	DerivedPOFixture,
+	test_table_iterator_constructor_and_basic_functioning_2
+)
+{
+	setup_table_iterator_test(*pdbc);
+	DerivedPOHandleIter const null_iter;
+	DerivedPOHandleIter it
+	(	*pdbc,
+		"select derived_po_id from derived_pos where y > 14.2"
+	);
+	size_t count = 0;
+	for ( ; it != null_iter; ++it) ++count;
+	CHECK_EQUAL(count, 3);
+}
+
+TEST_FIXTURE
+(	DerivedPOFixture,
+	test_table_iterator_constructor_exceptions
+)
+{
+	DerivedDatabaseConnection invalid_dbc;
+	CHECK_THROW(DerivedPOHandleIter it(invalid_dbc), InvalidConnection);
+	CHECK_THROW(FiveIter it(invalid_dbc), InvalidConnection);
+
+	setup_table_iterator_test(*pdbc);
+
+	CHECK_THROW
+	(	DerivedPOHandleIter it
+		(	*pdbc,
+			"qselect unsyntactical gobbledigook from jbooble"
+		),
+		SQLiteException
+	);
+	CHECK_THROW
+	(	DerivedPOHandleIter it
+		(	*pdbc,
+			"select nonexistent_column from derived_pos"
+		),
+		SQLiteException
+	);
+	CHECK_THROW
+	(	DerivedPOHandleIter it
+		(	*pdbc,
+			"select derived_po_id from nonexistent_table"
+		),
+		SQLiteException
+	);
+	CHECK_THROW
+	(	DerivedPOHandleIter it
+		(	*pdbc,
+			"select derived_po_id from derived_pos; "
+			"select derived_po_id from derived_pos where x = 5"
+		),
+		TooManyStatements
+	);
+	CHECK_THROW
+	(	DerivedPOHandleIter it
+		(	*pdbc,
+			"select derived_po_id from derived_pos; um"
+		),
+		TooManyStatements
+	);
+}
+	
+		
+
+	
+	
+	
 
 }  // namespace tests
 }  // namespace sqloxx

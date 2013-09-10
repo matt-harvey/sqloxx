@@ -97,6 +97,7 @@ TEST_FIXTURE
 	}
 	CHECK_EQUAL(max, 10);
 }
+
 TEST_FIXTURE
 (	DerivedPOFixture,
 	test_reader_constructor_and_basic_functioning_2
@@ -158,7 +159,7 @@ TEST_FIXTURE(DerivedPOFixture, test_reader_constructor_exceptions)
 	(	DerivedPOHandleReader reader6
 		(	*pdbc,
 			"select derived_po_id from derived_pos; "
-			"select derived_po_id_from derived_pos where x = 5"
+			"select derived_po_id from derived_pos where x = 5"
 		),
 		TooManyStatements
 	);
