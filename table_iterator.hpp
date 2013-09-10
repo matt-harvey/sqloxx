@@ -119,7 +119,14 @@ public:
 	 * This includes the case where there are further syntactically
 	 * acceptable SQL statements after the first one.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * Might also throw any exception that might be thrown by the function
+	 * <em>T::create_unchecked(Connection& T, T::Id)</em>, since this
+	 * function is invoked to initialize the iterator's internal instance
+	 * of T from the first row of the SQL result set.
+	 *
+	 * Exception safety: <em>strong guarantee</em>, providing that the
+	 * function <em>T::create_unchecked(Connection&, T::Id)</em> also offers
+	 * at least the strong guarantee.
 	 */
 	TableIterator
 	(	Connection& p_connection,
@@ -187,7 +194,14 @@ public:
 	 * corresponding exception class. If this occurs, the TableIterator
 	 * should not be used again.
 	 *
-	 * Exception safety: <em>basic guarantee</em>.
+	 * Might also throw any exception that might be thrown by the function
+	 * <em>T::create_unchecked(Connection& T, T::Id)</em>, since this
+	 * function is invoked to construct the iterator's internal instance
+	 * of T from the next row of the SQL result set.
+	 *
+	 * Exception safety: <em>basic guarantee</em>, providing that the
+	 * function <em>T::create_unchecked(Connection&, T::Id)</em> also offers
+	 * at least the basic guarantee.
 	 */
 	TableIterator& operator++();
 
