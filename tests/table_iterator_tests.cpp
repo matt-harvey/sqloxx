@@ -176,6 +176,48 @@ TEST_FIXTURE
 
 TEST_FIXTURE
 (	DerivedPOFixture,
+	test_table_iterator_empty_result_set
+)
+{
+	setup_table_iterator_test(*pdbc);
+	CHECK
+	(	DerivedPOHandleIter
+		(	*pdbc,
+			"select derived_po_id from derived_pos where x = 76898"
+		) ==
+		(DerivedPOHandleIter())
+	);
+	DerivedPOHandleIter it
+	(	*pdbc,
+		"select derived_po_id from derived_pos where 1 = 2"
+	);
+	DerivedPOHandleIter null_iter;
+	CHECK(it == null_iter);
+	++it;
+	CHECK(it == null_iter);
+	CHECK(null_iter == it);
+	CHECK(it++ == null_iter);
+}
+
+TEST_FIXTURE
+(	DerivedPOFixture,
+	test_table_iterator_completely_empty_table
+)
+{
+	CHECK(DerivedPOHandleIter(*pdbc) == (DerivedPOHandleIter()));
+	DerivedPOHandleIter it(*pdbc);
+	for (size_t i = 0; i != 189; ++i)
+	{
+		++it;
+		CHECK(it == (DerivedPOHandleIter()));
+	}
+	it++;
+	it++;
+	CHECK(it == (DerivedPOHandleIter()));
+}
+
+TEST_FIXTURE
+(	DerivedPOFixture,
 	test_table_iterator_increment_and_deref
 )
 {
