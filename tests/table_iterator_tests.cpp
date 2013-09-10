@@ -152,10 +152,124 @@ TEST_FIXTURE
 		TooManyStatements
 	);
 }
-	
-		
 
-	
+TEST_FIXTURE
+(	DerivedPOFixture,
+	test_table_iterator_increment_and_deref
+)
+{
+	setup_table_iterator_test(*pdbc);
+
+	DerivedPOHandleIter const null_it;
+
+	DerivedPOHandleIter it1
+	(	*pdbc,
+		"select derived_po_id from derived_pos order by derived_po_id"
+	);
+	int i = 1;
+	for ( ; it1 != null_it; ++it1, ++i)
+	{
+		CHECK_EQUAL((*it1)->id(), i);
+	}
+
+	for (DerivedPOHandleIter it(*pdbc) ; it != null_it; ++it)
+	{
+		Handle<DerivedPO> dpo2 = *it;
+		int const id = dpo2->id();
+		switch (id)
+		{
+		case 1:
+			CHECK_EQUAL(dpo2->x(), 0);
+			CHECK_EQUAL(dpo2->y(), 14.1);
+			break;
+		case 2:
+			CHECK_EQUAL(dpo2->x(), 5);
+			CHECK_EQUAL(dpo2->y(), 14.2);
+			break;
+		case 3:
+			CHECK_EQUAL(dpo2->x(), 10);
+			CHECK_EQUAL(dpo2->y(), 14.3);
+			break;
+		case 4:
+			CHECK_EQUAL(dpo2->x(), 0);
+			CHECK_EQUAL(dpo2->y(), 14.4);
+			break;
+		case 5:
+			CHECK_EQUAL(dpo2->x(), 5);
+			CHECK_EQUAL(dpo2->y(), 14.5);
+			break;
+		default:
+			CHECK(false);  // Execution should never reach here.
+			break;
+		}
+	}
+}
+		
+TEST_FIXTURE
+(	DerivedPOFixture,
+	test_table_iterator_increment_and_deref_exceptions_1
+)
+{
+	setup_table_iterator_test(*pdbc);
+	DerivedPOHandleIter const null_it;
+	DerivedPOHandleIter it(*pdbc);
+	for ( ; it != null_it; ++it)
+	{
+	}
+	CHECK_THROW(*it, InvalidTableIterator);
+	CHECK_THROW(*null_it, InvalidTableIterator);
+	CHECK_THROW(null_it.operator->(), InvalidTableIterator);
+	CHECK_THROW((*null_it)->id(), InvalidTableIterator);
+}
+
+TEST_FIXTURE
+(	DerivedPOFixture,
+	test_table_iterator_increment_and_deref_exceptions_2
+)
+{
+	setup_table_iterator_test(*pdbc);
+	for (DerivedPOHandleIter it1(*pdbc); it1 != DerivedPOHandleIter(); ++it1)
+	{
+		(*it1)->remove();
+	}
+
+	DerivedPOHandleIter it2(*pdbc);
+	CHECK_THROW(++it2, InvalidTableIterator);
+	CHECK_THROW(*it2, InvalidTableIterator);
+}
+
+TEST_FIXTURE
+(	DerivedPOFixture,
+	test_table_iterator_equality_and_inequality
+)
+{
+	setup_table_iterator_test(*pdbc);
+
+	DerivedPOHandleIter it1(*pdbc);
+	DerivedPOHandleIter it2(*pdbc);
+	DerivedPOHandleIter const null_iter1;
+	DerivedPOHandleIter const null_iter2;
+
+	CHECK(it1 != it2);
+	CHECK(null_iter1 == null_iter2);
+
+	while (it1 != null_iter1)
+	{
+		CHECK(it1 != it2);
+		CHECK(it2 != null_iter2);
+		CHECK(it1 != null_iter2);
+		CHECK(it2 != null_iter1);
+		++it1;
+		++it2;
+	}
+
+	CHECK(it1 == it2);
+	CHECK(it1 == null_iter1);
+	CHECK(it2 == null_iter2);
+	CHECK(it1 == null_iter2);
+	CHECK(it2 == null_iter1);
+	CHECK(null_iter1 == null_iter2);
+}
 	
 	
 

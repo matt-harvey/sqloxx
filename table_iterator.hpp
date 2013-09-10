@@ -155,8 +155,6 @@ public:
 	 * "null").
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
- 	 * @todo HIGH PRIORITY Testing.
 	 */
 	T const& operator*() const;
 
@@ -170,8 +168,6 @@ public:
 	 * "null".
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
-	 *
-	 * @todo HIGH PRIORITY Testing.
 	 */
 	T const* operator->() const;
 
@@ -205,8 +201,6 @@ public:
 	 * Exception safety: <em>basic guarantee</em>, providing that the
 	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em> also
 	 * offers at least the basic guarantee.
-	 *
-	 * @todo HIGH PRIORITY testing.
 	 */
 	TableIterator& operator++();
 
@@ -218,10 +212,8 @@ public:
 	 * result set.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo HIGH PRIORITY testing.
 	 */
-	bool operator==(TableIterator const& rhs);
+	bool operator==(TableIterator const& rhs) const;
 
 	/**
 	 * @return \e true if and only if the two sides do not compare equal
@@ -229,10 +221,8 @@ public:
 	 * operator.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo HIGH PRIORITY testing.
 	 */
-	bool operator!=(TableIterator const& rhs);
+	bool operator!=(TableIterator const& rhs) const;
 
 private:
 	
@@ -346,7 +336,7 @@ TableIterator<T, Connection>::operator++()
 template <typename T, typename Connection>
 inline
 bool
-TableIterator<T, Connection>::operator==(TableIterator const& rhs)
+TableIterator<T, Connection>::operator==(TableIterator const& rhs) const
 {
 	return !rhs.m_impl && !m_impl;
 }
@@ -354,7 +344,7 @@ TableIterator<T, Connection>::operator==(TableIterator const& rhs)
 template <typename T, typename Connection>
 inline
 bool
-TableIterator<T, Connection>::operator!=(TableIterator const& rhs)
+TableIterator<T, Connection>::operator!=(TableIterator const& rhs) const
 {
 	return !(*this == rhs);
 }
