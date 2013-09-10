@@ -64,7 +64,9 @@ namespace sqloxx
  *
  * </tt>
  *
- * Note instances of this class template are not copyable.
+ * Note instances of this class template are not copyable. This means that
+ * certain standard library algorithms, for example std::find_if, will
+ * not compile if used with TableIterators.
  */
 template <typename T, typename Connection>
 class TableIterator: private boost::noncopyable
