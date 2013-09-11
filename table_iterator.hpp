@@ -178,7 +178,7 @@ public:
 	 * Exception safety: will never throw, assuming the destructor for T will
 	 * never throw.
 	 */
-	~TableIterator();
+	virtual ~TableIterator();
 
 	/**
 	 * @returns a constant reference to the instance of T that is currently
