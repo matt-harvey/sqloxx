@@ -41,7 +41,6 @@ set (test_files
 	 tests/handle_tests.cpp
 	 tests/identity_map_tests.cpp
 	 tests/next_auto_key_tests.cpp
-	 tests/reader_tests.cpp
 	 tests/table_iterator_tests.cpp)
 
 add_executable (sqloxx_test ${test_files})
@@ -107,7 +106,6 @@ install(FILES
 		identity_map_fwd.hpp
 		next_auto_key.hpp
 		persistent_object.hpp
-		reader.hpp
 		sql_statement.hpp
 		sql_statement_fwd.hpp
 		sqloxx_exceptions.hpp
