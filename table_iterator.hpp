@@ -16,7 +16,7 @@ namespace sqloxx
 {
 
 /**
- * Provides a forward iterator interface for traversing a SQLite database
+ * Provides an input iterator interface for traversing a SQLite database
  * table from which instances of some type T can be extracted by reference
  * to a column in the table.
  *
@@ -25,7 +25,7 @@ namespace sqloxx
  *
  * In order for this to
  * work, there must be a static member function of T such that the
- * folling expression will return a valid instance of T, assuming
+ * following expression will evaluate to a valid instance of T, assuming
  * \e connection is an open instance of \e Connection and assuming
  * \e statement is a SQLStatement corresponding to the string passed
  * to the two-parameter constructor for TableIterator<Connection, T>.
@@ -60,7 +60,7 @@ namespace sqloxx
  * 	std::vector<Dog> vec;
  * 	std::copy
  * 	(	TableIterator<Dog, Conn>(dbc, "select dog_id from dogs"),
- * 		TableIterator<Dog, Conn>(),
+ * 		(TableIterator<Dog, Conn>()),
  * 		std::back_inserter(vec)
  * 	);
  *
