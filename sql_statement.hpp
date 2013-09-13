@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_sql_statement_hpp
-#define GUARD_sql_statement_hpp
+#ifndef GUARD_sql_statement_hpp_9859693450787893
+#define GUARD_sql_statement_hpp_9859693450787893
 
 #include "database_connection.hpp"
 #include "detail/sql_statement_impl.hpp"
@@ -224,4 +224,4 @@ SQLStatement::SQLStatement
 }  // namespace sqloxx
 
 
-#endif  // GUARD_sql_statement_hpp
+#endif  // GUARD_sql_statement_hpp_9859693450787893

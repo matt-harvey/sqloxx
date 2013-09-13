@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_atomicity_test_hpp
-#define GUARD_atomicity_test_hpp
+#ifndef GUARD_atomicity_test_hpp_2574979389354111
+#define GUARD_atomicity_test_hpp_2574979389354111
 
 // Hide from Doxygen
 /// @cond
@@ -49,4 +49,4 @@ inspect_database_for_atomicity(DatabaseConnection& dbc);
 /// @endcond
 // End hiding from Doxygen
 
-#endif  // GUARD_atomicity_test_hpp
+#endif  // GUARD_atomicity_test_hpp_2574979389354111

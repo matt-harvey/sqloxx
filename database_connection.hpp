@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_database_connection_hpp
-#define GUARD_database_connection_hpp
+#ifndef GUARD_database_connection_hpp_4041979952734886
+#define GUARD_database_connection_hpp_4041979952734886
 
 #include <boost/filesystem/path.hpp>
 #include <boost/noncopyable.hpp>
@@ -432,4 +432,4 @@ DatabaseConnection::TransactionAttorney::cancel_transaction
 
 }  // namespace sqloxx
 
-#endif  // GUARD_database_connection_hpp
+#endif  // GUARD_database_connection_hpp_4041979952734886

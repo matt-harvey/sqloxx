@@ -1,5 +1,5 @@
-#ifndef GUARD_sql_statement_impl_hpp
-#define GUARD_sql_statement_impl_hpp
+#ifndef GUARD_sql_statement_impl_hpp_8187575260264601
+#define GUARD_sql_statement_impl_hpp_8187575260264601
 
 // Hide from Doxygen
 /// @cond

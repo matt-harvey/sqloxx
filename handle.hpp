@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_handle_hpp
-#define GUARD_handle_hpp
+#ifndef GUARD_handle_hpp_03158044118042125
+#define GUARD_handle_hpp_03158044118042125
 
 #include "general_typedefs.hpp"
 #include "identity_map.hpp"
@@ -332,4 +332,4 @@ Handle<T>::Handle(T* p_pointer):
 
 }  // namespace sqloxx
 
-#endif  // GUARD_handle_hpp
+#endif  // GUARD_handle_hpp_03158044118042125

@@ -1,5 +1,5 @@
-#ifndef GUARD_sqlite_dbconn_hpp
-#define GUARD_sqlite_dbconn_hpp
+#ifndef GUARD_sqlite_dbconn_hpp_8577399267152603
+#define GUARD_sqlite_dbconn_hpp_8577399267152603
 
 // Hide from Doxygen
 /// @cond
@@ -177,4 +177,4 @@ private:
 /// @endcond
 // End hiding from Doxygen
 
-#endif  // GUARD_sqlite_dbconn_hpp
+#endif  // GUARD_sqlite_dbconn_hpp_8577399267152603

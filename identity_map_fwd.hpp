@@ -1,5 +1,5 @@
-#ifndef GUARD_identity_map_fwd_hpp
-#define GUARD_identity_map_fwd_hpp
+#ifndef GUARD_identity_map_fwd_hpp_034948303380491354
+#define GUARD_identity_map_fwd_hpp_034948303380491354
 
 namespace sqloxx
 {
@@ -9,4 +9,4 @@ class IdentityMap;
 
 }  // namespace sqloxx
 
-#endif  // GUARD_identity_map_fwd_hpp
+#endif  // GUARD_identity_map_fwd_hpp_034948303380491354

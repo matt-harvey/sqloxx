@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_database_transaction_hpp
-#define GUARD_database_transaction_hpp
+#ifndef GUARD_database_transaction_hpp_3761349159181746
+#define GUARD_database_transaction_hpp_3761349159181746
 
 #include <boost/noncopyable.hpp>
 
@@ -238,4 +238,4 @@ private:
 
 }  // sqloxx
 
-#endif  // GUARD_database_transaction_hpp
+#endif  // GUARD_database_transaction_hpp_3761349159181746

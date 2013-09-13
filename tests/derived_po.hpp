@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_derived_po_hpp
-#define GUARD_derived_po_hpp
+#ifndef GUARD_derived_po_hpp_7678596874549332
+#define GUARD_derived_po_hpp_7678596874549332
 
 // Hide from Doxygen
 /// @cond
@@ -96,4 +96,4 @@ DerivedDatabaseConnection::identity_map<DerivedPO>()
 /// @endcond
 // End hiding from Doxygen
 
-#endif  // GUARD_derived_po_hpp
+#endif  // GUARD_derived_po_hpp_7678596874549332

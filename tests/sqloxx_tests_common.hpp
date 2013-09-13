@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_sqloxx_tests_common_hpp
-#define GUARD_sqloxx_tests_common_hpp
+#ifndef GUARD_sqloxx_tests_common_hpp_18678273921216965
+#define GUARD_sqloxx_tests_common_hpp_18678273921216965
 
 // Hide from Doxygen
 /// @cond
@@ -80,4 +80,4 @@ struct DerivedPOFixture
 /// @endcond
 // End hiding from Doxygen
 
-#endif  // GUARD_sqloxx_tests_common_hpp
+#endif  // GUARD_sqloxx_tests_common_hpp_18678273921216965

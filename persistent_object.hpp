@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#ifndef GUARD_persistent_object_hpp
-#define GUARD_persistent_object_hpp
+#ifndef GUARD_persistent_object_hpp_3601795073413195
+#define GUARD_persistent_object_hpp_3601795073413195
 
 #include "database_transaction.hpp"
 #include "general_typedefs.hpp"
@@ -1407,7 +1407,7 @@ PersistentObject<Derived, Connection>::swap_base_internals
 }  // namespace sqloxx
 
 
-#endif  // GUARD_persistent_object_hpp
+#endif  // GUARD_persistent_object_hpp_3601795073413195
 
 
 

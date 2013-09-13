@@ -1,5 +1,5 @@
-#ifndef GUARD_table_iterator_hpp
-#define GUARD_table_iterator_hpp
+#ifndef GUARD_table_iterator_hpp_9025044682913015
+#define GUARD_table_iterator_hpp_9025044682913015
 
 #include "general_typedefs.hpp"
 #include "sqloxx_exceptions.hpp"
@@ -470,4 +470,4 @@ TableIterator<T, Connection>::Impl::next
 
 }  // namespace sqloxx
 
-#endif  // GUARD_table_iterator_hpp
+#endif  // GUARD_table_iterator_hpp_9025044682913015
