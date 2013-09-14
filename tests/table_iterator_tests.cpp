@@ -74,7 +74,7 @@ TEST_FIXTURE
 
 	size_t count = 0;
 	for (DerivedPOHandleIter it(*pdbc); it != null_iter; ++it) ++count;
-	CHECK_EQUAL(count, 5);
+	CHECK_EQUAL(count, static_cast<size_t>(5));
 
 	int max = 0;
 	for (DerivedPOHandleIter it(*pdbc); it != null_iter; ++it)
@@ -101,7 +101,7 @@ TEST_FIXTURE
 	);
 	size_t count = 0;
 	for ( ; it != null_iter; ++it) ++count;
-	CHECK_EQUAL(count, 3);
+	CHECK_EQUAL(count, static_cast<size_t>(3));
 }
 
 TEST_FIXTURE
