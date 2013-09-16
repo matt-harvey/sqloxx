@@ -11,7 +11,7 @@
 #include <jewel/stopwatch.hpp>
 
 
-#if JEWEL_ON_WINDOWS
+#ifdef JEWEL_ON_WINDOWS
 #	include <windows.h>  // for Sleep
 #endif
 
@@ -40,7 +40,7 @@ namespace
 {
 	void windows_friendly_remove(string const& fp)
 	{
-#		if JEWEL_ON_WINDOWS
+#		ifdef JEWEL_ON_WINDOWS
 			int const max_tries = 10000;
 			int const delay = 100;
 			char const* filename = fp.c_str();
