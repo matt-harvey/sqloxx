@@ -273,11 +273,12 @@ SQLStatementImpl::extract<long>(int index)
 
 
 // long long is guaranteed to be at least 8 bytes. But
-// if it's \e greater than 8 bytes, this causes a danger
-// of overflow of SQLite's 64-bit integer type column - in
-// which we will want to store values of this type.
+// if it's <em>greater than 64 bits</em>, this causes a danger
+// of overflow of SQLite's 64-bit integer type column, in
+// which we will want to store values of long long type.
 // Compilation should fail in this case.
-BOOST_STATIC_ASSERT(sizeof(long long) == 8);
+BOOST_STATIC_ASSERT(CHAR_BIT * sizeof(long long) == 64);
+
 
 
 template <>
