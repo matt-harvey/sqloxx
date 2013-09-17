@@ -63,24 +63,6 @@ class Handle;
  *
  * IdentityMap is intended to work in conjunction with sqloxx::Handle<T>
  * and sqloxx::PersistentObject<T, Connection>. See also the documentation
- *
- * @todo HIGH PRIORITY
- * Tighten up the architecture of SQLoxx as follows.
- * provide_handle should be renamed provide_pointer.
- * It should return a std::auto_ptr, not a handle.
- * It should be
- * accessible only from Handle. Handle should use it to grab a
- * raw pointer with which to initialize its internal pointer on
- * construction. The constructor of Handle should take a Connection&
- * and an id. Then internally this constructor should called the
- * identity_map() function of the Connection&. Then there is
- * not need for get_handle.
- * Having done all this, we can then construct Handle<T> instances
- * easily, without the cumbersome use of get_handle.
- * We can then provide a Table<T> class, that wraps an
- * SQLStatement selecting an id column that can initialize a
- * particular type; and a Table<T>::iterator which can iterate
- * that table.
  */
 template <typename T, typename Connection>
 class IdentityMap
