@@ -32,7 +32,7 @@ DerivedPO::DerivedPO
 (	IdentityMap& p_identity_map,
 	Id p_id
 ):
-	PersistentObject
+	DPersistentObject
 	(	p_identity_map,
 		p_id
 	),
@@ -42,9 +42,9 @@ DerivedPO::DerivedPO
 }
 
 DerivedPO::DerivedPO
-(	IdentityMap& p_identity_map
+(	DIdentityMap& p_identity_map
 ):
-	PersistentObject(p_identity_map),
+	DPersistentObject(p_identity_map),
 	m_x(0),
 	m_y(0)
 {
@@ -124,7 +124,7 @@ DerivedPO::set_y(double p_y)
 }
 
 DerivedPO::DerivedPO(DerivedPO const& rhs):
-	PersistentObject(rhs),
+	DPersistentObject(rhs),
 	m_x(rhs.m_x),
 	m_y(rhs.m_y)
 {

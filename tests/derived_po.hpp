@@ -28,9 +28,9 @@ class DerivedPO:
 public:
 	typedef sqloxx::Id Id;
 	typedef PersistentObject<DerivedPO, DerivedDatabaseConnection>
-		PersistentObject;
+		DPersistentObject;
 	typedef sqloxx::IdentityMap<DerivedPO, DerivedDatabaseConnection>
-		IdentityMap;
+		DIdentityMap;
 	static void setup_tables(DatabaseConnection& dbc);
 	explicit DerivedPO(IdentityMap& p_identity_map);
 	DerivedPO(IdentityMap& p_identity_map, Id p_id);
