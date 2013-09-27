@@ -730,7 +730,7 @@ IdentityMap<T, Connection>::disable_caching()
 {
 	if (is_caching())
 	{
-		for (auto& cache_entry: cache_key_map)
+		for (auto& cache_entry: cache_key_map())
 		{
 			if
 			(	PersistentObject<T, Connection>::HandleMonitorAttorney::
