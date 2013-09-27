@@ -7,21 +7,21 @@
 #include "../sql_statement.hpp"
 #include "../sqloxx_exceptions.hpp"
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/optional.hpp>
 #include <jewel/assert.hpp>
 #include <iostream>
 #include <limits>
+#include <memory>
 #include <typeinfo>
 #include <UnitTest++/UnitTest++.h>
 #include <stdexcept>
 
-using boost::shared_ptr;
 using jewel::UninitializedOptionalException;
 using std::cerr;
 using std::endl;
 using std::numeric_limits;
+using std::shared_ptr;
 
 
 

@@ -6,10 +6,10 @@
 #include "../handle.hpp"
 #include "../persistent_object.hpp"
 #include "../sql_statement.hpp"
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 
-using boost::shared_ptr;
+using std::shared_ptr;
 using std::string;
 
 namespace sqloxx

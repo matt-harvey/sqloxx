@@ -7,6 +7,7 @@
 #include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <jewel/exception.hpp>
+#include <utility>
 
 namespace sqloxx
 {
@@ -129,6 +130,16 @@ public:
 	Handle& operator=(Handle const& rhs);
 
 	/**
+	 * @todo HIGH PRIORITY Testing and documentation.
+	 */
+	Handle(Handle&& rhs);
+
+	/**
+	 * @todo HIGH PRIORITY Testing and documentation.
+	 */
+	Handle& operator=(Handle&&);
+
+	/**
 	 * @returns \e true if this Handle<T> is bound to some instance
 	 * of T; otherwise returns \e false.
 	 *
@@ -202,31 +213,31 @@ Handle<T>::exclusive_table_name()
 template <typename T>
 Handle<T>::~Handle()
 {
-	m_pointer->notify_handle_destruction();
+	if (m_pointer) m_pointer->decrement_handle_counter();
 }
-
 
 template <typename T>
 template <typename Connection>
-Handle<T>::Handle(Connection& p_connection):
-	m_pointer(0)
+Handle<T>::Handle(Connection& p_connection): m_pointer(nullptr)
 {
 	m_pointer = IdentityMap<T, Connection>::HandleAttorney::get_pointer
 	(	p_connection.template identity_map<T>()
 	);
-	m_pointer->notify_handle_construction();
+	JEWEL_ASSERT (m_pointer);
+	m_pointer->increment_handle_counter();
 }
 
 template <typename T>
 template <typename Connection>
 Handle<T>::Handle(Connection& p_connection, Id p_id):
-	m_pointer(0)
+	m_pointer(nullptr)
 {
 	m_pointer = IdentityMap<T, Connection>::HandleAttorney::get_pointer
 	(	p_connection.template identity_map<T>(),
 		p_id
 	);
-	m_pointer->notify_handle_construction();
+	JEWEL_ASSERT (m_pointer);
+	m_pointer->increment_handle_counter();
 }
 
 
@@ -245,36 +256,51 @@ Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 
 
 template <typename T>
-Handle<T>::Handle(Handle const& rhs):
-	m_pointer(rhs.m_pointer)
+Handle<T>::Handle(Handle const& rhs): m_pointer(rhs.m_pointer)
 {
-	m_pointer->notify_handle_copy_construction();
+	JEWEL_ASSERT (m_pointer);
+	m_pointer->increment_handle_counter();
 }
 
 
 template <typename T>
-Handle<T>::Handle(Handle& rhs):
-	m_pointer(rhs.m_pointer)
+Handle<T>::Handle(Handle& rhs): m_pointer(rhs.m_pointer)
 {
-	m_pointer->notify_handle_copy_construction();
+	JEWEL_ASSERT (m_pointer);
+	m_pointer->increment_handle_counter();
 }
-
 
 template <typename T>
 Handle<T>&
 Handle<T>::operator=(Handle const& rhs)
 {
+	JEWEL_ASSERT (m_pointer);
+	JEWEL_ASSERT (rhs.m_pointer);
+
 	// Strong guarantee, provided rhs has a valid pointer...
-	rhs.m_pointer->notify_rhs_assignment_operation();
+	rhs.m_pointer->increment_handle_counter();
 
 	// Nothrow guarantee, provided preconditions met, and
 	// provided rhs has a valid pointer.
-	m_pointer->notify_lhs_assignment_operation();
+	m_pointer->decrement_handle_counter();
 
 	m_pointer = rhs.m_pointer;  // nothrow
-	return *this;  // throw, provided we have a valid pointer
+	return *this;  // nothrow, provided we have a valid pointer
 }
 
+template <typename T>
+Handle<T>::Handle(Handle&& rhs): m_pointer(std::move(rhs.m_pointer))
+{
+	rhs.m_pointer = nullptr;
+}
+
+template <typename T>
+Handle<T>&
+Handle<T>::operator=(Handle&& rhs)
+{
+	m_pointer = std::move(rhs.m_pointer);
+	rhs.m_pointer = nullptr;
+}
 
 template <typename T>
 Handle<T>::operator bool() const
@@ -322,10 +348,9 @@ Handle<T>::operator!=(Handle<T> const& rhs) const
 
 
 template <typename T>
-Handle<T>::Handle(T* p_pointer):
-	m_pointer(p_pointer)
+Handle<T>::Handle(T* p_pointer): m_pointer(p_pointer)
 {
-	m_pointer->notify_handle_construction();
+	if (m_pointer) m_pointer->increment_handle_counter();
 }
 
 		

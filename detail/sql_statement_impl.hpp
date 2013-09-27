@@ -19,8 +19,6 @@
 #include <jewel/checked_arithmetic.hpp>
 #include "sqlite3.h"  // Compiling directly into build
 #include <boost/filesystem/path.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/static_assert.hpp>
 #include <limits>
 #include <string>
 #include <vector>
@@ -44,8 +42,7 @@ class SQLiteDBConn;
  * platforms? Possibly. We have a static assertion (below) to break
  * compilation on such platforms. This is unsatisfying though.
  */
-class SQLStatementImpl:
-	private boost::noncopyable
+class SQLStatementImpl
 {
 public:
 
@@ -71,6 +68,11 @@ public:
 	 * can encapsulate only one statement.
 	 */
 	SQLStatementImpl(SQLiteDBConn& p_sqlite_dbconn, std::string const& str);
+
+	SQLStatementImpl(SQLStatementImpl const&) = delete;
+	SQLStatementImpl(SQLStatementImpl&&) = delete;
+	SQLStatementImpl& operator=(SQLStatementImpl const&) = delete;
+	SQLStatementImpl& operator=(SQLStatementImpl&&) = delete;
 
 	~SQLStatementImpl();
 
@@ -277,8 +279,10 @@ SQLStatementImpl::extract<long>(int index)
 // of overflow of SQLite's 64-bit integer type column, in
 // which we will want to store values of long long type.
 // Compilation should fail in this case.
-BOOST_STATIC_ASSERT(CHAR_BIT * sizeof(long long) == 64);
-
+static_assert
+(	CHAR_BIT * sizeof(long long) == 64,
+	"For SQLStatementImpl to work safetly, sizeof(long long) must be 64 bits."
+);
 
 
 template <>

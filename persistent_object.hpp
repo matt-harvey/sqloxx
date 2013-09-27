@@ -11,7 +11,6 @@
 #include "sqloxx_exceptions.hpp"
 #include <boost/none.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -795,7 +794,6 @@ private:
 	virtual void do_save_existing() = 0;
 	virtual void do_save_new() = 0;
 	virtual void do_ghostify() = 0;
-	void increment_handle_counter();
 
 	/**
 	 * @returns true if and only if there are no Handle<Derived>
@@ -815,8 +813,7 @@ private:
 
 	/**
 	 * Called by Handle<Derived> via PersistentObjectHandleAttorney
-	 * to advise the underlying
-	 * object that a handle pointing to it has been constructed (not copy-
+	 * to trigger increment of reference count.
 	 * constructed, but ordinarily constructed).
 	 * 
 	 * @throws sqloxx::OverflowException if the maximum value
@@ -826,47 +823,14 @@ private:
 	 *
 	 * Exception safety: <em>strong guarantee</em>
 	 */
-	void notify_handle_construction();
-
-	/**
-	 * Called by Handle<Derived> via PersistentObjectHandleAttorney to
-	 * advise the underlying
-	 * object that a handle pointing to it has been copy-constructed.
-	 * 
-	 * @throws sqloxx::OverflowException if the maximum value of
-	 * HandleCounter has been reached such that additional handles
-	 * cannot be safely counted. On the default type for HandleCounter,
-	 * this should be extremely unlikely.
-	 *
-	 * Exception safety: <em>strong guarantee</em>.
-	 */
-	void notify_handle_copy_construction();
-
-	/**
-	 * Called by Handle<Derived> via PersistentObjectHandleAttorney
-	 * to advise the
-	 * underlying object that a handle pointing to it has appeared
-	 * as the right-hand operand of an assignment operation.
-	 *
-	 * @throws sqloxx::OverflowException if the maximum value of
-	 * HandleCounter has been reached such that additional handles
-	 * cannot be safely counted. On the default type for HandleCounter,
-	 * this should be extremely unlikely.
-	 *
-	 * Exception safety: <em>strong guarantee</em>.
-	 */
-	void notify_rhs_assignment_operation();
+	void increment_handle_counter();
 	
 	/**
 	 * Called by Handle<Derived> via PersistentObjectHandleAttorney
-	 * to advise the
-	 * underlying object that a Handle pointing to it has appeared
-	 * as the right-hand operand of an assignment operation.
+	 * to decrement reference count.
 	 *
 	 * Preconditions:\n
-	 * This function should only be called from Handle<Derived> to
-	 * notify that a Handle pointing to this instance of Derived
-	 * appears on the left side of an assignment operation;\n
+	 * This function should only be called from Handle<Derived>.
 	 * This instance of Derived must have been handled throughout
 	 * its life only via instances of Handle<Derived>, that have been obtained
 	 * from a single instance of IdentityMap<Derived, Connection>
@@ -877,18 +841,7 @@ private:
 	 * Exception safety: <em>nothrow guarantee</em> is offered, providing
 	 * the preconditions are met.
 	 */
-	void notify_lhs_assignment_operation();
-
-	/**
-	 * Called by Handle<Derived> via PersistentObjectHandleAttorney,
-	 * to advise the underlying
-	 * object that a handle pointing to it has been destructed.
-	 *
-	 * Preconditions: as for notify_lhs_assignment_operation().
-	 *
-	 * Exception safety: as for notify_lhs_assignment_operation().
-	 */
-	void notify_handle_destruction();
+	void decrement_handle_counter();
 
 	/**
 	 * Called by IdentityMap<Derived, Connection> via KeyAttorney to
@@ -907,26 +860,6 @@ private:
 	 * @todo Testing and documentation.
 	 */
 	void clear_id();
-
-	/**
-	 * Decrements handle counter and notifies the IdentityMap if it
-	 * reaches 0.
-	 *
-	 * @throws sqloxx::OverflowException if m_handle_counter is less
-	 * than 1 when this function is called.
-	 *
-	 * Preconditions: we must know that the object cached is in the
-	 * IdentityMap under m_cache_key. If the object has been managed
-	 * throughout its life by (a single instance of) IdentityMap,
-	 * and has only ever been
-	 * accessed via instances of Handle<Derived>, then we know this is
-	 * the case. Also, the destructor of Derived must be non-throwing.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>, providing the
-	 * object is cached in the IdentityMap under m_cache_key, and
-	 * the destructor of Derived is non-throwing.
-	 */
-	void decrement_handle_counter();
 
 	enum LoadingStatus
 	{
@@ -1187,50 +1120,6 @@ PersistentObject<Derived, Connection>::clear_id()
 	return;
 }
 
-template
-<typename Derived, typename Connection>
-void
-PersistentObject<Derived, Connection>::notify_handle_construction()
-{
-	increment_handle_counter();
-	return;
-}
-
-template
-<typename Derived, typename Connection>
-void
-PersistentObject<Derived, Connection>::notify_handle_copy_construction()
-{
-	increment_handle_counter();
-	return;
-}
-
-template
-<typename Derived, typename Connection>
-void
-PersistentObject<Derived, Connection>::notify_rhs_assignment_operation()
-{
-	increment_handle_counter();
-	return;
-}
-
-template
-<typename Derived, typename Connection>
-void
-PersistentObject<Derived, Connection>::notify_lhs_assignment_operation()
-{
-	decrement_handle_counter();
-	return;
-}
-
-template
-<typename Derived, typename Connection>
-void
-PersistentObject<Derived, Connection>::notify_handle_destruction()
-{
-	decrement_handle_counter();
-	return;
-}
 
 template
 <typename Derived, typename Connection>

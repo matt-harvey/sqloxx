@@ -4,13 +4,13 @@
 #include "general_typedefs.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/optional.hpp>
 #include <iterator>
+#include <memory>
 #include <string>
+#include <utility>
 
 namespace sqloxx
 {
@@ -87,7 +87,7 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	TableIterator();
+	TableIterator() = default;
 
 	/**
 	 * Creates a TableIterator that can traverse a table in the database
@@ -169,7 +169,15 @@ public:
 	 * Exception safety: <em>strong guarantee</em>, providing that the
 	 * copy constructor for T offers at least the strong guarantee.
 	 */
-	TableIterator(TableIterator const& rhs);
+	TableIterator(TableIterator const&) = default;
+
+	/**
+	 * @todo HIGH PRIORITY Test, and document esp. re. exception-safety.
+	 */
+	TableIterator(TableIterator&&) = default;
+
+	TableIterator& operator=(TableIterator const&) = delete;
+	TableIterator& operator=(TableIterator&&) = delete;
 
 	/**
 	 * Note destructor is virtual, TableIterator should not be used as a
@@ -178,7 +186,7 @@ public:
 	 * Exception safety: will never throw, assuming the destructor for T will
 	 * never throw.
 	 */
-	~TableIterator();
+	~TableIterator() = default;
 
 	/**
 	 * @returns a constant reference to the instance of T that is currently
@@ -305,27 +313,25 @@ public:
 
 private:
 
-	/**
-	 * NOT IMPLEMENTED.
-	 */
-	TableIterator& operator=(TableIterator const&);
-	
 	void advance();
 
-	class Impl: boost::noncopyable
+	class Impl
 	{
 	public:
 		Impl(Connection&, std::string const&);
-		~Impl();
+		Impl(Impl const&) = delete;
+		Impl(Impl&&) = delete;
+		Impl& operator=(Impl const&) = delete;
+		Impl& operator=(Impl&&) = delete;
+		~Impl() = default;
 		void next(boost::optional<T>& out);
-			
 	private:
 		Connection& m_connection;
 		SQLStatement m_sql_statement;
 
 	};  // class Impl
 
-	typedef boost::shared_ptr<Impl> Pimpl;
+	typedef std::shared_ptr<Impl> Pimpl;
 	Pimpl mutable m_impl;
 	boost::optional<T> m_maybe_object;
 
@@ -333,13 +339,6 @@ private:
 
 
 // IMPLEMENTATION
-
-template <typename T, typename Connection>
-inline
-TableIterator<T, Connection>::TableIterator()
-{
-	JEWEL_LOG_TRACE();
-}
 
 template <typename T, typename Connection>
 inline
@@ -351,22 +350,6 @@ TableIterator<T, Connection>::TableIterator
 {
 	JEWEL_LOG_TRACE();
 	advance();
-}
-
-template <typename T, typename Connection>
-inline
-TableIterator<T, Connection>::TableIterator(TableIterator const& rhs):
-	m_impl(rhs.m_impl),  // never throws
-	m_maybe_object(rhs.m_maybe_object)  // might throw
-{
-	JEWEL_LOG_TRACE();
-}
-
-template <typename T, typename Connection>
-inline
-TableIterator<T, Connection>::~TableIterator()
-{
-	JEWEL_LOG_TRACE();
 }
 
 template <typename T, typename Connection>
@@ -438,12 +421,6 @@ TableIterator<T, Connection>::Impl::Impl
 ):
 	m_connection(p_connection),
 	m_sql_statement(p_connection, p_statement_text)
-{
-}
-
-template <typename T, typename Connection>
-inline
-TableIterator<T, Connection>::Impl::~Impl()
 {
 }
 

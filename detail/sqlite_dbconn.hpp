@@ -38,9 +38,7 @@
 #include "sql_statement_impl.hpp"
 #include <jewel/checked_arithmetic.hpp>
 #include "sqlite3.h"  // Compiling directly into build
-#include <boost/cstdint.hpp>
 #include <boost/filesystem/path.hpp>
-#include <boost/noncopyable.hpp>
 #include <limits>
 #include <string>
 #include <vector>
@@ -70,8 +68,7 @@ namespace detail
  * Sqloxx, as well as a range of convenience functions that are not
  * provided by this lower-level class.
  */
-class SQLiteDBConn:
-	private boost::noncopyable
+class SQLiteDBConn
 {
 	friend class SQLStatementImpl;
 
@@ -86,6 +83,11 @@ public:
 	 * for any reason.
 	 */
 	SQLiteDBConn();
+
+	SQLiteDBConn(SQLiteDBConn const&) = delete;
+	SQLiteDBConn(SQLiteDBConn&&) = delete;
+	SQLiteDBConn& operator=(SQLiteDBConn const&) = delete;
+	SQLiteDBConn& operator=(SQLiteDBConn&&) = delete;
 
 	/**
 	 * Closes any open SQLite3 database connection, and also

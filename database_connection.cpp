@@ -7,8 +7,6 @@
 #include "sqloxx_exceptions.hpp"
 #include "detail/sql_statement_impl.hpp"
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
@@ -17,13 +15,13 @@
 #include <climits>
 #include <cstdio>
 #include <limits>
+#include <memory>
 #include <set>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
 
 
-using boost::shared_ptr;
-using boost::unordered_map;
 using jewel::value;
 using std::bad_alloc;
 using std::cout;
@@ -32,7 +30,9 @@ using std::endl;
 using std::fprintf;
 using std::numeric_limits;
 using std::set;
+using std::shared_ptr;
 using std::string;
+using std::unordered_map;
 
 namespace sqloxx
 {

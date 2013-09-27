@@ -7,21 +7,21 @@
 #include "../detail/sql_statement_impl.hpp"
 #include <UnitTest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
-#include <boost/shared_ptr.hpp>
 #include <jewel/assert.hpp>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <memory>
 #include <set>
 #include <string>
 
-using boost::shared_ptr;
 using std::cerr;
 using std::endl;
 using std::multiset;
 using std::ofstream;
 using std::multiset;
 using std::set;
+using std::shared_ptr;
 using std::string;
 
 

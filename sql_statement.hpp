@@ -5,8 +5,7 @@
 
 #include "database_connection.hpp"
 #include "detail/sql_statement_impl.hpp"
-#include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 
 
@@ -36,8 +35,7 @@ namespace sqloxx
  * from being used unless used
  * via the very same SQLStatement that triggered the invalid state.
  */
-class SQLStatement:
-	boost::noncopyable
+class SQLStatement
 {
 public:
 
@@ -75,6 +73,13 @@ public:
 	(	DatabaseConnection& p_database_connection,	
 		std::string const& p_statement_text
 	);
+
+	// TODO Provide a move constructor, even if I don't provide a copy
+	// constructor.
+	SQLStatement(SQLStatement const&) = delete;
+	SQLStatement(SQLStatement&&) = delete;
+	SQLStatement& operator=(SQLStatement const&) = delete;
+	SQLStatement& operator=(SQLStatement&&) = delete;
 
 	/**
 	 * Destructor "clears" the state of the underlying cached
@@ -201,7 +206,7 @@ public:
 
 private:
 
-	boost::shared_ptr<detail::SQLStatementImpl> m_sql_statement;
+	std::shared_ptr<detail::SQLStatementImpl> m_sql_statement;
 
 };
 

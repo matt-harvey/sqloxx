@@ -6,13 +6,13 @@
 #include "general_typedefs.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/numeric/conversion/cast.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
 #include <map>
+#include <memory>
 #include <stdexcept>
+#include <unordered_map>
 #include <utility>
 
 
@@ -248,8 +248,8 @@ public:
 private:
 
 	/**
-	 * Provide pointer to object of type T, representing a newly created object
-	 * that has not yet been persisted to the database.
+	 * Provide pointer to object of type T, representing a newly created
+	 * object that has not yet been persisted to the database.
 	 *
 	 * @returns a T* pointing to a newly constructed instance of T,
 	 * that is cached in this instance of IdentityMap<T, Connection>.
@@ -427,8 +427,8 @@ private:
 	 */
 	CacheKey provide_cache_key();
 
-	typedef typename boost::shared_ptr<T> Record;
-	typedef boost::unordered_map<Id, Record> IdMap;
+	typedef typename std::shared_ptr<T> Record;
+	typedef std::unordered_map<Id, Record> IdMap;
 	typedef std::map<CacheKey, Record> CacheKeyMap;
 
 	/**
@@ -502,7 +502,7 @@ private:
 		// pointing to it (m_caching == false).
 		bool is_caching; 
 	};
-	boost::shared_ptr<MapData> m_map_data;
+	std::shared_ptr<MapData> m_map_data;
 };
 
 
@@ -730,19 +730,14 @@ IdentityMap<T, Connection>::disable_caching()
 {
 	if (is_caching())
 	{
-		typename CacheKeyMap::iterator const endpoint = cache_key_map().end();
-		for
-		(	typename CacheKeyMap::iterator it = cache_key_map().begin();
-			it != endpoint;
-			++it
-		)
+		for (auto& cache_entry: cache_key_map)
 		{
 			if
 			(	PersistentObject<T, Connection>::HandleMonitorAttorney::
-					is_orphaned(*(it->second))
+					is_orphaned(*(cache_entry.second))
 			)
 			{
-				uncache_object(it->first);  // TODO Should this be partially_uncache_object?
+				uncache_object(cache_entry.first);  // TODO Should this be partially_uncache_object?
 			}
 		}
 		is_caching() = false;

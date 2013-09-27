@@ -4,11 +4,11 @@
 #include "database_connection.hpp"
 #include "detail/sql_statement_impl.hpp"
 #include <jewel/log.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <string>
 
-using boost::shared_ptr;
-using std::endl;  // for debug logging
+using std::shared_ptr;
+using std::endl;
 using std::string;
 
 

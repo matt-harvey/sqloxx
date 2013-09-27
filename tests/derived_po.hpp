@@ -10,7 +10,6 @@
 #include "../database_connection.hpp"
 #include "../identity_map.hpp"
 #include "../persistent_object.hpp"
-#include <boost/shared_ptr.hpp>
 #include <string>
 
 namespace sqloxx

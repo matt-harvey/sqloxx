@@ -3,7 +3,6 @@
 #ifndef GUARD_database_transaction_hpp_3761349159181746
 #define GUARD_database_transaction_hpp_3761349159181746
 
-#include <boost/noncopyable.hpp>
 
 namespace sqloxx
 {
@@ -91,8 +90,7 @@ class DatabaseConnection;
  * in the member function documentation for this class depends on this
  * being the case.
  */
-class DatabaseTransaction:
-	public boost::noncopyable
+class DatabaseTransaction
 {
 public:
 
@@ -122,6 +120,11 @@ public:
 	 * etc.) directly.
 	 */
 	explicit DatabaseTransaction(DatabaseConnection& p_database_connection);
+
+	DatabaseTransaction(DatabaseTransaction const&) = delete;
+	DatabaseTransaction(DatabaseTransaction&&) = delete;
+	DatabaseTransaction& operator=(DatabaseTransaction const&) = delete;
+	DatabaseTransaction& operator=(DatabaseTransaction&&) = delete;
 
 	/**
 	 * Preconditions: see documentation for class.

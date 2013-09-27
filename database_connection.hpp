@@ -4,13 +4,11 @@
 #define GUARD_database_connection_hpp_4041979952734886
 
 #include <boost/filesystem/path.hpp>
-#include <boost/noncopyable.hpp>
 #include <boost/optional.hpp>
-#include <boost/scoped_ptr.hpp>
-#include <boost/shared_ptr.hpp>
-#include <boost/unordered_map.hpp>
+#include <memory>
 #include <set>
 #include <string>
+#include <unordered_map>
 #include "sqloxx_exceptions.hpp"
 
 
@@ -46,13 +44,13 @@ namespace detail
  * Represents a SQLite3 database connection. Class can be extended to provide
  * representations of connections to application-specific databases.
  */
-class DatabaseConnection: private boost::noncopyable
+class DatabaseConnection
 {
 public:
 
 	typedef
-		boost::unordered_map
-		<	std::string, boost::shared_ptr<detail::SQLStatementImpl>
+		std::unordered_map
+		<	std::string, std::shared_ptr<detail::SQLStatementImpl>
 		>
 		StatementCache;
 	
@@ -75,6 +73,11 @@ public:
 	 */
 	explicit
 	DatabaseConnection(StatementCache::size_type p_cache_capacity = 300);
+
+	DatabaseConnection(DatabaseConnection const&) = delete;
+	DatabaseConnection(DatabaseConnection&&) = delete;
+	DatabaseConnection& operator=(DatabaseConnection const&) = delete;
+	DatabaseConnection& operator=(DatabaseConnection&&) = delete;
 
 	/**
 	 * Exception safety: <em>nothrow guarantee<em>. (Of course, the exception
@@ -201,7 +204,7 @@ public:
 	public:
 		friend class SQLStatement;
 	private:
-		static boost::shared_ptr<detail::SQLStatementImpl>
+		static std::shared_ptr<detail::SQLStatementImpl>
 			provide_sql_statement
 			(	DatabaseConnection& p_database_connection,
 				std::string const& p_statement_text
@@ -289,7 +292,7 @@ private:
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	boost::shared_ptr<detail::SQLStatementImpl> provide_sql_statement
+	std::shared_ptr<detail::SQLStatementImpl> provide_sql_statement
 	(	std::string const& statement_text
 	);
 
@@ -372,7 +375,7 @@ private:
 	void unchecked_rollback_transaction();
 	void unchecked_rollback_to_savepoint();
 
-	boost::scoped_ptr<detail::SQLiteDBConn> m_sqlite_dbconn;
+	std::unique_ptr<detail::SQLiteDBConn> m_sqlite_dbconn;
 
 	// s_max_nesting relies on m_transaction_nesting_level being an int
 	int m_transaction_nesting_level;
@@ -386,7 +389,7 @@ private:
 
 
 inline
-boost::shared_ptr<detail::SQLStatementImpl>
+std::shared_ptr<detail::SQLStatementImpl>
 DatabaseConnection::StatementAttorney::provide_sql_statement
 (	DatabaseConnection& p_database_connection,
 	std::string const& p_statement_text
