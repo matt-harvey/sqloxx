@@ -9,7 +9,6 @@
 #include "next_auto_key.hpp"
 #include "sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
-#include <boost/none.hpp>
 #include <boost/optional.hpp>
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
