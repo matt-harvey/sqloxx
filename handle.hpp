@@ -277,14 +277,17 @@ Handle<T>::operator=(Handle const& rhs)
 	JEWEL_ASSERT (m_pointer);
 	JEWEL_ASSERT (rhs.m_pointer);
 
-	// Strong guarantee, provided rhs has a valid pointer...
-	rhs.m_pointer->increment_handle_counter();
+	if (this != &rhs)
+	{
+		// Strong guarantee, provided rhs has a valid pointer...
+		rhs.m_pointer->increment_handle_counter();
 
-	// Nothrow guarantee, provided preconditions met, and
-	// provided rhs has a valid pointer.
-	m_pointer->decrement_handle_counter();
+		// Nothrow guarantee, provided preconditions met, and
+		// provided rhs has a valid pointer.
+		m_pointer->decrement_handle_counter();
 
-	m_pointer = rhs.m_pointer;  // nothrow
+		m_pointer = rhs.m_pointer;  // nothrow
+	}
 	return *this;  // nothrow, provided we have a valid pointer
 }
 
@@ -298,8 +301,12 @@ template <typename T>
 Handle<T>&
 Handle<T>::operator=(Handle&& rhs)
 {
-	m_pointer = std::move(rhs.m_pointer);
-	rhs.m_pointer = nullptr;
+	if (this != &rhs)
+	{
+		m_pointer = std::move(rhs.m_pointer);
+		rhs.m_pointer = nullptr;
+	}
+	return *this;
 }
 
 template <typename T>
