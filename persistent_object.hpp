@@ -213,12 +213,15 @@ public:
 	 */
 	Connection& database_connection() const;
 
+	PersistentObject& operator=(PersistentObject const&) = delete;
+	PersistentObject& operator=(PersistentObject&&) = delete;
+
 	/**
 	 * Destructor.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	virtual ~PersistentObject();
+	virtual ~PersistentObject() = default;
 
 	/**
 	 * Preconditions:\n
@@ -621,10 +624,7 @@ protected:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	PersistentObject
-	(	IdentityMap& p_identity_map,
-		Id p_id
-	);
+	PersistentObject(IdentityMap& p_identity_map, Id p_id);
 
 	/** 
 	 * This should only be called by Derived.
@@ -637,10 +637,7 @@ protected:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	explicit
-	PersistentObject
-	(	IdentityMap& p_identity_map
-	);
+	explicit PersistentObject(IdentityMap& p_identity_map);
 
 	/**
 	 * Calls the derived class's implementation
@@ -711,7 +708,15 @@ protected:
 	 * Exception safety: <em>nothrow guarantee</em> (though derived classes'
 	 * copy constructors might, of course, throw).
 	 */
-	PersistentObject(PersistentObject const& rhs);
+	PersistentObject(PersistentObject const&) = default;
+
+	/**
+	 * Move constructor.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em> (though derived
+	 * classes' move constructors might throw, of course).
+	 */
+	PersistentObject(PersistentObject&&) = default;
 
 	/**
 	 * Swap function. Does what you expect. This swaps the base part of
@@ -783,11 +788,6 @@ protected:
 	virtual void do_remove();
 
 private:
-
-	 // Deliberately unimplemented. Assignment doesn't make much semantic
-	 // sense for a PersistentObject that is supposed to
-	 // represent a \e unique object in the database with a unique id.
-	PersistentObject& operator=(PersistentObject const& rhs);
 
 	virtual void do_load() = 0;
 	virtual void do_save_existing() = 0;
@@ -896,8 +896,7 @@ private:
 
 
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 PersistentObject<Derived, Connection>::PersistentObject
 (	IdentityMap& p_identity_map,
 	Id p_id
@@ -909,8 +908,8 @@ PersistentObject<Derived, Connection>::PersistentObject
 {
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
+inline
 PersistentObject<Derived, Connection>::PersistentObject
 (	IdentityMap& p_identity_map	
 ):
@@ -923,14 +922,7 @@ PersistentObject<Derived, Connection>::PersistentObject
 {
 }
 
-template
-<typename Derived, typename Connection>
-PersistentObject<Derived, Connection>::~PersistentObject()
-{
-}
-
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 bool
 PersistentObject<Derived, Connection>::exists
 (	Connection& p_database_connection,
@@ -952,8 +944,7 @@ PersistentObject<Derived, Connection>::exists
 	return statement.step();
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 bool
 PersistentObject<Derived, Connection>::none_saved
 (	Connection& p_database_connection
@@ -969,8 +960,7 @@ PersistentObject<Derived, Connection>::none_saved
 	return !statement.step();
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 void
 PersistentObject<Derived, Connection>::load()
 {
@@ -998,8 +988,7 @@ PersistentObject<Derived, Connection>::load()
 	return;
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 void
 PersistentObject<Derived, Connection>::save()
 {
@@ -1063,8 +1052,7 @@ PersistentObject<Derived, Connection>::save()
 	return;
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 void
 PersistentObject<Derived, Connection>::remove()
 {
@@ -1093,16 +1081,16 @@ PersistentObject<Derived, Connection>::remove()
 	return;
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
+inline
 Id
 PersistentObject<Derived, Connection>::id() const
 {
 	return jewel::value(m_id);
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
+inline
 void
 PersistentObject<Derived, Connection>::set_cache_key(Id p_cache_key)
 {
@@ -1120,8 +1108,7 @@ PersistentObject<Derived, Connection>::clear_id()
 }
 
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 void
 PersistentObject<Derived, Connection>::increment_handle_counter()
 {
@@ -1137,8 +1124,7 @@ PersistentObject<Derived, Connection>::increment_handle_counter()
 	return;
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 void
 PersistentObject<Derived, Connection>::decrement_handle_counter()
 {
@@ -1167,16 +1153,15 @@ PersistentObject<Derived, Connection>::decrement_handle_counter()
 	return;
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
+inline
 Connection&
 PersistentObject<Derived, Connection>::database_connection() const
 {
 	return m_identity_map.connection();
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 Id
 PersistentObject<Derived, Connection>::prospective_key() const
 {
@@ -1193,8 +1178,7 @@ PersistentObject<Derived, Connection>::prospective_key() const
 	);
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 void
 PersistentObject<Derived, Connection>::do_remove()
 {
@@ -1215,8 +1199,8 @@ PersistentObject<Derived, Connection>::do_remove()
 	return;
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
+inline
 bool
 PersistentObject<Derived, Connection>::has_id() const
 {
@@ -1225,16 +1209,16 @@ PersistentObject<Derived, Connection>::has_id() const
 	return m_id;
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
+inline
 bool
 PersistentObject<Derived, Connection>::is_orphaned() const
 {
 	return m_handle_counter == 0;
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
+inline
 bool
 PersistentObject<Derived, Connection>::has_high_handle_count() const
 {
@@ -1243,8 +1227,7 @@ PersistentObject<Derived, Connection>::has_high_handle_count() const
 	return m_handle_counter >= safe_limit;
 }
 
-template
-<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 void
 PersistentObject<Derived, Connection>::
 ghostify()
@@ -1252,18 +1235,6 @@ ghostify()
 	do_ghostify();
 	m_loading_status = ghost;
 	return;
-}
-
-template
-<typename Derived, typename Connection>
-PersistentObject<Derived, Connection>::PersistentObject
-(	PersistentObject const& rhs
-):
-	m_identity_map(rhs.m_identity_map),
-	m_id(rhs.m_id),
-	m_cache_key(rhs.m_cache_key),
-	m_loading_status(rhs.m_loading_status)
-{
 }
 		
 template
@@ -1273,20 +1244,23 @@ PersistentObject<Derived, Connection>::swap_base_internals
 (	PersistentObject& rhs
 )
 {
-	IdentityMap temp_id_map = rhs.m_identity_map;
-	boost::optional<Id> temp_id = rhs.m_id;
-	boost::optional<Id> temp_cache_key = rhs.m_cache_key;
-	LoadingStatus temp_loading_status = rhs.m_loading_status;
+	IdentityMap const temp_id_map = rhs.m_identity_map;
+	boost::optional<Id> const temp_id = rhs.m_id;
+	boost::optional<Id> const temp_cache_key = rhs.m_cache_key;
+	LoadingStatus const temp_loading_status = rhs.m_loading_status;
+	HandleCounter const temp_handle_counter = rhs.m_handle_counter;
 
 	rhs.m_identity_map = m_identity_map;
 	rhs.m_id = m_id;
 	rhs.m_cache_key = m_cache_key;
 	rhs.m_loading_status = m_loading_status;
+	rhs.m_handle_counter = m_handle_counter;
 
 	m_identity_map = temp_id_map;
 	m_id = temp_id;
 	m_cache_key = temp_cache_key;
 	m_loading_status = temp_loading_status;
+	m_handle_counter = temp_handle_counter;
 
 	return;
 }

@@ -92,7 +92,12 @@ public:
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	IdentityMap(IdentityMap const& rhs);
-	
+
+	/**
+	 * @todo Document and test.
+	 */
+	IdentityMap(IdentityMap&&) = default;
+
 	/**
 	 * Destructor. The underlying cache is automatically emptied
 	 * of all objects (i.e. instances of T) on destruction of
@@ -116,6 +121,11 @@ public:
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	IdentityMap& operator=(IdentityMap const& rhs);
+
+	/**
+	 * @todo Document and test.
+	 */
+	IdentityMap& operator=(IdentityMap&&) = default;
 
 	/**
 	 * Turn on caching. When caching is on, objects loaded from the
