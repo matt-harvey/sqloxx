@@ -193,7 +193,7 @@ class PersistentObjectHandleAttorney;
  *
  * @todo Have a single location for documenting use of Sqloxx holistically.
  */
-template<typename Derived, typename Connection>
+template <typename Derived, typename Connection>
 class PersistentObject
 {
 public:

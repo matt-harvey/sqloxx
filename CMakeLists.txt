@@ -102,14 +102,17 @@ install(FILES
 		database_transaction.hpp
 		general_typedefs.hpp
 		handle.hpp
+		handle_fwd.hpp
 		identity_map.hpp
 		identity_map_fwd.hpp
 		next_auto_key.hpp
 		persistent_object.hpp
+		persistent_object_fwd.hpp
 		sql_statement.hpp
 		sql_statement_fwd.hpp
 		sqloxx_exceptions.hpp
 		table_iterator.hpp
+		table_iterator_fwd.hpp
 		DESTINATION
 		${inner_header_installation_dir})
 
