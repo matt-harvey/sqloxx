@@ -213,6 +213,9 @@ public:
 	 */
 	Connection& database_connection() const;
 
+	// note copy constructor is protected
+
+	PersistentObject(PersistentObject&&) = delete;
 	PersistentObject& operator=(PersistentObject const&) = delete;
 	PersistentObject& operator=(PersistentObject&&) = delete;
 
@@ -709,14 +712,6 @@ protected:
 	 * copy constructors might, of course, throw).
 	 */
 	PersistentObject(PersistentObject const&) = default;
-
-	/**
-	 * Move constructor.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em> (though derived
-	 * classes' move constructors might throw, of course).
-	 */
-	PersistentObject(PersistentObject&&) = default;
 
 	/**
 	 * Swap function. Does what you expect. This swaps the base part of
