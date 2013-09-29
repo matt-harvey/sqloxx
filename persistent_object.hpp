@@ -200,7 +200,6 @@ public:
 
 	friend class Handle<Derived>;
 
-	typedef sqloxx::Id Id;
 	typedef sqloxx::HandleCounter HandleCounter;
 	typedef sqloxx::IdentityMap<Derived, Connection> IdentityMap;
 
