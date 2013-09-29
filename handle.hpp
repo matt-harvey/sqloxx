@@ -190,6 +190,7 @@ private:
 
 
 template <typename T>
+inline
 std::string
 Handle<T>::primary_key_name()
 {
@@ -197,6 +198,7 @@ Handle<T>::primary_key_name()
 }
 
 template <typename T>
+inline
 std::string
 Handle<T>::primary_table_name()
 {
@@ -204,6 +206,7 @@ Handle<T>::primary_table_name()
 }
 
 template <typename T>
+inline
 std::string
 Handle<T>::exclusive_table_name()
 {
@@ -211,6 +214,7 @@ Handle<T>::exclusive_table_name()
 }
 
 template <typename T>
+inline
 Handle<T>::~Handle()
 {
 	if (m_pointer) m_pointer->decrement_handle_counter();
@@ -243,6 +247,7 @@ Handle<T>::Handle(Connection& p_connection, Id p_id):
 
 template <typename T>
 template <typename Connection>
+inline
 Handle<T>
 Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 {
@@ -261,7 +266,6 @@ Handle<T>::Handle(Handle const& rhs): m_pointer(rhs.m_pointer)
 	JEWEL_ASSERT (m_pointer);
 	m_pointer->increment_handle_counter();
 }
-
 
 template <typename T>
 Handle<T>::Handle(Handle& rhs): m_pointer(rhs.m_pointer)
@@ -292,6 +296,7 @@ Handle<T>::operator=(Handle const& rhs)
 }
 
 template <typename T>
+inline
 Handle<T>::Handle(Handle&& rhs): m_pointer(std::move(rhs.m_pointer))
 {
 	rhs.m_pointer = nullptr;
@@ -310,6 +315,7 @@ Handle<T>::operator=(Handle&& rhs)
 }
 
 template <typename T>
+inline
 Handle<T>::operator bool() const
 {
 	return static_cast<bool>(m_pointer);  // nothrow
@@ -327,7 +333,6 @@ Handle<T>::operator*() const
 	JEWEL_THROW(UnboundHandleException, "Unbound Handle.");
 }
 
-
 template <typename T>
 T*
 Handle<T>::operator->() const
@@ -340,6 +345,7 @@ Handle<T>::operator->() const
 }
 
 template <typename T>
+inline
 bool
 Handle<T>::operator==(Handle<T> const& rhs) const
 {
@@ -347,6 +353,7 @@ Handle<T>::operator==(Handle<T> const& rhs) const
 }
 
 template <typename T>
+inline
 bool
 Handle<T>::operator!=(Handle<T> const& rhs) const
 {
@@ -355,6 +362,7 @@ Handle<T>::operator!=(Handle<T> const& rhs) const
 
 
 template <typename T>
+inline
 Handle<T>::Handle(T* p_pointer): m_pointer(p_pointer)
 {
 	if (m_pointer) m_pointer->increment_handle_counter();
