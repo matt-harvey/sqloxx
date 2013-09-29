@@ -42,13 +42,16 @@ class Handle;
  * constuctors of the form:\n
  * T(Connection&); and\n
  * T(Connection&, T::Id)\n
- * These pass their arguments to the corresponding constructors of
- * PersistentObject<T, Connection>.
+ * These should then pass their arguments to the corresponding
+ * constructors of PersistentObject<T, Connection>. In T, these
+ * constructors should be declared private, and IdentityMap declared
+ * a friend class, to force client code to access T instances
+ * solely via sqloxx::Handle<T>.
  *
  * Each instance of IdentityMap has a particular Connection associated
  * with it. The IdentityMap caches objects loaded from the database,
- * and provides clients - in particular the sqloxx::Handle<T> class -
- * pointers to these objects. By using IdentityMap to cache objects,
+ * and provides the sqloxx::Handle<T> class
+ * with pointers to these objects. By using IdentityMap to cache objects,
  * application code can be sure that each single record of type T
  * that is stored in the database, has at most a single in-memory
  * object of type T associated with that record, loaded in memory
