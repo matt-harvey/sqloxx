@@ -244,7 +244,6 @@ Handle<T>::Handle(Connection& p_connection, Id p_id):
 	m_pointer->increment_handle_counter();
 }
 
-
 template <typename T>
 template <typename Connection>
 inline
@@ -258,7 +257,6 @@ Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 		)
 	);
 }
-
 
 template <typename T>
 Handle<T>::Handle(Handle const& rhs): m_pointer(rhs.m_pointer)

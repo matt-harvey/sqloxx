@@ -436,7 +436,7 @@ private:
 	/**
 	 * Returns a reference to the underlying cache in which objects
 	 * are indexed by CacheKey (as opposed to Id, which does not apply
-	 * to objects not yet persisted to the database.
+	 * to objects not yet persisted to the database).
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
