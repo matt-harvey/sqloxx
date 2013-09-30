@@ -9,6 +9,7 @@
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
+#include <jewel/signature.hpp>
 #include <map>
 #include <memory>
 #include <stdexcept>
@@ -33,14 +34,15 @@ class Handle;
  * to the class template. It is expected that T is a subclass of
  * sqloxx::PersistentObject<T, Connection>, and Connection is a
  * subclass of sqloxx::DatabaseConnection. T should define
- * constuctors of the form:\n
- * explicit T(Connection&); and\n
- * T(Connection&, T::Id)\n
- * These should then pass their arguments to the corresponding
- * constructors of PersistentObject<T, Connection>. In T, these
- * constructors should be declared private, and IdentityMap declared
- * a friend class, to force client code to access T instances
- * solely via sqloxx::Handle<T>.
+ * constructors of the form:\n
+ * T(Connection&, IdentityMap<T, Connection>::Signature const&); and\n
+ * T(Connection&, T::Id, IdentityMap<T, Connection>::Signature const&)\n
+ * These should then pass their parameters to the corresponding
+ * constructors of PersistentObject<T, Connection>; except that the
+ * final "Signature" parameter is not passed on.
+ * The purpose of the Signature parameter is to prevent
+ * the T constructor from being called by any class other than
+ * IdentityMap.
  *
  * Each instance of IdentityMap has a particular Connection associated
  * with it. The IdentityMap caches objects loaded from the database,
@@ -67,6 +69,8 @@ class IdentityMap
 public:
 
 	typedef sqloxx::Id CacheKey;
+
+	typedef jewel::Signature<IdentityMap> Signature;
 
 	/**
 	 * Construct an IdentityMap associated with the database
@@ -512,7 +516,7 @@ T*
 IdentityMap<T, Connection>::provide_pointer()
 {
 	// Comments here are to help ascertain exception-safety.
-	Record obj_ptr(new T(*this));  // T-dependent exception safety
+	Record obj_ptr(new T(*this, Signature()));  // T-dependent exception safety
 	CacheKey const cache_key = provide_cache_key(); // strong guarantee
 
 	// In the next statement:
@@ -561,7 +565,7 @@ IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 		// Then we need to create this object.
 
 		// Exception safety here depends on T.
-		Record obj_ptr(new T(*this, p_id));
+		Record obj_ptr(new T(*this, p_id, Signature()));
 
 		// atomic, possible sqloxx::OverflowException
 		CacheKey const cache_key = provide_cache_key();

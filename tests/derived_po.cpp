@@ -30,7 +30,8 @@ DerivedPO::setup_tables(DatabaseConnection& dbc)
 
 DerivedPO::DerivedPO
 (	IdentityMap& p_identity_map,
-	Id p_id
+	Id p_id,
+	IdentityMap::Signature const& p_sig
 ):
 	DPersistentObject
 	(	p_identity_map,
@@ -39,15 +40,18 @@ DerivedPO::DerivedPO
 	m_x(0),
 	m_y(0)
 {
+	(void)p_sig;  // silence compiler re. unused param.
 }
 
 DerivedPO::DerivedPO
-(	DIdentityMap& p_identity_map
+(	DIdentityMap& p_identity_map,
+	IdentityMap::Signature const& p_sig
 ):
 	DPersistentObject(p_identity_map),
 	m_x(0),
 	m_y(0)
 {
+	(void)p_sig;  // silence compiler re. unused param.
 }
 
 int
