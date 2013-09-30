@@ -15,11 +15,8 @@
 #include <unordered_map>
 #include <utility>
 
-
-
 namespace sqloxx
 {
-
 
 // Forward declarations
 
@@ -29,9 +26,6 @@ class PersistentObject;
 template <typename T>
 class Handle;
 
-
-
-
 /**
  * Provides an in-memory cache for objects of type T, where such
  * objects are persisted to a database via a database connection of
@@ -40,7 +34,7 @@ class Handle;
  * sqloxx::PersistentObject<T, Connection>, and Connection is a
  * subclass of sqloxx::DatabaseConnection. T should define
  * constuctors of the form:\n
- * T(Connection&); and\n
+ * explicit T(Connection&); and\n
  * T(Connection&, T::Id)\n
  * These should then pass their arguments to the corresponding
  * constructors of PersistentObject<T, Connection>. In T, these
@@ -94,7 +88,7 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	IdentityMap(IdentityMap const& rhs);
+	IdentityMap(IdentityMap const&) = default;
 
 	/**
 	 * @todo Document and test.
@@ -115,7 +109,7 @@ public:
 	 *
 	 * @todo Testing.
 	 */
-	~IdentityMap();
+	~IdentityMap() = default;
 
 	/**
 	 * Assignment is shallow, and with semantics like those of the
@@ -123,7 +117,7 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	IdentityMap& operator=(IdentityMap const& rhs);
+	IdentityMap& operator=(IdentityMap const&) = default;
 
 	/**
 	 * @todo Document and test.
@@ -167,7 +161,6 @@ public:
 	 */
 	Connection& connection();
 
-
 	/**
 	 * Control access to the provide_pointer functions, deliberately
 	 * limiting this access to the Handle<T> class.
@@ -195,7 +188,6 @@ public:
 	
 	friend class HandleAttorney;
 
-
 	/**
 	 * Control access to the various functions of the class
 	 * IdentityMap<T, Connection>, deliberately
@@ -204,11 +196,8 @@ public:
 	class PersistentObjectAttorney
 	{
 	public:
-
 		friend class PersistentObject<T, Connection>;
-
 	private:
-
 		static void register_id
 		(	IdentityMap& p_identity_map,
 			CacheKey p_cache_key,
@@ -218,7 +207,6 @@ public:
 			p_identity_map.register_id(p_cache_key, p_id);
 			return;
 		}
-
 		static void deregister_id
 		(	IdentityMap& p_identity_map,
 			Id p_id
@@ -227,7 +215,6 @@ public:
 			p_identity_map.deregister_id(p_id);
 			return;
 		}
-
 		static void notify_nil_handles
 		(	IdentityMap& p_identity_map,
 			CacheKey p_cache_key
@@ -236,7 +223,6 @@ public:
 			p_identity_map.notify_nil_handles(p_cache_key);
 			return;
 		}
-
 		static void uncache_object
 		(	IdentityMap& p_identity_map,	
 			CacheKey p_cache_key
@@ -245,7 +231,6 @@ public:
 			p_identity_map.uncache_object(p_cache_key);
 			return;
 		}
-
 		static void partially_uncache_object
 		(	IdentityMap& p_identity_map,
 			CacheKey p_cache_key
@@ -488,10 +473,6 @@ private:
 			is_caching(false)
 		{
 		}
-	
-		~MapData()
-		{
-		}
 
 		// Provides index to all cached objects, including those not as yet
 		// saved to the database.
@@ -527,33 +508,11 @@ IdentityMap<T, Connection>::IdentityMap(Connection& p_connection):
 }
 
 template <typename T, typename Connection>
-inline
-IdentityMap<T, Connection>::IdentityMap(IdentityMap const& rhs):
-	m_map_data(rhs.m_map_data)
-{
-}
-
-template <typename T, typename Connection>
-inline
-IdentityMap<T, Connection>::~IdentityMap()
-{
-}
-
-template <typename T, typename Connection>
-inline
-IdentityMap<T, Connection>&
-IdentityMap<T, Connection>::operator=(IdentityMap const& rhs)
-{
-	m_map_data = rhs.m_map_data;
-	return *this;
-}
-
-template <typename T, typename Connection>
 T*
 IdentityMap<T, Connection>::provide_pointer()
 {
 	// Comments here are to help ascertain exception-safety.
-	Record obj_ptr(new T(*this));  // T-dependant exception safety
+	Record obj_ptr(new T(*this));  // T-dependent exception safety
 	CacheKey const cache_key = provide_cache_key(); // strong guarantee
 
 	// In the next statement:
@@ -577,7 +536,6 @@ IdentityMap<T, Connection>::provide_pointer()
 	return obj_ptr.get();
 }
 
-
 template <typename T, typename Connection>
 T*
 IdentityMap<T, Connection>::provide_pointer(Id p_id)
@@ -592,7 +550,6 @@ IdentityMap<T, Connection>::provide_pointer(Id p_id)
 	}
 	return unchecked_provide_pointer(p_id);
 }
-
 
 template <typename T, typename Connection>
 T*
@@ -688,7 +645,6 @@ IdentityMap<T, Connection>::deregister_id(Id p_id)
 	return;
 }
 
-
 template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::uncache_object(CacheKey p_cache_key)
@@ -714,7 +670,6 @@ IdentityMap<T, Connection>::partially_uncache_object(CacheKey p_cache_key)
 	}
 	return;
 }
-
 
 template <typename T, typename Connection>
 void
@@ -766,7 +721,6 @@ IdentityMap<T, Connection>::connection()
 	return m_map_data->connection;
 }
 
-
 template <typename T, typename Connection>
 typename IdentityMap<T, Connection>::CacheKey
 IdentityMap<T, Connection>::provide_cache_key()
@@ -815,63 +769,6 @@ IdentityMap<T, Connection>::provide_cache_key()
 	JEWEL_ASSERT (cache_key_map().find(ret) == cache_key_map().end());
 	return last_cache_key() = ret;  // Intentional assignment
 }
-
-
-
-/*
-template <typename T, typename Connection>
-inline
-void
-IdentityMap<T, Connection>::Attorney::register_id
-(	IdentityMap& p_identity_map,
-	IdentityMap::CacheKey p_cache_key,
-	IdentityMap::Id p_id
-)
-{
-	p_identity_map.register_id(p_cache_key, p_id);
-	return;
-}
-
-
-template <typename T, typename Connection>
-inline
-void
-IdentityMap<T, Connection>::Attorney::deregister_id
-(	IdentityMap& p_identity_map,
-	IdentityMap::Id p_id
-)
-{
-	p_identity_map.deregister_id(p_id);
-	return;
-}
-
-
-template <typename T, typename Connection>
-inline
-void
-IdentityMap<T, Connection>::Attorney::notify_nil_handles
-(	IdentityMap& p_identity_map,
-	IdentityMap::CacheKey p_cache_key
-)
-{
-	p_identity_map.notify_nil_handles(p_cache_key);
-	return;
-}
-
-
-template <typename T, typename Connection>
-inline
-void
-IdentityMap<T, Connection>::Attorney::uncache_object
-(	IdentityMap& p_identity_map,
-	IdentityMap::CacheKey p_cache_key
-)
-{
-	p_identity_map.uncache_object(p_cache_key);
-	return;
-}
-*/
-
 
 }  // namespace sqloxx
 
