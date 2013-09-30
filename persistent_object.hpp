@@ -864,7 +864,8 @@ private:
 	
 	// Data members
 
-	IdentityMap& m_identity_map;
+	// non-owning pointer to IdentityMap in which object is cached.
+	IdentityMap* m_identity_map;
 
 	// Represent primary key in database. If the object does not correspond to
 	// and does not purport to correspond to any record in the database, then
@@ -895,7 +896,7 @@ PersistentObject<Derived, Connection>::PersistentObject
 (	IdentityMap& p_identity_map,
 	Id p_id
 ):
-	m_identity_map(p_identity_map),
+	m_identity_map(&p_identity_map),
 	m_id(p_id),
 	m_loading_status(ghost),
 	m_handle_counter(0)
@@ -907,7 +908,7 @@ inline
 PersistentObject<Derived, Connection>::PersistentObject
 (	IdentityMap& p_identity_map	
 ):
-	m_identity_map(p_identity_map),
+	m_identity_map(&p_identity_map),
 	m_loading_status(ghost),
 	m_handle_counter(0)
 	// Note m_cache_key is left unitialized. It is the responsibility
@@ -1016,7 +1017,7 @@ PersistentObject<Derived, Connection>::save()
 
 			// strong guarantee
 			IdentityMap::PersistentObjectAttorney::register_id
-			(	m_identity_map,
+			(	*m_identity_map,
 				*m_cache_key,
 				allocated_id
 			);
@@ -1028,7 +1029,7 @@ PersistentObject<Derived, Connection>::save()
 			{
 				// nothrow (assuming preconditions met)
 				IdentityMap::PersistentObjectAttorney::deregister_id
-				(	m_identity_map,
+				(	*m_identity_map,
 					allocated_id
 				);
 				throw;
@@ -1066,7 +1067,7 @@ PersistentObject<Derived, Connection>::remove()
 		}
 		// nothrow (conditional)
 		IdentityMap::PersistentObjectAttorney::partially_uncache_object
-		(	m_identity_map,
+		(	*m_identity_map,
 			*m_cache_key
 		);
 
@@ -1132,7 +1133,7 @@ PersistentObject<Derived, Connection>::decrement_handle_counter()
 		if (m_cache_key)
 		{
 			IdentityMap::PersistentObjectAttorney::notify_nil_handles
-			(	m_identity_map,
+			(	*m_identity_map,
 				*m_cache_key
 			);
 		}
@@ -1152,7 +1153,8 @@ inline
 Connection&
 PersistentObject<Derived, Connection>::database_connection() const
 {
-	return m_identity_map.connection();
+	JEWEL_ASSERT (m_identity_map);
+	return m_identity_map->connection();
 }
 
 template <typename Derived, typename Connection>
@@ -1238,7 +1240,7 @@ PersistentObject<Derived, Connection>::swap_base_internals
 (	PersistentObject& rhs
 )
 {
-	IdentityMap const temp_id_map = rhs.m_identity_map;
+	IdentityMap* const temp_id_map = rhs.m_identity_map;
 	boost::optional<Id> const temp_id = rhs.m_id;
 	boost::optional<Id> const temp_cache_key = rhs.m_cache_key;
 	LoadingStatus const temp_loading_status = rhs.m_loading_status;

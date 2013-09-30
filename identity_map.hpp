@@ -84,20 +84,10 @@ public:
 	 */
 	IdentityMap(Connection& p_connection);
 
-	/**
-	 * Copy constructor. Performs a shallow copy. The underlying
-	 * structures (e.g. database connection and cache) employed
-	 * by the new IdentityMap will be the very same as those employed
-	 * by rhs.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	IdentityMap(IdentityMap const&) = default;
-
-	/**
-	 * @todo Document and test.
-	 */
-	IdentityMap(IdentityMap&&) = default;
+	IdentityMap(IdentityMap const&) = delete;
+	IdentityMap(IdentityMap&&) = delete;
+	IdentityMap& operator=(IdentityMap const&) = delete;
+	IdentityMap& operator=(IdentityMap&&) = delete;
 
 	/**
 	 * Destructor. The underlying cache is automatically emptied
@@ -114,19 +104,6 @@ public:
 	 * @todo Testing.
 	 */
 	~IdentityMap() = default;
-
-	/**
-	 * Assignment is shallow, and with semantics like those of the
-	 * copy constructor.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	IdentityMap& operator=(IdentityMap const&) = default;
-
-	/**
-	 * @todo Document and test.
-	 */
-	IdentityMap& operator=(IdentityMap&&) = default;
 
 	/**
 	 * Turn on caching. When caching is on, objects loaded from the
@@ -158,10 +135,12 @@ public:
 	void disable_caching();
 
 	/**
-	 * @returns a reference to the database connection with which
-	 * this IdentityMap is associated.
-	 *
+	 * @returns a reference to the database connection associated with
+	 * this IdentityMap.
+	 * 
 	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo Is this function necessary?
 	 */
 	Connection& connection();
 
@@ -433,82 +412,40 @@ private:
 	typedef std::unordered_map<Id, Record> IdMap;
 	typedef std::map<CacheKey, Record> CacheKeyMap;
 
-	/**
-	 * Returns a reference to the underlying cache in which objects
-	 * are indexed by CacheKey (as opposed to Id, which does not apply
-	 * to objects not yet persisted to the database).
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
-	 */
-	CacheKeyMap& cache_key_map() const
-	{
-		return m_map_data->cache_key_map;
-	}
-
-	/**
-	 * Returns a reference to the underlying cache in which objectsa
-	 * are indexed Id (ass opposed to CacheKey.
-	 *
-	 * Exception safety: <nothrow guarantee</em>
-	 */
-	IdMap& id_map() const
-	{
-		return m_map_data->id_map;
-	}
-
-	CacheKey& last_cache_key() const
-	{
-		return m_map_data->last_cache_key;
-	}
-
-	bool& is_caching() const
-	{
-		return m_map_data->is_caching;
-	}
-
 	// Data members
 
-	// Hold data in a pimpl struct merely to facilitate safe, shallow copying.
-	struct MapData
-	{
-		MapData(Connection& p_connection):
-			connection(p_connection),
-			last_cache_key(0),
-			is_caching(false)
-		{
-		}
+	// Provides index to all cached objects, including those not as yet
+	// saved to the database.
+	CacheKeyMap m_cache_key_map;
 
-		// Provides index to all cached objects, including those not as yet
-		// saved to the database.
-		CacheKeyMap cache_key_map;
+	// Provides index to object that have been saved to the database,
+	// indexed by their primary key.
+	IdMap m_id_map;
 
-		// Provides index to objects that have been persisted to the database,
-		// indexed by their primary key in the database.
-		IdMap id_map;
+	// To database connection with which this IdentityMap is associated.
+	Connection& m_connection;
 
-		// The database connection with which this IdentityMap is associated.
-		Connection& connection; 
+	// The last key to have been assigned as an index into m_cache_key_map -
+	// or 0 if none have been assigned.
+	CacheKey m_last_cache_key = 0;
 
-		// The last key to be assigned as in index into cache_key_map - or
-		// 0 if none have been assigned.
-		CacheKey last_cache_key;
-
-		// Indicates whether the IdentityMap is currently
-		// holding objects indefinitely in the cache (m_caching == true),
-		// or whether it is
-		// clearing each object out when there are no longer handles
-		// pointing to it (m_caching == false).
-		bool is_caching; 
-	};
-	std::shared_ptr<MapData> m_map_data;
+	// Indicates whether the IdentityMap is currently holding objects
+	// indefinitely in the cache (m_caching == true), or whether
+	// it is clearing each object out when there are no longer
+	// handles pointing to it (m_caching == false).
+	bool m_is_caching = false;
 };
 
 
 template <typename T, typename Connection>
 inline
 IdentityMap<T, Connection>::IdentityMap(Connection& p_connection):
-	m_map_data(new MapData(p_connection))	
+	m_connection(p_connection)
 {
+	JEWEL_ASSERT (m_id_map.empty());
+	JEWEL_ASSERT (m_cache_key_map.empty());
+	JEWEL_ASSERT (m_last_cache_key == 0);
+	JEWEL_ASSERT (m_is_caching == false);
 }
 
 template <typename T, typename Connection>
@@ -525,12 +462,12 @@ IdentityMap<T, Connection>::provide_pointer()
 	// throws std::bad_alloc. If it throws, then obj_ptr
 	// will be deleted on exit (as it's a shared_ptr) - which amounts to
 	// rollback of provide_pointer().
-	cache_key_map().insert
+	m_cache_key_map.insert
 	(	typename CacheKeyMap::value_type(cache_key, obj_ptr)
 	);
 	// We could have done the following, but the above is more efficient and
 	// less "magical".
-	// cache_key_map()[cache_key] = obj_ptr; 
+	// m_cache_key_map[cache_key] = obj_ptr; 
 
 	// Nothrow
 	PersistentObject<T, Connection>::
@@ -544,7 +481,7 @@ template <typename T, typename Connection>
 T*
 IdentityMap<T, Connection>::provide_pointer(Id p_id)
 {
-	if (!PersistentObject<T, Connection>::exists(connection(), p_id))
+	if (!PersistentObject<T, Connection>::exists(m_connection, p_id))
 	{
 		JEWEL_THROW
 		(	BadIdentifier,
@@ -559,8 +496,8 @@ template <typename T, typename Connection>
 T*
 IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 {
-	typename IdMap::iterator it = id_map().find(p_id);
-	if (it == id_map().end())
+	typename IdMap::iterator it = m_id_map.find(p_id);
+	if (it == m_id_map.end())
 	{
 		// Then we need to create this object.
 
@@ -571,16 +508,16 @@ IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 		CacheKey const cache_key = provide_cache_key();
 
 		// atomic, possible std::bad_alloc
-		id_map().insert(typename IdMap::value_type(p_id, obj_ptr));
+		m_id_map.insert(typename IdMap::value_type(p_id, obj_ptr));
 		try
 		{
-			cache_key_map().insert
+			m_cache_key_map.insert
 			(	typename IdMap::value_type(cache_key, obj_ptr)
 			);
 		}
 		catch (std::bad_alloc&)
 		{
-			id_map().erase(p_id);
+			m_id_map.erase(p_id);
 			throw;
 		}
 
@@ -592,7 +529,7 @@ IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 		// newly loaded object.
 		return obj_ptr.get();
 	}
-	JEWEL_ASSERT (it != id_map().end());
+	JEWEL_ASSERT (it != m_id_map.end());
 	if
 	(	PersistentObject<T, Connection>::HandleMonitorAttorney::
 			has_high_handle_count(*(it->second))
@@ -611,12 +548,12 @@ void
 IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 {
 	typename CacheKeyMap::const_iterator const finder =
-		cache_key_map().find(p_cache_key);
-	JEWEL_ASSERT (finder != cache_key_map().end());  // Precondition
+		m_cache_key_map.find(p_cache_key);
+	JEWEL_ASSERT (finder != m_cache_key_map.end());  // Precondition
 	typedef typename std::pair<typename IdMap::const_iterator, bool>
 		InsertionResult;
 	typedef typename IdMap::value_type Elem;
-	InsertionResult res = id_map().insert(Elem(p_id, finder->second));
+	InsertionResult res = m_id_map.insert(Elem(p_id, finder->second));
 	if (!res.second)
 	{
 		// There was already an object with this id. This could occur
@@ -632,7 +569,7 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 		(	PersistentObject<T, Connection>::KeyAttorney::cache_key(old_obj)
 		);
 		PersistentObject<T, Connection>::KeyAttorney::clear_id(old_obj);
-		res = id_map().insert(Elem(p_id, finder->second));
+		res = m_id_map.insert(Elem(p_id, finder->second));
 		JEWEL_ASSERT (res.second);
 	}
 	return;
@@ -643,9 +580,9 @@ void
 IdentityMap<T, Connection>::deregister_id(Id p_id)
 {
 	// Precondition
-	JEWEL_ASSERT (id_map().find(p_id) != id_map().end());
+	JEWEL_ASSERT (m_id_map.find(p_id) != m_id_map.end());
 	
-	id_map().erase(p_id);
+	m_id_map.erase(p_id);
 	return;
 }
 
@@ -654,9 +591,9 @@ void
 IdentityMap<T, Connection>::uncache_object(CacheKey p_cache_key)
 {
 	// Precondition
-	JEWEL_ASSERT (cache_key_map().find(p_cache_key) != cache_key_map().end());
-	partially_uncache_object(p_cache_key);  // Erase from id_map()
-	cache_key_map().erase(p_cache_key);     // Erase from cache_key_map()
+	JEWEL_ASSERT (m_cache_key_map.find(p_cache_key) != m_cache_key_map.end());
+	partially_uncache_object(p_cache_key);  // Erase from m_id_map
+	m_cache_key_map.erase(p_cache_key);     // Erase from m_cache_key_map
 	return;
 }
 
@@ -665,12 +602,12 @@ void
 IdentityMap<T, Connection>::partially_uncache_object(CacheKey p_cache_key)
 {
 	// Precondition
-	JEWEL_ASSERT (cache_key_map().find(p_cache_key) != cache_key_map().end());
-	Record const record = cache_key_map().find(p_cache_key)->second;
+	JEWEL_ASSERT (m_cache_key_map.find(p_cache_key) != m_cache_key_map.end());
+	Record const record = m_cache_key_map.find(p_cache_key)->second;
 	if (record->has_id())
 	{
-		JEWEL_ASSERT (id_map().find(record->id()) != id_map().end());
-		id_map().erase(record->id());
+		JEWEL_ASSERT (m_id_map.find(record->id()) != m_id_map.end());
+		m_id_map.erase(record->id());
 	}
 	return;
 }
@@ -680,9 +617,9 @@ void
 IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 {
 	typename CacheKeyMap::const_iterator it =
-		cache_key_map().find(p_cache_key);
-	JEWEL_ASSERT (it != cache_key_map().end()); // Assert precondition
-	if (  !it->second->has_id()  ||  !is_caching()  )
+		m_cache_key_map.find(p_cache_key);
+	JEWEL_ASSERT (it != m_cache_key_map.end()); // Assert precondition
+	if ( !it->second->has_id()  ||  !m_is_caching )
 	{
 		uncache_object(p_cache_key);
 	}
@@ -693,16 +630,16 @@ template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::enable_caching()
 {
-	is_caching() = true;
+	m_is_caching = true;
 }
 
 template <typename T, typename Connection>
 void
 IdentityMap<T, Connection>::disable_caching()
 {
-	if (is_caching())
+	if (m_is_caching)
 	{
-		for (auto& cache_entry: cache_key_map())
+		for (auto& cache_entry: m_cache_key_map)
 		{
 			if
 			(	PersistentObject<T, Connection>::HandleMonitorAttorney::
@@ -712,7 +649,7 @@ IdentityMap<T, Connection>::disable_caching()
 				uncache_object(cache_entry.first);  // TODO Should this be partially_uncache_object?
 			}
 		}
-		is_caching() = false;
+		m_is_caching = false;
 	}
 	return;
 }
@@ -722,7 +659,7 @@ inline
 Connection&
 IdentityMap<T, Connection>::connection()
 {
-	return m_map_data->connection;
+	return m_connection;
 }
 
 template <typename T, typename Connection>
@@ -730,10 +667,10 @@ typename IdentityMap<T, Connection>::CacheKey
 IdentityMap<T, Connection>::provide_cache_key()
 {
 	static CacheKey const maximum = std::numeric_limits<CacheKey>::max();
-	typename CacheKeyMap::size_type const sz = cache_key_map().size();
+	typename CacheKeyMap::size_type const sz = m_cache_key_map.size();
 	if (sz == 0)
 	{
-		return last_cache_key() = 1;  // Intentional assignment
+		return m_last_cache_key = 1;  // Intentional assignment
 	}
 	if (sz == boost::numeric_cast<typename CacheKeyMap::size_type>(maximum))
 	{
@@ -750,28 +687,28 @@ IdentityMap<T, Connection>::provide_cache_key()
 			"in the IdentityMap."
 		);
 	}
-	CacheKey ret = last_cache_key();
+	CacheKey ret = m_last_cache_key;
 	typedef typename CacheKeyMap::const_iterator Iterator;
-	Iterator it = cache_key_map().find(ret);
-	Iterator const endpoint = cache_key_map().end();
+	Iterator it = m_cache_key_map.find(ret);
+	Iterator const endpoint = m_cache_key_map.end();
 	if (it == endpoint)
 	{
-		return last_cache_key();
+		return m_last_cache_key;
 	}
 
 	// Look for the first available unused key to assign to next_cache_key()
 	// ready for the next call to provide_cache_key(). This relies on
 	// CacheKeyMap being, or behaving like, std::map, in that it keeps its
 	// elements ordered by key.
-	JEWEL_ASSERT (cache_key_map().size() > 0);
+	JEWEL_ASSERT (m_cache_key_map.size() > 0);
 	while (ret == it->first)
 	{
 		if (ret == maximum) ret = 1;
 		else ++ret;
-		if (++it == endpoint) it = cache_key_map().begin();
+		if (++it == endpoint) it = m_cache_key_map.begin();
 	}
-	JEWEL_ASSERT (cache_key_map().find(ret) == cache_key_map().end());
-	return last_cache_key() = ret;  // Intentional assignment
+	JEWEL_ASSERT (m_cache_key_map.find(ret) == m_cache_key_map.end());
+	return m_last_cache_key = ret;  // Intentional assignment
 }
 
 }  // namespace sqloxx
