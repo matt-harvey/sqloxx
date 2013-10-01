@@ -160,7 +160,7 @@ public:
 	 *
 	 * @todo Testing.
 	 */
-	operator bool() const;
+	explicit operator bool() const;
 
 	/**
 	 * @returns the instance of T that is handled by this Handle<T>.
@@ -196,7 +196,7 @@ public:
 
 private:
 	
-	Handle(T* p_pointer);
+	explicit Handle(T* p_pointer);
 
 	T* m_pointer;
 };

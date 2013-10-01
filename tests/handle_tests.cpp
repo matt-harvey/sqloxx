@@ -121,7 +121,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_equality_and_inequality)
 	Handle<DerivedPO> dpo1(*pdbc);
 	Handle<DerivedPO> dpo2(dpo1);
 	CHECK(dpo1 == dpo2);
-	CHECK_EQUAL(dpo2, dpo1);
+	CHECK(dpo2 == dpo1);
 
 	Handle<DerivedPO> dpo3(*pdbc);
 	dpo3->set_x(109);
@@ -132,7 +132,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_equality_and_inequality)
 
 	Handle<DerivedPO> dpo4(*pdbc, 1);
 	CHECK(dpo4 == dpo3);
-	CHECK_EQUAL(dpo3, dpo4);
+	CHECK(dpo3 == dpo4);
 }
 
 
