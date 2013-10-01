@@ -4,7 +4,7 @@
 #define GUARD_identity_map_hpp_41089441925794556
 
 #include "general_typedefs.hpp"
-#include "handle_fwd.hpp"
+#include "handle.hpp"
 #include "persistence_traits.hpp"
 #include "persistent_object_fwd.hpp"
 #include "sqloxx_exceptions.hpp"
@@ -149,21 +149,25 @@ public:
 	class HandleAttorney
 	{
 	public:
+		// WARNING HIGH PRIORITY temp hack
+		template <typename X> friend class Handle;
+		/*
 		friend class Handle<T>;
 		friend class Handle<typename PersistenceTraits<T>::PrimaryT>;
+		*/
 	private:
 		template <typename DynamicT>
-		static T* get_pointer(IdentityMap& p_identity_map)
+		static DynamicT* get_pointer(IdentityMap& p_identity_map)
 		{
 			return p_identity_map.provide_pointer<DynamicT>();
 		}
 		template <typename DynamicT>
-		static T* get_pointer(IdentityMap& p_identity_map, Id p_id)
+		static DynamicT* get_pointer(IdentityMap& p_identity_map, Id p_id)
 		{
 			return p_identity_map.provide_pointer<DynamicT>(p_id);
 		}
 		template <typename DynamicT>
-		static T* unchecked_get_pointer
+		static DynamicT* unchecked_get_pointer
 		(	IdentityMap& p_identity_map, Id p_id
 		)
 		{
@@ -266,7 +270,7 @@ private:
 	 * state that is not rolled back but which does not affect client code).
 	 */
 	template <typename DynamicT>
-	T* provide_pointer();
+	DynamicT* provide_pointer();
 
 	/**
 	 * Provide pointer to object of static type T, and dynamic type DynamicT,
@@ -328,7 +332,7 @@ private:
 	 * of \e DynamicT? It should.
 	 */
 	template <typename DynamicT>
-	T* provide_pointer(Id p_id);
+	DynamicT* provide_pointer(Id p_id);
 
 	/**
 	 * Behaviour is exactly the same as provide_pointer(Id p_id), with the
@@ -345,7 +349,7 @@ private:
 	 * will fail.
 	 */
 	template <typename DynamicT>
-	T* unchecked_provide_pointer(Id p_id);
+	DynamicT* unchecked_provide_pointer(Id p_id);
 
 	/**
 	 * Register id of newly saved instance of T. This function is
@@ -477,7 +481,7 @@ IdentityMap<T, Connection>::IdentityMap(Connection& p_connection):
 
 template <typename T, typename Connection>
 template <typename DynamicT>
-T*
+DynamicT*
 IdentityMap<T, Connection>::provide_pointer()
 {
 	static_assert
@@ -516,12 +520,14 @@ IdentityMap<T, Connection>::provide_pointer()
 		KeyAttorney::set_cache_key(*obj_ptr, cache_key);
 
 	// In the below, get() is nothrow.
-	return obj_ptr.get();
+	DynamicT* const ret = dynamic_cast<DynamicT*>(obj_ptr.get());
+	JEWEL_ASSERT (ret);
+	return ret;
 }
 
 template <typename T, typename Connection>
 template <typename DynamicT>
-T*
+DynamicT*
 IdentityMap<T, Connection>::provide_pointer(Id p_id)
 {
 	static_assert
@@ -551,7 +557,7 @@ IdentityMap<T, Connection>::provide_pointer(Id p_id)
 
 template <typename T, typename Connection>
 template <typename DynamicT>
-T*
+DynamicT*
 IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 {
 	static_assert
@@ -599,7 +605,9 @@ IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 
 		// We know this won't throw sqloxx::OverflowError, as it's a
 		// newly loaded object.
-		return obj_ptr.get();
+		DynamicT* const ret = dynamic_cast<DynamicT*>(obj_ptr.get());
+		JEWEL_ASSERT (ret);
+		return ret;
 	}
 	JEWEL_ASSERT (it != m_id_map.end());
 	if
@@ -612,7 +620,9 @@ IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 			"Handle count for has reached dangerous level. "
 		);
 	}
-	return it->second.get();
+	DynamicT* const ret = dynamic_cast<DynamicT*>(it->second.get());
+	JEWEL_ASSERT (ret);
+	return ret;
 }
 
 template <typename T, typename Connection>

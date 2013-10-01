@@ -5,7 +5,7 @@
 
 #include "database_transaction.hpp"
 #include "general_typedefs.hpp"
-#include "handle_fwd.hpp"
+#include "handle.hpp"
 #include "identity_map.hpp"
 #include "next_auto_key.hpp"
 #include "persistence_traits.hpp"
@@ -181,8 +181,12 @@ public:
 	typedef typename sqloxx::PersistenceTraits<Derived>::PrimaryT PrimaryT;
 	typedef sqloxx::IdentityMap<PrimaryT, Connection> IdentityMap;
 
+	// WARNING HIGH PRIORITY temp hack
+	template <typename T> friend class Handle;
+	/*
 	friend class Handle<Derived>;
 	friend class Handle<PrimaryT>;
+	*/
 
 	/**
 	 * @returns a reference to the database connection with which
@@ -841,7 +845,6 @@ private:
 		loading,
 		loaded
 	};
-
 	
 	// Data members
 

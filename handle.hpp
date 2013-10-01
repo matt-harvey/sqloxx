@@ -4,7 +4,7 @@
 #define GUARD_handle_hpp_03158044118042125
 
 #include "general_typedefs.hpp"
-#include "identity_map.hpp"
+#include "identity_map_fwd.hpp"
 #include "persistence_traits.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <jewel/exception.hpp>
@@ -102,6 +102,9 @@ public:
 	template <typename Connection, typename DynamicT = T>
 	static Handle create(Connection& p_connection, Id p_id);
 
+	// TODO HIGH PRIORITY URGENT temp hack
+	T* get() { return m_pointer; }
+	
 	/**
 	 * Calling create_unchecked for an object that is NOT in the database with
 	 * the given id, causes UNDEFINED BEHAVIOUR.
