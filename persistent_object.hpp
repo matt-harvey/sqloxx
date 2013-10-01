@@ -5,8 +5,10 @@
 
 #include "database_transaction.hpp"
 #include "general_typedefs.hpp"
+#include "handle_fwd.hpp"
 #include "identity_map.hpp"
 #include "next_auto_key.hpp"
+#include "persistence_traits.hpp"
 #include "sql_statement.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <boost/optional.hpp>
@@ -17,21 +19,15 @@
 #include <exception>
 #include <string>
 
-#ifdef DEBUG
-	#include <iomanip>
-	#include <iostream>
-#endif
-
 namespace sqloxx
 {
 
-// Forward declaration
-template <typename T>
-class Handle;
+// forward declarations
 
 template <typename T>
 class PersistentObjectHandleAttorney;
 
+// end forward declarations
 
 /**
  * Class template for creating objects persisted to a database. This
@@ -45,12 +41,7 @@ class PersistentObjectHandleAttorney;
  * an auto-incrementing integer primary key.
  *
  * <b>IMPORTANT</b>: Only handle a PersistentObject instances via Handle
- * instances;\n
- * and always obtain Handle instances either: by copying or assigning existing
- * Handle instances; by calling
- * IdentityMap<Derived, Connection>::provide_handle(...); or
- * by calling get_handle<Derived>(...) (which in turn calls
- * IdentityMap<...>::provide_handle(...).
+ * instances.
  *
  * <b>Identity Map Pattern</b>
  *
@@ -60,15 +51,7 @@ class PersistentObjectHandleAttorney;
  * Architecture"). To enable this, sqloxx::PersistentObject is intended to
  * work in conjunction with sqloxx::IdentityMap and sqloxx::Handle.
  *
- * Say we have a client class derived from PersistentObject. Call this
- * class Derived. To obtain an instance of Derived, we call the
- * free-standing function sqloxx::get_handle<Derived>, declared in
- * database_connection.hpp. (See documentation therein for more details.)
- * 
-  * This will return a Handle<Derived> to the underlying Derived
- * instance, the instance itself being cached in the IdentityMap<Derived>
- * that is associated with the DatabaseConnection passed to get_handle.
- * Instances of Derived should only ever be handled via a Handle<Derived>.
+ * Instances of Derived should only ever be handled via a Handle.
  * Handles can be copied around, dereferenced, and otherwise treated
  * similarly to a shared_ptr. The PersistentObject part of the Derived
  * instance, together
@@ -77,10 +60,6 @@ class PersistentObjectHandleAttorney;
  * into memory (i.e. cached in the IdentityMap). This prevents problems
  * with objects being edited across multiple instances.
  *	
- * There is nothing to prevent client code from using a further
- * wrapper class around Handle<Derived>. This then becomes a
- * special case of the "pimpl" pattern.
- *
  * See sqloxx::IdentityMap and sqloxx::Handle for further documentation
  * here.
  *
@@ -198,10 +177,12 @@ class PersistentObject
 {
 public:
 
-	friend class Handle<Derived>;
-
 	typedef sqloxx::HandleCounter HandleCounter;
-	typedef sqloxx::IdentityMap<Derived, Connection> IdentityMap;
+	typedef typename sqloxx::PersistenceTraits<Derived>::PrimaryT PrimaryT;
+	typedef sqloxx::IdentityMap<PrimaryT, Connection> IdentityMap;
+
+	friend class Handle<Derived>;
+	friend class Handle<PrimaryT>;
 
 	/**
 	 * @returns a reference to the database connection with which
@@ -300,10 +281,10 @@ public:
 	/**
 	 * Preconditions:\n
 	 * The destructor of Derived must be non-throwing;\n
-	 * We have handled this object only via a Handle<Derived>, with
-	 * the Handle<Derived> having been copied or assigned from another
-	 * Handle<Derived>, or obtained by a call to
-	 * IdentityMap<Derived, Connection>::provide_handle(...);\n
+	 * We have handled this object only via a Handle, with
+	 * the Handle having been copied or assigned from another
+	 * Handle, or obtained by a call to one of Handle's
+	 * constructors or factory functions;\n
 	 * If the object has an id, the id corresponds to the primary
 	 * key of an object of this type that exists in the database;\n
 	 * do_save_existing() and do_save_new() must be defined in such
@@ -376,7 +357,7 @@ public:
 	 * the class Derived. The base save() function takes care of wrapping
 	 * this call as a SQL transaction. The base function also takes care of:
 	 * assigning an id to the newly saved object in the database; recording
-	 * this id in the in-memory object; and notifying the IdentityMap<Derived>
+	 * this id in the in-memory object; and notifying the IdentityMap
 	 * (i.e. the "cache") for this object, that it has been saved and assigned
 	 * its id.
 	 *
@@ -551,12 +532,12 @@ public:
 	/**
 	 * Provides access to get m_cache_key, set m_cache_key,
 	 * and clear m_id, only to
-	 * to IdentityMap<Derived, Connection>.
+	 * to IdentityMap<PrimaryT, Connection>.
 	 */
 	class KeyAttorney
 	{
 	public:
-		friend class sqloxx::IdentityMap<Derived, Connection>;
+		friend class sqloxx::IdentityMap<PrimaryT, Connection>;
 	private:
 		static void set_cache_key(Derived& p_obj, Id p_cache_key)
 		{
@@ -578,14 +559,14 @@ public:
 
 	/**
 	 * Controls access to functions that monitor the number of
-	 * Handle<T> instances pointing to a given instance of
+	 * Handle instances pointing to a given instance of
 	 * PersistentObject<T, Connection>, deliberately restricting
-	 * this access to IdentityMap<Derived, Connection>
+	 * this access to IdentityMap<PrimaryT, Connection>
 	 */
 	class HandleMonitorAttorney
 	{
 	public:
-		friend class sqloxx::IdentityMap<Derived, Connection>;
+		friend class sqloxx::IdentityMap<PrimaryT, Connection>;
 	private:
 		static bool is_orphaned(Derived const& p_obj)
 		{
@@ -789,7 +770,7 @@ private:
 	virtual void do_ghostify() = 0;
 
 	/**
-	 * @returns true if and only if there are no Handle<Derived>
+	 * @returns true if and only if there are no Handle
 	 * instances pointing to this object.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
@@ -805,12 +786,12 @@ private:
 	bool has_high_handle_count() const;
 
 	/**
-	 * Called by Handle<Derived> via PersistentObjectHandleAttorney
+	 * Called by Handle via PersistentObjectHandleAttorney
 	 * to trigger increment of reference count.
 	 * constructed, but ordinarily constructed).
 	 * 
 	 * @throws sqloxx::OverflowException if the maximum value
-	 * for type HandleCounter has been reached, such that additional Handle<T>
+	 * for type HandleCounter has been reached, such that additional Handle
 	 * cannot be safely counted. On the default type for HandleCounter,
 	 * this should be extremely unlikely.
 	 *
@@ -819,16 +800,16 @@ private:
 	void increment_handle_counter();
 	
 	/**
-	 * Called by Handle<Derived> via PersistentObjectHandleAttorney
+	 * Called by Handle via PersistentObjectHandleAttorney
 	 * to decrement reference count.
 	 *
 	 * Preconditions:\n
-	 * This function should only be called from Handle<Derived>.
+	 * This function should only be called from Handle.
 	 * This instance of Derived must have been handled throughout
-	 * its life only via instances of Handle<Derived>, that have been obtained
-	 * from a single instance of IdentityMap<Derived, Connection>
+	 * its life only via instances of Handle, that have been obtained
+	 * from a single instance of IdentityMap<PrimaryT, Connection>
 	 * via calls to the IdentityMap API, or else have been copied from other
-	 * instances of Handle<Derived>; and\n
+	 * instances of Handle; and\n
 	 * The destructor of derived must be non-throwing.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em> is offered, providing
@@ -837,7 +818,7 @@ private:
 	void decrement_handle_counter();
 
 	/**
-	 * Called by IdentityMap<Derived, Connection> via KeyAttorney to
+	 * Called by IdentityMap<PrimaryT, Connection> via KeyAttorney to
 	 * provide a "cache
 	 * key" to the object. The cache key is used by IdentityMap to
 	 * identify the object in its internal cache. Every object created by
@@ -872,9 +853,9 @@ private:
 	// m_id in unitialized.
 	boost::optional<Id> m_id;
 	
-	// Represents the identifier, in the IdentityMap<Derived> for
+	// Represents the identifier, in the IdentityMap for
 	// m_database_connection, of an instance of Derived. The
-	// IdentityMap<Derived> can look up a PersistentObject either via its id
+	// IdentityMap can look up a PersistentObject either via its id
 	// (which corresponds to its primary key in the database), or via
 	// its cache_key. PersistentObject instances that are newly created and
 	// have not yet been saved to the database will not have an id (i.e. m_id
@@ -912,7 +893,7 @@ PersistentObject<Derived, Connection>::PersistentObject
 	m_loading_status(ghost),
 	m_handle_counter(0)
 	// Note m_cache_key is left unitialized. It is the responsibility
-	// of IdentityMap<Derived> to call set_cache_key after construction,
+	// of IdentityMap to call set_cache_key after construction,
 	// before providing a Handle to a newly created Derived instance.
 {
 }

@@ -5,6 +5,7 @@
 
 #include "general_typedefs.hpp"
 #include "identity_map.hpp"
+#include "persistence_traits.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <jewel/exception.hpp>
 #include <utility>
@@ -12,20 +13,22 @@
 namespace sqloxx
 {
 
-
-
 /**
  * Handle for handling business objects of type T where T is a class
  * derived from PersistentObject and is
- * managed via IdentityMap<T> to ensure only one instance of T exists in
- * memory at any one time, in relation to any given record in a given
- * database.
+ * managed via IdentityMap<PersistenceTraits<T>::PrimaryT> to ensure only one
+ * instance of T exists in memory at any one time, in relation to any given
+ * record in a given database.
  *
  * T should be associated with a instance of Connection, where Connection
  * is a subclass of sqloxx::DatabaseConnection, with a member function
- * identity_map<T>() that returns an instance of IdentityMap<T, Connection>
- * unique to that database connection, for managing instances of T. (See
- * separate documentation for IdentityMap.)
+ * template identity_map<S>() that is specialized for
+ * S = PersistentTraits<T>::PrimaryT, that returns an instance of
+ * IdentityMap<PrimaryT, Connection>
+ * unique to that database connection, for managing instances of PrimaryT.
+ * (See separate documentation for IdentityMap.) (By default PrimaryT will be
+ * the same type as T, but it need not be; see documentation
+ * for PersistenceTraits.)
  *
  * @todo Testing.
  */
@@ -33,6 +36,8 @@ template <typename T>
 class Handle
 {
 public:
+
+	typedef typename PersistenceTraits<T>::PrimaryT PrimaryT;
 
 	static std::string primary_key_name();
 	static std::string primary_table_name();
@@ -92,14 +97,19 @@ public:
 	Handle(Connection& p_connection, Id p_id);
 
 	/**
+	 * @todo Testing and documentation.
+	 */
+	template <typename Connection, typename DynamicT = T>
+	static Handle create(Connection& p_connection, Id p_id);
+
+	/**
 	 * Calling create_unchecked for an object that is NOT in the database with
 	 * the given id, causes UNDEFINED BEHAVIOUR.
 	 *
 	 * @todo Documentation and testing.
 	 */
-	template <typename Connection>
-	Handle
-	static create_unchecked(Connection& p_connection, Id p_id);
+	template <typename Connection, typename DynamicT = T>
+	static Handle create_unchecked(Connection& p_connection, Id p_id);
 
 	/**
 	 * @throws sqloxx::OverflowException in the extremely unlikely
@@ -224,8 +234,10 @@ template <typename T>
 template <typename Connection>
 Handle<T>::Handle(Connection& p_connection): m_pointer(nullptr)
 {
-	m_pointer = IdentityMap<T, Connection>::HandleAttorney::get_pointer
-	(	p_connection.template identity_map<T>()
+	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
+	typedef typename IdentityMap::HandleAttorney Attorney;
+	m_pointer = Attorney::template get_pointer<T>
+	(	p_connection.template identity_map<PrimaryT>()
 	);
 	JEWEL_ASSERT (m_pointer);
 	m_pointer->increment_handle_counter();
@@ -236,8 +248,10 @@ template <typename Connection>
 Handle<T>::Handle(Connection& p_connection, Id p_id):
 	m_pointer(nullptr)
 {
-	m_pointer = IdentityMap<T, Connection>::HandleAttorney::get_pointer
-	(	p_connection.template identity_map<T>(),
+	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
+	typedef typename IdentityMap::HandleAttorney Attorney;
+	m_pointer = Attorney::template get_pointer<T>
+	(	p_connection.template identity_map<PrimaryT>(),
 		p_id
 	);
 	JEWEL_ASSERT (m_pointer);
@@ -245,14 +259,30 @@ Handle<T>::Handle(Connection& p_connection, Id p_id):
 }
 
 template <typename T>
-template <typename Connection>
-inline
+template <typename Connection, typename DynamicT>
+Handle<T>
+Handle<T>::create(Connection& p_connection, Id p_id)
+{
+	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
+	typedef typename IdentityMap::HandleAttorney Attorney;
+	return Handle<T>
+	(	Attorney::template get_pointer<DynamicT>
+		(	p_connection.template identity_map<PrimaryT>(),
+			p_id
+		)
+	);
+}
+
+template <typename T>
+template <typename Connection, typename DynamicT>
 Handle<T>
 Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 {
+	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
+	typedef typename IdentityMap::HandleAttorney Attorney;
 	return Handle<T>
-	(	IdentityMap<T, Connection>::HandleAttorney::unchecked_get_pointer
-		(	p_connection.template identity_map<T>(),
+	(	Attorney::template unchecked_get_pointer<DynamicT>
+		(	p_connection.template identity_map<PrimaryT>(),
 			p_id
 		)
 	);
