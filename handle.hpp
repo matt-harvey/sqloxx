@@ -18,7 +18,7 @@ namespace sqloxx
  * derived from PersistentObject and is
  * managed via IdentityMap<PersistenceTraits<T>::PrimaryT> to ensure only one
  * instance of T exists in memory at any one time, in relation to any given
- * record in a given database.
+ * record in the database.
  *
  * T should be associated with a instance of Connection, where Connection
  * is a subclass of sqloxx::DatabaseConnection, with a member function

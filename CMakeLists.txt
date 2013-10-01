@@ -108,6 +108,7 @@ install(FILES
 		next_auto_key.hpp
 		persistent_object.hpp
 		persistent_object_fwd.hpp
+		persistence_traits.hpp
 		sql_statement.hpp
 		sql_statement_fwd.hpp
 		sqloxx_exceptions.hpp

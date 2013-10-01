@@ -10,6 +10,12 @@
 # existence of the crashed database file, check that the database state
 # is as expected given the crash, output the result of this check to
 # standard output, and then run the remaining unit tests.
+#
+# Normally this script should be run as "test.tcl" with no arguments.
+# However if you pass additional arguments, these are prefixed within
+# the internal execution command for running the test suite.
+# Thus running "test.tcl valgrind" will cause the test suite
+# to be run through the valgrind program.
 
 set filename testfile9182734123.db
 
@@ -22,11 +28,11 @@ if {[file exists $filename] || [file exists ${filename}-journal]} {
 puts "Running atomicity test..."
 
 # This execution crashes, but we recover
-catch { exec ./sqloxx_test $filename 2>@ stderr >@ stdout }
+catch { exec {*}$argv ./sqloxx_test $filename 2>@ stderr >@ stdout }
 
 # And in this second execution we inspect the database to see that it
 # reacted as expected; and then we perform the other unit tests.
-catch { exec ./sqloxx_test $filename 2>@ stderr >@ stdout }
+catch { exec {*}$argv ./sqloxx_test $filename 2>@ stderr >@ stdout }
 
 # And clean up left over files
 catch { file delete $filename }

@@ -30,7 +30,7 @@ namespace sqloxx
  * to the class template. It is expected that T is a subclass of
  * sqloxx::PersistentObject<T, Connection>, and Connection is a
  * subclass of sqloxx::DatabaseConnection.
- * Where IdentityMap is the type IdentityMap<PersistenceTraits<T>::PrimaryT, Connection>,
+ *
  * T should define
  * constructors of the form:\n
  * T(IdentityMap&, IdentityMap::Signature const&); and\n
