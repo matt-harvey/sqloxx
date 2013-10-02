@@ -184,6 +184,9 @@ public:
 
 	template <typename T> friend class Handle;
 
+	template <typename L, typename R>
+	friend Handle<L> handle_cast(Handle<R> const& rhs);
+
 	/**
 	 * @returns a reference to the database connection with which
 	 * this instance of PersistentObject is associated. This is where the

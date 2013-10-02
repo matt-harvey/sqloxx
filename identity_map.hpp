@@ -144,28 +144,30 @@ public:
 	 * Control access to the provide_pointer functions, deliberately
 	 * limiting this access to the Handle class.
 	 */
+	template <typename DynamicT>
 	class HandleAttorney
 	{
 	public:
 		friend class Handle<T>;
+		friend class Handle<DynamicT>;
 	private:
-		static T* get_pointer(IdentityMap& p_identity_map)
+		static DynamicT* get_pointer(IdentityMap& p_identity_map)
 		{
-			return p_identity_map.provide_pointer();
+			return p_identity_map.provide_pointer<DynamicT>();
 		}
-		static T* get_pointer(IdentityMap& p_identity_map, Id p_id)
+		static DynamicT* get_pointer(IdentityMap& p_identity_map, Id p_id)
 		{
-			return p_identity_map.provide_pointer(p_id);
+			return p_identity_map.provide_pointer<DynamicT>(p_id);
 		}
-		static T* unchecked_get_pointer
+		static DynamicT* unchecked_get_pointer
 		(	IdentityMap& p_identity_map, Id p_id
 		)
 		{
-			return p_identity_map.unchecked_provide_pointer(p_id);
+			return p_identity_map.unchecked_provide_pointer<DynamicT>(p_id);
 		}
 	};
 
-	template <typename> friend class HandleAttorney;
+	template <typename DynamicT> friend class HandleAttorney;
 
 	/**
 	 * Control access to the various functions of the class
@@ -225,10 +227,19 @@ public:
 private:
 
 	/**
-	 * Provide pointer to object of type T, representing a newly created
+	 * Provide pointer to object of type static type T, and dynamic type
+	 * DynamicT, representing a newly created
 	 * object that has not yet been persisted to the database.
+	 * Typically DynamicT will be the same type as T, but it need
+	 * not be - it might be a class derived from T.
 	 *
-	 * @returns a T* pointing to a newly constructed instance of T,
+	 * DynamicT must also be such that PersistenceTraits<T>::Base is the
+	 * same as T. DynamicT must also be, or be derived, from T.
+	 * If derived from T, then T must
+	 * be a polymorphic base class. If these conditions fail, compilation
+	 * will fail.
+	 *
+	 * @returns a T* pointing to a newly constructed instance of DynamicT,
 	 * that is cached in this instance of IdentityMap<T>.
 	 *
 	 * @throws sqloxx::OverflowException in the extremely unlikely
@@ -239,24 +250,32 @@ private:
 	 * @throws std::bad_alloc in the unlikely event of memory allocation
 	 * failure during the creating and caching of the instance of T.
 	 *
-	 * <em>In addition</em>, any exceptions thrown from the T
+	 * <em>In addition</em>, any exceptions thrown from the DynamicT
 	 * constructor may also
 	 * be thrown from provide_pointer().
 	 *
-	 * Exception safety depends on the constructor of T of the form
-	 * T(IdentityMap&, IdentityMap::Signature const&).
+	 * Exception safety depends on the constructor of DerivedT of the form
+	 * DynamicT(IdentityMap&, IdentityMap::Signature const&).
 	 * Provided this constructor offers at
 	 * least the <em>strong guarantee</em>, then provide_pointer() offers the
 	 * <em>strong guarantee</em> (although there may be some internal cache
 	 * state that is not rolled back but which does not affect client code).
 	 */
-	T* provide_pointer();
+	template <typename DynamicT>
+	DynamicT* provide_pointer();
 
 	/**
-	 * Provide pointer to object of static type T, representing an object
+	 * Provide pointer to object of static type T, and dynamic type DynamicT,
+	 * representing an object
 	 * already stored in the database, with primary key (id) p_id.
 	 *
-	 * @returns a T* pointing to an instance of T corresponding
+	 * DynamicT must also be such that PersistenceTraits<T>::Base is the
+	 * same as T. DynamicT must also be, or be derived, from T.
+	 * If derived from T, then T must
+	 * be a polymorphic base class. If these conditions fail, compilation
+	 * will fail.
+	 *
+	 * @returns a pointer<T> pointing to an instance of DynamicT corresponding
 	 * to a record of the corresponding type already persisted in the
 	 * database, with p_id as its primary key.
 	 *
@@ -289,8 +308,8 @@ private:
 	 * <em>In addition</em>, any exceptions thrown from the T constructor
 	 * may also be thrown from provide_pointer().
 	 *
-	 * Exception safety depends on the constructor of T of the form
-	 * T(IdentityMap&, Id, IdentityMap::Signature const&).
+	 * Exception safety depends on the constructor of DynamicT of the form
+	 * DynamicT(IdentityMap&, Id, IdentityMap::Signature const&).
 	 * Provided this constructor offers at least the
 	 * <em>strong guarantee</em>, then provide_pointer() offers the
 	 * <em>strong guarantee</em> (although there may be some internal cache
@@ -302,19 +321,27 @@ private:
 	 * unchecked_provide_pointer separately as well.
 	 *
 	 * @todo HIGH PRIORITY Does this check for existence in the exclusive_table
-	 * of \e T? It should.
+	 * of \e DynamicT? It should.
 	 */
-	T* provide_pointer(Id p_id);
+	template <typename DynamicT>
+	DynamicT* provide_pointer(Id p_id);
 
 	/**
 	 * Behaviour is exactly the same as provide_pointer(Id p_id), with the
 	 * sole difference that (a) the unchecked version is faster, and
-	 * (b) if a record of type T, with p_id as its primary key,
+	 * (b) if a record of type DynamicT, with p_id as its primary key,
 	 * does not exist in the database, then, rather than an exception
 	 * being thrown, behaviour is undefined. This function should \e never be
 	 * called unless you are \e sure p_id is an existing primary key.
+	 *
+	 * DynamicT must also be such that PersistenceTraits<T>::Base is the
+	 * same as T. DynamicT must also be, or be derived, from T.
+	 * If derived from T, then T must
+	 * be a polymorphic base class. If these conditions fail, compilation
+	 * will fail.
 	 */
-	T* unchecked_provide_pointer(Id p_id);
+	template <typename DynamicT>
+	DynamicT* unchecked_provide_pointer(Id p_id);
 
 	/**
 	 * Register id of newly saved instance of T. This function is
@@ -445,7 +472,8 @@ IdentityMap<T>::IdentityMap(Connection& p_connection):
 }
 
 template <typename T>
-T*
+template <typename DynamicT>
+DynamicT*
 IdentityMap<T>::provide_pointer()
 {
 	static_assert
@@ -456,8 +484,14 @@ IdentityMap<T>::provide_pointer()
 		"Invalid instantiation of provide_pointer template."
 	);
 
+	static_assert
+	(	std::is_same<T, DynamicT>::value ||
+		(std::is_polymorphic<T>::value && std::is_base_of<T, DynamicT>::value),
+		"Invalid instantiation of provide_pointer template."
+	);
+
 	// Comments here are to help ascertain exception-safety.
-	Record obj_ptr(new T(*this, Signature()));  // T-dependent exception safety
+	Record obj_ptr(new DynamicT(*this, Signature()));  // T-dependent exception safety
 	CacheKey const cache_key = provide_cache_key(); // strong guarantee
 
 	// In the next statement:
@@ -465,7 +499,7 @@ IdentityMap<T>::provide_pointer()
 	// calling insert either (a) succeeds, or (b) fails completely and
 	// throws std::bad_alloc. If it throws, then obj_ptr
 	// will be deleted on exit (as it's a shared_ptr) - which amounts to
-	// rollback of provide_pointer<T>().
+	// rollback of provide_pointer<DynamicT>().
 	m_cache_key_map.insert
 	(	typename CacheKeyMap::value_type(cache_key, obj_ptr)
 	);
@@ -478,13 +512,14 @@ IdentityMap<T>::provide_pointer()
 		KeyAttorney::set_cache_key(*obj_ptr, cache_key);
 
 	// In the below, get() is nothrow.
-	T* const ret = obj_ptr.get();
+	DynamicT* const ret = dynamic_cast<DynamicT*>(obj_ptr.get());
 	JEWEL_ASSERT (ret);
 	return ret;
 }
 
 template <typename T>
-T*
+template <typename DynamicT>
+DynamicT*
 IdentityMap<T>::provide_pointer(Id p_id)
 {
 	static_assert
@@ -494,6 +529,13 @@ IdentityMap<T>::provide_pointer(Id p_id)
 		>::value,
 		"Invalid instantiation of provide_pointer template."
 	);
+
+	static_assert
+	(	std::is_same<T, DynamicT>::value ||
+		(std::is_polymorphic<T>::value && std::is_base_of<T, DynamicT>::value),
+		"Invalid instantiation of provide_pointer template."
+	);
+
 	if (!PersistentObject<T, Connection>::exists(m_connection, p_id))
 	{
 		JEWEL_THROW
@@ -502,11 +544,12 @@ IdentityMap<T>::provide_pointer(Id p_id)
 			"requested type with the requested id."
 		);
 	}
-	return unchecked_provide_pointer(p_id);
+	return unchecked_provide_pointer<DynamicT>(p_id);
 }
 
 template <typename T>
-T*
+template <typename DynamicT>
+DynamicT*
 IdentityMap<T>::unchecked_provide_pointer(Id p_id)
 {
 	static_assert
@@ -517,13 +560,19 @@ IdentityMap<T>::unchecked_provide_pointer(Id p_id)
 		"Invalid instantiation of unchecked_provide_pointer template."
 	);
 
+	static_assert
+	(	std::is_same<T, DynamicT>::value ||
+		(std::is_polymorphic<T>::value && std::is_base_of<T, DynamicT>::value),
+		"Invalid instantiation of unchecked_provide_pointer template."
+	);
+
 	typename IdMap::iterator it = m_id_map.find(p_id);
 	if (it == m_id_map.end())
 	{
 		// Then we need to create this object.
 
 		// Exception safety here depends on T.
-		Record obj_ptr(new T(*this, p_id, Signature()));
+		Record obj_ptr(new DynamicT(*this, p_id, Signature()));
 
 		// atomic, possible sqloxx::OverflowException
 		CacheKey const cache_key = provide_cache_key();
@@ -548,7 +597,7 @@ IdentityMap<T>::unchecked_provide_pointer(Id p_id)
 
 		// We know this won't throw sqloxx::OverflowError, as it's a
 		// newly loaded object.
-		T* const ret = obj_ptr.get();
+		DynamicT* const ret = dynamic_cast<DynamicT*>(obj_ptr.get());
 		JEWEL_ASSERT (ret);
 		return ret;
 	}
@@ -563,7 +612,7 @@ IdentityMap<T>::unchecked_provide_pointer(Id p_id)
 			"Handle count for has reached dangerous level. "
 		);
 	}
-	T* const ret = it->second.get();
+	DynamicT* const ret = dynamic_cast<DynamicT*>(it->second.get());
 	JEWEL_ASSERT (ret);
 	return ret;
 }

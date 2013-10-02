@@ -188,7 +188,7 @@ public:
 private:
 
 	typedef IdentityMap<Base> IdentityMapT;
-	typedef typename IdentityMapT::HandleAttorney AttorneyT;
+	typedef typename IdentityMapT::template HandleAttorney<T> AttorneyT;
 
 	explicit Handle(T* p_pointer);
 
