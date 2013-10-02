@@ -42,6 +42,9 @@ public:
 	typedef typename T::Connection Connection;
 	typedef typename PersistenceTraits<T>::Base Base;
 
+	template <typename L, typename R>
+	friend Handle<L> handle_cast(Handle<R> const& rhs);
+
 	static std::string primary_key_name();
 	static std::string primary_table_name();
 	static std::string exclusive_table_name();
@@ -103,28 +106,11 @@ public:
 	Handle(Connection& p_connection, Id p_id);
 
 	/**
-	 * @todo Testing and documentation.
-	 */
-	template <typename DynamicT = T>
-	static Handle create(Connection& p_connection, Id p_id);
-
-	/**
-	 * @todo Testing and documentation and move implementation
-	 * out of class body.
-	 */
-	template <typename DynamicT>
-	bool has_dynamic_type()
-	{
-		return static_cast<bool>(dynamic_cast<DynamicT*>(m_pointer));
-	}
-
-	/**
 	 * Calling create_unchecked for an object that is NOT in the database with
 	 * the given id, causes UNDEFINED BEHAVIOUR.
 	 *
 	 * @todo Documentation and testing.
 	 */
-	template <typename DynamicT = T>
 	static Handle create_unchecked(Connection& p_connection, Id p_id);
 
 	/**
@@ -133,18 +119,10 @@ public:
 	 * underlying instance of T is too large to be safely counted
 	 * by the type PersistentObject<T, Connection>::HandleCounter.
 	 *
-	 * Note it is necessary for both const& and non-const& forms
-	 * to be defined here, otherwise the compiler confuses it
-	 * with the templated single-parameter constructor. (OK,
-	 * possibly the const& form is never getting called. But
-	 * we want to make certain the compiler doesn't create
-	 * an undesirable version for us...)
-	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	Handle(Handle const& rhs);
-	Handle(Handle& rhs);
-
+	
 	/**
 	 * @throws sqloxx::OverflowException in the extremely unlikely
 	 * event that the number of Handle instances pointing to the
@@ -210,11 +188,40 @@ public:
 private:
 
 	typedef IdentityMap<Base> IdentityMapT;
+	typedef typename IdentityMapT::HandleAttorney AttorneyT;
 
 	explicit Handle(T* p_pointer);
 
 	T* m_pointer = nullptr;
 };
+
+// NON-MEMBER FUNCTIONS
+
+/**
+ * R must be such that PersistenceTraits<L>::Base is the same type
+ * as PersistenceTraits<R>::Base.
+ *
+ * L and R must also be such that L::Connection is the same type
+ * as R::Connection.
+ *
+ * Finally, L must be a base class of R, or must be one and the same
+ * type as R, or else R must be a base class of L.
+ *
+ * These preconditions enforced using static_asserts.
+ *
+ * A dynamic_cast is attempted on the underlying pointer. If it
+ * succeeds, then the returned Handle<L> will point to one and the
+ * same object of the common base type. If it fails, then the returned
+ * pointer will be null.
+ *
+ * @todo Document exception safety, and test.
+ */
+template <typename L, typename R>
+Handle<L>
+handle_cast(Handle<R> const& rhs);
+
+
+// FUNCTION IMPLEMENTATIONS
 
 template <typename T>
 inline
@@ -250,8 +257,7 @@ Handle<T>::~Handle()
 template <typename T>
 Handle<T>::Handle(Connection& p_connection)
 {
-	typedef typename IdentityMapT::template HandleAttorney<T> Attorney;
-	m_pointer = Attorney::get_pointer
+	m_pointer = AttorneyT::get_pointer
 	(	p_connection.template identity_map<Base>()
 	);
 	JEWEL_ASSERT (m_pointer);
@@ -261,8 +267,7 @@ Handle<T>::Handle(Connection& p_connection)
 template <typename T>
 Handle<T>::Handle(Connection& p_connection, Id p_id)
 {
-	typedef typename IdentityMapT::template HandleAttorney<T> Attorney;
-	m_pointer = Attorney::get_pointer
+	m_pointer = AttorneyT::get_pointer
 	(	p_connection.template identity_map<Base>(),
 		p_id
 	);
@@ -271,37 +276,11 @@ Handle<T>::Handle(Connection& p_connection, Id p_id)
 }
 
 template <typename T>
-template <typename DynamicT>
-Handle<T>
-Handle<T>::create(Connection& p_connection, Id p_id)
-{
-	typedef typename PersistenceTraits<DynamicT>::Base DPT;
-	static_assert
-	(	std::is_same<T, DPT>::value || std::is_same<T, DynamicT>::value,
-		"Invalid instantiation of Handle<T>::create template."
-	);
-	typedef typename IdentityMapT::template HandleAttorney<DynamicT> Attorney;
-	return Handle<T>
-	(	Attorney::get_pointer
-		(	p_connection.template identity_map<Base>(),
-			p_id
-		)
-	);
-}
-
-template <typename T>
-template <typename DynamicT>
 Handle<T>
 Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 {
-	typedef typename PersistenceTraits<DynamicT>::Base DPT;
-	static_assert
-	(	std::is_same<T, DPT>::value || std::is_same<T, DynamicT>::value,
-		"Invalid instantiation of Handle<T>::create template."
-	);
-	typedef typename IdentityMapT::template HandleAttorney<DynamicT> Attorney;
 	return Handle<T>
-	(	Attorney::unchecked_get_pointer
+	(	AttorneyT::unchecked_get_pointer
 		(	p_connection.template identity_map<Base>(),
 			p_id
 		)
@@ -310,12 +289,6 @@ Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 
 template <typename T>
 Handle<T>::Handle(Handle const& rhs): m_pointer(rhs.m_pointer)
-{
-	if (m_pointer) m_pointer->increment_handle_counter();
-}
-
-template <typename T>
-Handle<T>::Handle(Handle& rhs): m_pointer(rhs.m_pointer)
 {
 	if (m_pointer) m_pointer->increment_handle_counter();
 }
@@ -410,7 +383,40 @@ Handle<T>::Handle(T* p_pointer): m_pointer(p_pointer)
 	if (m_pointer) m_pointer->increment_handle_counter();
 }
 
-		
+template <typename L, typename R>
+Handle<L>
+handle_cast(Handle<R> const& rhs)
+{
+	static_assert
+	(	std::is_base_of<L, R>::value ||
+		std::is_base_of<R, L>::value ||
+		std::is_same<L, R>::value,
+		"Invalid instantiation of sqloxx::handle_cast."
+	);
+	static_assert
+	(	std::is_same
+		<	typename PersistenceTraits<L>::Base,
+			typename PersistenceTraits<R>::Base
+		>::value,
+		"Invalid instantiation of sqloxx::handle_cast."
+	);
+	static_assert
+	(	std::is_same
+		<	typename L::Connection,
+			typename R::Connection
+		>::value,
+		"Invalid instantiation of sqloxx::handle_cast."
+	);
+	Handle<L> ret;
+	if (rhs.m_pointer)
+	{
+		ret.m_pointer = dynamic_cast<L*>(rhs.m_pointer);
+		if (ret.m_pointer) ret.m_pointer->increment_handle_counter();
+	}
+	return ret;
+}
+
+
 
 }  // namespace sqloxx
 
