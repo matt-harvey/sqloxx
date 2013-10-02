@@ -146,27 +146,21 @@ public:
 	 * Control access to the provide_pointer functions, deliberately
 	 * limiting this access to the Handle class.
 	 */
+	template <typename DynamicT>
 	class HandleAttorney
 	{
 	public:
-		// WARNING HIGH PRIORITY temp hack
-		template <typename X> friend class Handle;
-		/*
 		friend class Handle<T>;
-		friend class Handle<typename PersistenceTraits<T>::PrimaryT>;
-		*/
+		friend class Handle<DynamicT>;
 	private:
-		template <typename DynamicT>
 		static DynamicT* get_pointer(IdentityMap& p_identity_map)
 		{
 			return p_identity_map.provide_pointer<DynamicT>();
 		}
-		template <typename DynamicT>
 		static DynamicT* get_pointer(IdentityMap& p_identity_map, Id p_id)
 		{
 			return p_identity_map.provide_pointer<DynamicT>(p_id);
 		}
-		template <typename DynamicT>
 		static DynamicT* unchecked_get_pointer
 		(	IdentityMap& p_identity_map, Id p_id
 		)
@@ -174,8 +168,8 @@ public:
 			return p_identity_map.unchecked_provide_pointer<DynamicT>(p_id);
 		}
 	};
-	
-	friend class HandleAttorney;
+
+	template <typename DynamicT> friend class HandleAttorney;
 
 	/**
 	 * Control access to the various functions of the class

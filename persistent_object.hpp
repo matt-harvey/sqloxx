@@ -18,6 +18,7 @@
 #include <jewel/optional.hpp>
 #include <exception>
 #include <string>
+#include <type_traits>
 
 namespace sqloxx
 {
@@ -177,16 +178,10 @@ class PersistentObject
 {
 public:
 
-	typedef sqloxx::HandleCounter HandleCounter;
 	typedef typename sqloxx::PersistenceTraits<Derived>::PrimaryT PrimaryT;
 	typedef sqloxx::IdentityMap<PrimaryT, Connection> IdentityMap;
 
-	// WARNING HIGH PRIORITY temp hack
 	template <typename T> friend class Handle;
-	/*
-	friend class Handle<Derived>;
-	friend class Handle<PrimaryT>;
-	*/
 
 	/**
 	 * @returns a reference to the database connection with which

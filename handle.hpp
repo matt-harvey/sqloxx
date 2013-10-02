@@ -7,7 +7,9 @@
 #include "identity_map_fwd.hpp"
 #include "persistence_traits.hpp"
 #include "sqloxx_exceptions.hpp"
+#include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
+#include <type_traits>
 #include <utility>
 
 namespace sqloxx
@@ -103,7 +105,10 @@ public:
 	static Handle create(Connection& p_connection, Id p_id);
 
 	// TODO HIGH PRIORITY URGENT temp hack
-	T* get() { return m_pointer; }
+	T* get()
+	{
+		return m_pointer;
+	}
 	
 	/**
 	 * Calling create_unchecked for an object that is NOT in the database with
@@ -238,8 +243,8 @@ template <typename Connection>
 Handle<T>::Handle(Connection& p_connection): m_pointer(nullptr)
 {
 	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
-	typedef typename IdentityMap::HandleAttorney Attorney;
-	m_pointer = Attorney::template get_pointer<T>
+	typedef typename IdentityMap::template HandleAttorney<T> Attorney;
+	m_pointer = Attorney::get_pointer
 	(	p_connection.template identity_map<PrimaryT>()
 	);
 	JEWEL_ASSERT (m_pointer);
@@ -252,8 +257,8 @@ Handle<T>::Handle(Connection& p_connection, Id p_id):
 	m_pointer(nullptr)
 {
 	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
-	typedef typename IdentityMap::HandleAttorney Attorney;
-	m_pointer = Attorney::template get_pointer<T>
+	typedef typename IdentityMap::template HandleAttorney<T> Attorney;
+	m_pointer = Attorney::get_pointer
 	(	p_connection.template identity_map<PrimaryT>(),
 		p_id
 	);
@@ -266,10 +271,19 @@ template <typename Connection, typename DynamicT>
 Handle<T>
 Handle<T>::create(Connection& p_connection, Id p_id)
 {
+	static_assert
+	(	std::is_same
+		<	T,
+			typename PersistenceTraits<DynamicT>::PrimaryT
+		>::value ||
+			std::is_same<T, DynamicT>::value,
+		"Invalid instantiation of Handle<T>::create template."
+	);
+
 	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
-	typedef typename IdentityMap::HandleAttorney Attorney;
+	typedef typename IdentityMap::template HandleAttorney<DynamicT> Attorney;
 	return Handle<T>
-	(	Attorney::template get_pointer<DynamicT>
+	(	Attorney::get_pointer
 		(	p_connection.template identity_map<PrimaryT>(),
 			p_id
 		)
@@ -281,10 +295,19 @@ template <typename Connection, typename DynamicT>
 Handle<T>
 Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 {
+	static_assert
+	(	std::is_same
+		<	T,
+			typename PersistenceTraits<DynamicT>::PrimaryT
+		>::value ||
+			std::is_same<T, DynamicT>::value,
+		"Invalid instantiation of Handle<T>::create_unchecked template."
+	);
+
 	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
-	typedef typename IdentityMap::HandleAttorney Attorney;
+	typedef typename IdentityMap::template HandleAttorney<DynamicT> Attorney;
 	return Handle<T>
-	(	Attorney::template unchecked_get_pointer<DynamicT>
+	(	Attorney::unchecked_get_pointer
 		(	p_connection.template identity_map<PrimaryT>(),
 			p_id
 		)
