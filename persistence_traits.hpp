@@ -21,7 +21,18 @@ struct PersistenceTraits
 	 * key of Derived will be in a column in the "Base table"
 	 * in the database. Then Derived may have its own table with
 	 * a column that references the primary key column in the
-	 * Base table.
+	 * Base table. The PrimaryT class must have the following functions
+	 * defined:
+	 *
+	 * <em>static std::string exclusive_table_name();</em>.
+	 * This must return the table name of the table in which
+	 * the primary key of T is ultimately stored.
+	 *
+	 * <em>static std::string primary_key_name();<em>
+	 * This must return the name of the primary key for T as it
+	 * appears in the table named by exclusive_table_name(). This
+	 * must be a single-column integer primary key that is
+	 * auto-incrementing (using the SQLite "autoincrement" keyword).
 	 *
 	 * @todo Improve this explanation.
 	 */

@@ -187,15 +187,9 @@ DerivedPO::do_ghostify()
 }
 
 string
-DerivedPO::primary_table_name()
-{
-	return "derived_pos";
-}
-
-string
 DerivedPO::exclusive_table_name()
 {
-	return primary_table_name();
+	return "derived_pos";
 }
 
 string

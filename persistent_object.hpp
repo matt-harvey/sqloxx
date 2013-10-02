@@ -107,12 +107,27 @@ class PersistentObjectHandleAttorney;
  * The following functions need to be provided with definitions
  * provided in the Derived class:
  *
- * <em>static std::string primary_table_name();</em>\n
- * Should return name of table in which instances of the derived class
- * are persisted in the database. If instance are persisted across
- * multiple tables, this function should return the "primary table",
- * i.e. a table containing the primary key for this class, such that
- * every persisted instance of this class has a row in this table.
+ * <em>static std::string exclusive_table_name();</em>\n
+ * Should return, without side effects, the name of table in which
+ * instances of the derived class
+ * are persisted in the database. If instances fields are persisted in
+ * multiple tables (which is often the case where class hierarchies
+ * are involved), the exclusive_table_name() should return the name
+ * of the table in which <em>all and only</em> primary keys of \e T
+ * occur (this generally corresponds to the derived class table, not
+ * the base class table).
+ *
+ * <em>static std::string primary_key_name();<em>\n
+ * Should return, without side effects, the name of the primary
+ * key column for T. This primary key column must appear in
+ * the table named by \e exclusive_table_name(). The primary key
+ * must be a single-column integer primary key that is autoincrementing
+ * (using the SQLite "autoincrement" key word).
+ * If PersistentTraits<...> has been specialized for T, then it
+ * is the class PersistenceTraits<T>::PrimaryT for which primary_key_name()
+ * must be defined, rather than T per se. The primary key name must
+ * be the same both in the table name by T::exclusive_table_name() and
+ * PrimaryT::exclusive_table_name().
  *
  * <em>virtual void do_load() = 0;</em>\n
  * See documentation of load() function.
@@ -132,21 +147,6 @@ class PersistentObjectHandleAttorney;
  *
  * <em>virtual void do_remove();\n
  * See documentation for remove() function.
- *
- *
- * <b>Derived class static functions</b>
- *
- * The folliwng functions need to be defined by the Derived class:
- *
- * static std::string Derived::primary_table_name();\n
- * Should return the name of the database table in which all the
- * primary keys of records for storing instances of Derived appear
- * in the database. Should have no side effects.
- *
- * static std::string Derived::primary_key_name();\n
- * Should return the name of the primary key column of the table
- * named by primary_table_name(). Should have no side effects.
- * (Note the primary key must be an autoincrementing primary key.)
  *
  *
  * <b>Template parameters</b>
@@ -211,25 +211,18 @@ public:
 	virtual ~PersistentObject() = default;
 
 	/**
-	 * Preconditions:\n
-	 * Derived::primary_key_name() and Derived::exclusive_table_name()
-	 * must be defined as static functions that, without side-effects,
-	 * return a std::string being, respectively, the name of the
-	 * primary key column
-	 * for type Derived as it is stored in the database, and the name
-	 * of the database table in which instances of Derived are stored
-	 * such that ALL and ONLY instances of Derived (and not any other
-	 * class) are stored in this table. Note, exclusive_table_name()
-	 * may have the same return value as primary_table_name(), but
-	 * this will not be always so. Sometimes a class may share a
-	 * primary table with other classes, in which case the shared
-	 * table will not be its exclusive table. In such cases - assuming
-	 * a sensible database design - there will be another table in
-	 * the database that is its exclusive table.
-	 * 
+	 * @returns PersistenceTraits<T>::PrimaryT::exclusive_table_name().
+	 *
+	 * @todo Document exception throwing behaviour and test.
+	 */
+	static std::string primary_table_name();
+	
+	/**
 	 * @returns true if and only if an object with p_id as its
 	 * primary key exists in
-	 * the database to which p_database_connection is connected.
+	 * the database to which p_database_connection is connected,
+	 * in the "exclusive table" for T (i.e. the table with the
+	 * name returned by "exclusive table name").
 	 * Note the database is always checked, not the
 	 * cache.
 	 *
@@ -249,19 +242,6 @@ public:
 	static bool exists(Connection& p_database_connection, Id p_id);
 
 	/**
-	 * Preconditions:\n
-	 * Derived::exclusive_table_name() must be defined as a static function
-	 * that, without side-effects, returns a std::string being the name
-	 * of the database table in which instances of Derived are stored
-	 * such that ALL and ONLY instances of Derived (and not any other
-	 * class) are stored in this table. Note, exclusive_table_name()
-	 * may have the same return value as primary_table_name(), but
-	 * this will not be always so. Sometimes a class may share a
-	 * primary table with other classes, in which case the shared
-	 * table will not be its exclusive table. In such cases - assuming
-	 * a sensible database design - there will be another table in
-	 * the database that is its exclusive table.
-	 * 
 	 * @returns true if and only if there are no objects of type Derived
 	 * saved in the database.
 	 * Note the database is always checked, not the
@@ -301,11 +281,6 @@ public:
 	 * Every setter and getter method defined in the Derived class must have
 	 * a call to load() as its first statement (see below for
 	 * explanation);\n
-	 * The primary_table_name() static function must be defined in the
-	 * class Derived, and must simply return a std::string, being the
-	 * name of the table in which instances of Derived are stored
-	 * using an autoincrementing integer primary key (using the
-	 * built-in SQLite "autoincrement" qualifier);\n
 	 * Derived::do_ghostify() must be defined so as to be non-throwing;\n
 	 * Derived::do_load() preconditions must be met (see documentation
 	 * for load());
@@ -732,9 +707,7 @@ protected:
 	 * in the event of an invalid database connection.
 	 *
 	 * Exception safety: the default implementation offers the
-	 * <em>strong guarantee</em> - providing the virtual
-	 * function primary_table_name() does nothing odd but simply returns a
-	 * std::string as would be expected.
+	 * <em>strong guarantee</em>.
 	 */
 	Id prospective_key() const;
 
@@ -748,14 +721,7 @@ protected:
 	 *
 	 * The default implementation of this function will simply delete
 	 * the row with the primary key returned by id(), in the table
-	 * named by Derived::primary_table_name().
-	 *
-	 * Preconditions:\n
-	 * Derived::primary_table_name() must be defined by Derived so as
-	 * to return the name of the table in which all instances of Derived
-	 * are stored with their primary key, as a std::string; and\n
-	 * The primary key must be a single column primary key, the name
-	 * of which is returned by Derived::primary_key_name().
+	 * named by PersistenceTraits<Derived>::PrimaryT::exclusive_table_name().
 	 *
 	 * @throws InvalidConnection if the database connection is invalid.
 	 *
@@ -902,6 +868,14 @@ PersistentObject<Derived, Connection>::PersistentObject
 }
 
 template <typename Derived, typename Connection>
+inline
+std::string
+PersistentObject<Derived, Connection>::primary_table_name()
+{
+	return PrimaryT::exclusive_table_name();
+}
+
+template <typename Derived, typename Connection>
 bool
 PersistentObject<Derived, Connection>::exists
 (	Connection& p_database_connection,
@@ -913,7 +887,7 @@ PersistentObject<Derived, Connection>::exists
 		"select * from " +
 		Derived::exclusive_table_name() +
 		" where " +
-		Derived::primary_key_name() +
+		PrimaryT::primary_key_name() +
 		" = :p";
 	// Could throw InvalidConnection or SQLiteException
 	SQLStatement statement(p_database_connection, text);
@@ -1154,7 +1128,7 @@ PersistentObject<Derived, Connection>::prospective_key() const
 	}
 	return next_auto_key<Connection, Id>
 	(	database_connection(),
-		Derived::primary_table_name()
+		primary_table_name()
 	);
 }
 
@@ -1165,10 +1139,9 @@ PersistentObject<Derived, Connection>::do_remove()
 	// primary_table_name() might throw std::bad_alloc (strong guar.).
 	// primary_key_name() might throw might throw InvalidConnection or
 	// std::bad_alloc.
-	//
 	std::string const statement_text =
-		"delete from " + Derived::primary_table_name() + " where " +
-		Derived::primary_key_name() + " = :p";
+		"delete from " + primary_table_name() + " where " +
+		PrimaryT::primary_key_name() + " = :p";
 	
 	// Might throw InvalidConnection or std::bad_alloc
 	SQLStatement statement(database_connection(), statement_text);
