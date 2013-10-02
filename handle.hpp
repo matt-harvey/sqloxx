@@ -104,12 +104,16 @@ public:
 	template <typename Connection, typename DynamicT = T>
 	static Handle create(Connection& p_connection, Id p_id);
 
-	// TODO HIGH PRIORITY URGENT temp hack
-	T* get()
+	/**
+	 * @todo Testing and documentation and move implementation
+	 * out of class body.
+	 */
+	template <typename DynamicT>
+	bool has_dynamic_type()
 	{
-		return m_pointer;
+		return static_cast<bool>(dynamic_cast<DynamicT*>(m_pointer));
 	}
-	
+
 	/**
 	 * Calling create_unchecked for an object that is NOT in the database with
 	 * the given id, causes UNDEFINED BEHAVIOUR.
