@@ -165,7 +165,7 @@ public:
 		}
 	};
 
-	friend class HandleAttorney;
+	template <typename> friend class HandleAttorney;
 
 	/**
 	 * Control access to the various functions of the class
