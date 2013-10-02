@@ -46,6 +46,15 @@ public:
 	static std::string exclusive_table_name();
 
 	/**
+	 * Construct a null Handle. Cannot be dereferenced.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
+	 *
+	 * @todo test
+	 */
+	Handle() = default;
+
+	/**
 	 * Preconditions:\n
 	 * the object must have been managed
 	 * throughout its life by (a single instance of) IdentityMap,
@@ -207,9 +216,8 @@ private:
 	
 	explicit Handle(T* p_pointer);
 
-	T* m_pointer;
+	T* m_pointer = nullptr;
 };
-
 
 template <typename T>
 inline
@@ -244,7 +252,7 @@ Handle<T>::~Handle()
 
 template <typename T>
 template <typename Connection>
-Handle<T>::Handle(Connection& p_connection): m_pointer(nullptr)
+Handle<T>::Handle(Connection& p_connection)
 {
 	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
 	typedef typename IdentityMap::template HandleAttorney<T> Attorney;
@@ -257,8 +265,7 @@ Handle<T>::Handle(Connection& p_connection): m_pointer(nullptr)
 
 template <typename T>
 template <typename Connection>
-Handle<T>::Handle(Connection& p_connection, Id p_id):
-	m_pointer(nullptr)
+Handle<T>::Handle(Connection& p_connection, Id p_id)
 {
 	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
 	typedef typename IdentityMap::template HandleAttorney<T> Attorney;
@@ -321,32 +328,27 @@ Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 template <typename T>
 Handle<T>::Handle(Handle const& rhs): m_pointer(rhs.m_pointer)
 {
-	JEWEL_ASSERT (m_pointer);
-	m_pointer->increment_handle_counter();
+	if (m_pointer) m_pointer->increment_handle_counter();
 }
 
 template <typename T>
 Handle<T>::Handle(Handle& rhs): m_pointer(rhs.m_pointer)
 {
-	JEWEL_ASSERT (m_pointer);
-	m_pointer->increment_handle_counter();
+	if (m_pointer) m_pointer->increment_handle_counter();
 }
 
 template <typename T>
 Handle<T>&
 Handle<T>::operator=(Handle const& rhs)
 {
-	JEWEL_ASSERT (m_pointer);
-	JEWEL_ASSERT (rhs.m_pointer);
-
 	if (this != &rhs)
 	{
 		// Strong guarantee, provided rhs has a valid pointer...
-		rhs.m_pointer->increment_handle_counter();
+		if (rhs.m_pointer) rhs.m_pointer->increment_handle_counter();
 
 		// Nothrow guarantee, provided preconditions met, and
 		// provided rhs has a valid pointer.
-		m_pointer->decrement_handle_counter();
+		if (m_pointer) m_pointer->decrement_handle_counter();
 
 		m_pointer = rhs.m_pointer;  // nothrow
 	}
@@ -384,7 +386,7 @@ template <typename T>
 T&
 Handle<T>::operator*() const
 {
-	if (static_cast<bool>(m_pointer))  // nothrow
+	if (m_pointer)  // nothrow
 	{
 		return *m_pointer;  // nothrow
 	}
@@ -395,7 +397,7 @@ template <typename T>
 T*
 Handle<T>::operator->() const
 {
-	if (static_cast<bool>(m_pointer))  // nothrow
+	if (m_pointer)  // nothrow
 	{
 		return m_pointer;  // nothrow
 	}
