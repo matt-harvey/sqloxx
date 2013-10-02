@@ -4,7 +4,7 @@
 #define GUARD_handle_hpp_03158044118042125
 
 #include "general_typedefs.hpp"
-#include "identity_map_fwd.hpp"
+#include "identity_map.hpp"
 #include "persistence_traits.hpp"
 #include "sqloxx_exceptions.hpp"
 #include <jewel/assert.hpp>
@@ -17,18 +17,18 @@ namespace sqloxx
 
 /**
  * Handle for handling business objects of type T where T is a class
- * derived from PersistentObject and is
- * managed via IdentityMap<PersistenceTraits<T>::PrimaryT> to ensure only one
+ * derived from PersistentObject<T, Connection> for some type Connection, and is
+ * managed via IdentityMap<PersistenceTraits<T>::Base> to ensure only one
  * instance of T exists in memory at any one time, in relation to any given
  * record in the database.
  *
- * T should be associated with a instance of Connection, where Connection
- * is a subclass of sqloxx::DatabaseConnection, with a member function
+ * T should be associated with a instance of T::Connection,
+ * with a member function
  * template identity_map<S>() that is specialized for
- * S = PersistentTraits<T>::PrimaryT, that returns an instance of
- * IdentityMap<PrimaryT, Connection>
- * unique to that database connection, for managing instances of PrimaryT.
- * (See separate documentation for IdentityMap.) (By default PrimaryT will be
+ * S = PersistentTraits<T>::Base, that returns an instance of
+ * IdentityMap<Base> that is
+ * unique to that database connection, for managing instances of Base.
+ * (See separate documentation for IdentityMap.) (By default Base will be
  * the same type as T, but it need not be; see documentation
  * for PersistenceTraits.)
  *
@@ -39,7 +39,8 @@ class Handle
 {
 public:
 
-	typedef typename PersistenceTraits<T>::PrimaryT PrimaryT;
+	typedef typename T::Connection Connection;
+	typedef typename PersistenceTraits<T>::Base Base;
 
 	static std::string primary_key_name();
 	static std::string primary_table_name();
@@ -68,15 +69,11 @@ public:
 	~Handle();
 
 	/**
-	 * Preconditions:\n
-	 * Connection should be a subclass of sqloxx::DatabaseConnection and
-	 * should define identity_map<T>().
-	 *
 	 * Constructs a Handle to a new instance of T, which has \e not yet
 	 * been persisted to the database represented by p_connection. Connection
 	 * should be derived from sqloxx::DatabaseConnection. The handled object
 	 * will be persisted to p_connection if and when it is saved. The
-	 * object will be managed by the IdentityMap<T, Connection> associated
+	 * object will be managed by the IdentityMap<T> associated
 	 * with p_connection (returned by p_connection.identity_map<T>()).
 	 *
 	 * @throws sqloxx::OverflowException in the extremely unlikely event that
@@ -88,7 +85,7 @@ public:
 	 * failure during the creating and caching of the instance of T.
 	 *
 	 * <em>In addition</em>, any exceptions thrown from the T constructor
-	 * of the form T(IdentityMap<T, Connection>&) may also be thrown
+	 * of the form T(IdentityMap<T>&) may also be thrown
 	 * from this Handle constructor.
 	 *
 	 * Exception safety: depends on the constructor for T. If this constructor
@@ -98,19 +95,17 @@ public:
 	 * way that temporarily affects performance or size of allocated memory,
 	 * but not program logic).
 	 */
-	template <typename Connection>
 	explicit Handle(Connection& p_connection);
 
 	/**
 	 * @todo Documentation.
 	 */
-	template <typename Connection>
 	Handle(Connection& p_connection, Id p_id);
 
 	/**
 	 * @todo Testing and documentation.
 	 */
-	template <typename Connection, typename DynamicT = T>
+	template <typename DynamicT = T>
 	static Handle create(Connection& p_connection, Id p_id);
 
 	/**
@@ -129,7 +124,7 @@ public:
 	 *
 	 * @todo Documentation and testing.
 	 */
-	template <typename Connection, typename DynamicT = T>
+	template <typename DynamicT = T>
 	static Handle create_unchecked(Connection& p_connection, Id p_id);
 
 	/**
@@ -213,7 +208,9 @@ public:
 	bool operator!=(Handle const& rhs) const;
 
 private:
-	
+
+	typedef IdentityMap<Base> IdentityMapT;
+
 	explicit Handle(T* p_pointer);
 
 	T* m_pointer = nullptr;
@@ -251,26 +248,22 @@ Handle<T>::~Handle()
 }
 
 template <typename T>
-template <typename Connection>
 Handle<T>::Handle(Connection& p_connection)
 {
-	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
-	typedef typename IdentityMap::template HandleAttorney<T> Attorney;
+	typedef typename IdentityMapT::template HandleAttorney<T> Attorney;
 	m_pointer = Attorney::get_pointer
-	(	p_connection.template identity_map<PrimaryT>()
+	(	p_connection.template identity_map<Base>()
 	);
 	JEWEL_ASSERT (m_pointer);
 	m_pointer->increment_handle_counter();
 }
 
 template <typename T>
-template <typename Connection>
 Handle<T>::Handle(Connection& p_connection, Id p_id)
 {
-	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
-	typedef typename IdentityMap::template HandleAttorney<T> Attorney;
+	typedef typename IdentityMapT::template HandleAttorney<T> Attorney;
 	m_pointer = Attorney::get_pointer
-	(	p_connection.template identity_map<PrimaryT>(),
+	(	p_connection.template identity_map<Base>(),
 		p_id
 	);
 	JEWEL_ASSERT (m_pointer);
@@ -278,48 +271,38 @@ Handle<T>::Handle(Connection& p_connection, Id p_id)
 }
 
 template <typename T>
-template <typename Connection, typename DynamicT>
+template <typename DynamicT>
 Handle<T>
 Handle<T>::create(Connection& p_connection, Id p_id)
 {
+	typedef typename PersistenceTraits<DynamicT>::Base DPT;
 	static_assert
-	(	std::is_same
-		<	T,
-			typename PersistenceTraits<DynamicT>::PrimaryT
-		>::value ||
-			std::is_same<T, DynamicT>::value,
+	(	std::is_same<T, DPT>::value || std::is_same<T, DynamicT>::value,
 		"Invalid instantiation of Handle<T>::create template."
 	);
-
-	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
-	typedef typename IdentityMap::template HandleAttorney<DynamicT> Attorney;
+	typedef typename IdentityMapT::template HandleAttorney<DynamicT> Attorney;
 	return Handle<T>
 	(	Attorney::get_pointer
-		(	p_connection.template identity_map<PrimaryT>(),
+		(	p_connection.template identity_map<Base>(),
 			p_id
 		)
 	);
 }
 
 template <typename T>
-template <typename Connection, typename DynamicT>
+template <typename DynamicT>
 Handle<T>
 Handle<T>::create_unchecked(Connection& p_connection, Id p_id)
 {
+	typedef typename PersistenceTraits<DynamicT>::Base DPT;
 	static_assert
-	(	std::is_same
-		<	T,
-			typename PersistenceTraits<DynamicT>::PrimaryT
-		>::value ||
-			std::is_same<T, DynamicT>::value,
-		"Invalid instantiation of Handle<T>::create_unchecked template."
+	(	std::is_same<T, DPT>::value || std::is_same<T, DynamicT>::value,
+		"Invalid instantiation of Handle<T>::create template."
 	);
-
-	typedef IdentityMap<PrimaryT, Connection> IdentityMap;
-	typedef typename IdentityMap::template HandleAttorney<DynamicT> Attorney;
+	typedef typename IdentityMapT::template HandleAttorney<DynamicT> Attorney;
 	return Handle<T>
 	(	Attorney::unchecked_get_pointer
-		(	p_connection.template identity_map<PrimaryT>(),
+		(	p_connection.template identity_map<Base>(),
 			p_id
 		)
 	);
@@ -343,16 +326,15 @@ Handle<T>::operator=(Handle const& rhs)
 {
 	if (this != &rhs)
 	{
-		// Strong guarantee, provided rhs has a valid pointer...
+		// Strong guarantee.
 		if (rhs.m_pointer) rhs.m_pointer->increment_handle_counter();
 
-		// Nothrow guarantee, provided preconditions met, and
-		// provided rhs has a valid pointer.
+		// Nothrow guarantee, provided preconditions met.
 		if (m_pointer) m_pointer->decrement_handle_counter();
 
-		m_pointer = rhs.m_pointer;  // nothrow
+		m_pointer = rhs.m_pointer;
 	}
-	return *this;  // nothrow, provided we have a valid pointer
+	return *this;
 }
 
 template <typename T>
@@ -378,7 +360,7 @@ template <typename T>
 inline
 Handle<T>::operator bool() const
 {
-	return static_cast<bool>(m_pointer);  // nothrow
+	return m_pointer != nullptr;
 }
 
 
@@ -386,9 +368,9 @@ template <typename T>
 T&
 Handle<T>::operator*() const
 {
-	if (m_pointer)  // nothrow
+	if (m_pointer)
 	{
-		return *m_pointer;  // nothrow
+		return *m_pointer;
 	}
 	JEWEL_THROW(UnboundHandleException, "Unbound Handle.");
 }
@@ -397,9 +379,9 @@ template <typename T>
 T*
 Handle<T>::operator->() const
 {
-	if (m_pointer)  // nothrow
+	if (m_pointer)
 	{
-		return m_pointer;  // nothrow
+		return m_pointer;
 	}
 	JEWEL_THROW(UnboundHandleException, "Unbound Handle.");
 }

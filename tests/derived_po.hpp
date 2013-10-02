@@ -20,16 +20,13 @@ namespace tests
 
 // Dummy class inheriting from PersistentObject, for the purpose
 // of testing PersistentObject class.
-class DerivedPO:
-	public PersistentObject<DerivedPO, DerivedDatabaseConnection>
+class DerivedPO: public PersistentObject<DerivedPO, DerivedDatabaseConnection>
 {
 
 public:
 	typedef sqloxx::Id Id;
 	typedef PersistentObject<DerivedPO, DerivedDatabaseConnection>
 		DPersistentObject;
-	typedef sqloxx::IdentityMap<DerivedPO, DerivedDatabaseConnection>
-		DIdentityMap;
 	static void setup_tables(DatabaseConnection& dbc);
 	DerivedPO(IdentityMap& p_identity_map, IdentityMap::Signature const& p_sig);
 	DerivedPO(IdentityMap& p_identity_map, Id p_id, IdentityMap::Signature const& p_sig);
@@ -67,8 +64,7 @@ public:
 
 	DerivedDatabaseConnection();
 
-	typedef sqloxx::IdentityMap<DerivedPO, DerivedDatabaseConnection>
-		IdentityMap;
+	typedef sqloxx::IdentityMap<DerivedPO> IdentityMap;
 
 	template <typename T>
 	IdentityMap& identity_map();
@@ -81,7 +77,7 @@ private:
 
 template <>
 inline
-IdentityMap<DerivedPO, DerivedDatabaseConnection>&
+IdentityMap<DerivedPO>&
 DerivedDatabaseConnection::identity_map<DerivedPO>()
 {
 	return m_derived_po_map;

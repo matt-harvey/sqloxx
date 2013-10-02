@@ -44,7 +44,7 @@ DerivedPO::DerivedPO
 }
 
 DerivedPO::DerivedPO
-(	DIdentityMap& p_identity_map,
+(	IdentityMap& p_identity_map,
 	IdentityMap::Signature const& p_sig
 ):
 	DPersistentObject(p_identity_map),

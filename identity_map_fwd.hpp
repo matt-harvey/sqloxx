@@ -4,8 +4,7 @@
 namespace sqloxx
 {
 
-template <typename T, typename Connection>
-class IdentityMap;
+template <typename T> class IdentityMap;
 
 }  // namespace sqloxx
 

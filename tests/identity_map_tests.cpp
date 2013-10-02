@@ -19,13 +19,6 @@ namespace tests
 // TODO Uncomment the commented-out tests and adjust them to
 // reflect that those functions are now private.
 
-TEST_FIXTURE(DatabaseConnectionFixture, identity_map_constructors)
-{
-	// There's not a lot to test here
-	IdentityMap<DerivedPO, DatabaseConnection> idm(*pdbc);
-
-	DatabaseConnection dbc2;
-}
 
 TEST_FIXTURE(DerivedPOFixture, identity_map_after_object_removal)
 {
@@ -55,7 +48,7 @@ TEST_FIXTURE(DerivedPOFixture, identity_map_after_object_removal)
 TEST_FIXTURE(DerivedPOFixture, identity_map_connection)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
-	IdentityMap<DerivedPO, DerivedDatabaseConnection> idm(dbc);
+	IdentityMap<DerivedPO> idm(dbc);
 	CHECK_EQUAL(&(idm.connection()), &dbc);
 }
 

@@ -4,7 +4,7 @@
 #define GUARD_identity_map_hpp_41089441925794556
 
 #include "general_typedefs.hpp"
-#include "handle.hpp"
+#include "handle_fwd.hpp"
 #include "persistence_traits.hpp"
 #include "persistent_object_fwd.hpp"
 #include "sqloxx_exceptions.hpp"
@@ -26,10 +26,9 @@ namespace sqloxx
 /**
  * Provides an in-memory cache for objects of type T, where such
  * objects are persisted to a database via a database connection of
- * type Connection. T and Connection are passed as template parameters
- * to the class template. It is expected that T is a subclass of
- * sqloxx::PersistentObject<T, Connection>, and Connection is a
- * subclass of sqloxx::DatabaseConnection.
+ * type T::Connection. T is passed as a template parameter
+ * to the class template. It is expected that T inherits from
+ * sqloxx::PersistentObject<T, Connection>.
  *
  * T should define
  * constructors of the form:\n
@@ -61,19 +60,18 @@ namespace sqloxx
  * IdentityMap is intended to work in conjunction with sqloxx::Handle
  * and sqloxx::PersistentObject<T, Connection>. See also the documentation
  */
-template <typename T, typename Connection>
+template <typename T>
 class IdentityMap
 {
 public:
 
+	typedef typename T::Connection Connection;
 	typedef sqloxx::Id CacheKey;
-
 	typedef jewel::Signature<IdentityMap> Signature;
 
 	/**
 	 * Construct an IdentityMap associated with the database
-	 * connection Connection. Connection should be a subclass
-	 * of sqloxx::DatabaseConnection.
+	 * connection Connection.
 
 	 * @throws std::bad_alloc in the case of memory allocation
 	 * failure. (This is very unlikely.)
@@ -173,7 +171,7 @@ public:
 
 	/**
 	 * Control access to the various functions of the class
-	 * IdentityMap<T, Connection>, deliberately
+	 * IdentityMap<T>, deliberately
 	 * limiting this access to the class PersistentObject<T, Connection>.
 	 */
 	class PersistentObjectAttorney
@@ -235,14 +233,14 @@ private:
 	 * Typically DynamicT will be the same type as T, but it need
 	 * not be - it might be a class derived from T.
 	 *
-	 * DynamicT must also be such that PersistenceTraits<T>::PrimaryT is the
+	 * DynamicT must also be such that PersistenceTraits<T>::Base is the
 	 * same as T. DynamicT must also be, or be derived, from T.
 	 * If derived from T, then T must
 	 * be a polymorphic base class. If these conditions fail, compilation
 	 * will fail.
 	 *
 	 * @returns a T* pointing to a newly constructed instance of DynamicT,
-	 * that is cached in this instance of IdentityMap<T, Connection>.
+	 * that is cached in this instance of IdentityMap<T>.
 	 *
 	 * @throws sqloxx::OverflowException in the extremely unlikely
 	 * event that the in-memory cache already has so many objects loaded that
@@ -271,7 +269,7 @@ private:
 	 * representing an object
 	 * already stored in the database, with primary key (id) p_id.
 	 *
-	 * DynamicT must also be such that PersistenceTraits<T>::PrimaryT is the
+	 * DynamicT must also be such that PersistenceTraits<T>::Base is the
 	 * same as T. DynamicT must also be, or be derived, from T.
 	 * If derived from T, then T must
 	 * be a polymorphic base class. If these conditions fail, compilation
@@ -336,7 +334,7 @@ private:
 	 * being thrown, behaviour is undefined. This function should \e never be
 	 * called unless you are \e sure p_id is an existing primary key.
 	 *
-	 * DynamicT must also be such that PersistenceTraits<T>::PrimaryT is the
+	 * DynamicT must also be such that PersistenceTraits<T>::Base is the
 	 * same as T. DynamicT must also be, or be derived, from T.
 	 * If derived from T, then T must
 	 * be a polymorphic base class. If these conditions fail, compilation
@@ -462,9 +460,9 @@ private:
 };
 
 
-template <typename T, typename Connection>
+template <typename T>
 inline
-IdentityMap<T, Connection>::IdentityMap(Connection& p_connection):
+IdentityMap<T>::IdentityMap(Connection& p_connection):
 	m_connection(p_connection)
 {
 	JEWEL_ASSERT (m_id_map.empty());
@@ -473,15 +471,15 @@ IdentityMap<T, Connection>::IdentityMap(Connection& p_connection):
 	JEWEL_ASSERT (m_is_caching == false);
 }
 
-template <typename T, typename Connection>
+template <typename T>
 template <typename DynamicT>
 DynamicT*
-IdentityMap<T, Connection>::provide_pointer()
+IdentityMap<T>::provide_pointer()
 {
 	static_assert
 	(	std::is_same
 		<	T,
-			typename PersistenceTraits<T>::PrimaryT
+			typename PersistenceTraits<T>::Base
 		>::value,
 		"Invalid instantiation of provide_pointer template."
 	);
@@ -519,15 +517,15 @@ IdentityMap<T, Connection>::provide_pointer()
 	return ret;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 template <typename DynamicT>
 DynamicT*
-IdentityMap<T, Connection>::provide_pointer(Id p_id)
+IdentityMap<T>::provide_pointer(Id p_id)
 {
 	static_assert
 	(	std::is_same
 		<	T,
-			typename PersistenceTraits<T>::PrimaryT
+			typename PersistenceTraits<T>::Base
 		>::value,
 		"Invalid instantiation of provide_pointer template."
 	);
@@ -549,15 +547,15 @@ IdentityMap<T, Connection>::provide_pointer(Id p_id)
 	return unchecked_provide_pointer<DynamicT>(p_id);
 }
 
-template <typename T, typename Connection>
+template <typename T>
 template <typename DynamicT>
 DynamicT*
-IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
+IdentityMap<T>::unchecked_provide_pointer(Id p_id)
 {
 	static_assert
 	(	std::is_same
 		<	T,
-			typename PersistenceTraits<T>::PrimaryT
+			typename PersistenceTraits<T>::Base
 		>::value,
 		"Invalid instantiation of unchecked_provide_pointer template."
 	);
@@ -619,9 +617,9 @@ IdentityMap<T, Connection>::unchecked_provide_pointer(Id p_id)
 	return ret;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 void
-IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
+IdentityMap<T>::register_id(CacheKey p_cache_key, Id p_id)
 {
 	typename CacheKeyMap::const_iterator const finder =
 		m_cache_key_map.find(p_cache_key);
@@ -651,9 +649,9 @@ IdentityMap<T, Connection>::register_id(CacheKey p_cache_key, Id p_id)
 	return;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 void
-IdentityMap<T, Connection>::deregister_id(Id p_id)
+IdentityMap<T>::deregister_id(Id p_id)
 {
 	// Precondition
 	JEWEL_ASSERT (m_id_map.find(p_id) != m_id_map.end());
@@ -662,9 +660,9 @@ IdentityMap<T, Connection>::deregister_id(Id p_id)
 	return;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 void
-IdentityMap<T, Connection>::uncache_object(CacheKey p_cache_key)
+IdentityMap<T>::uncache_object(CacheKey p_cache_key)
 {
 	// Precondition
 	JEWEL_ASSERT (m_cache_key_map.find(p_cache_key) != m_cache_key_map.end());
@@ -673,9 +671,9 @@ IdentityMap<T, Connection>::uncache_object(CacheKey p_cache_key)
 	return;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 void
-IdentityMap<T, Connection>::partially_uncache_object(CacheKey p_cache_key)
+IdentityMap<T>::partially_uncache_object(CacheKey p_cache_key)
 {
 	// Precondition
 	JEWEL_ASSERT (m_cache_key_map.find(p_cache_key) != m_cache_key_map.end());
@@ -688,9 +686,9 @@ IdentityMap<T, Connection>::partially_uncache_object(CacheKey p_cache_key)
 	return;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 void
-IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
+IdentityMap<T>::notify_nil_handles(CacheKey p_cache_key)
 {
 	typename CacheKeyMap::const_iterator it =
 		m_cache_key_map.find(p_cache_key);
@@ -702,16 +700,16 @@ IdentityMap<T, Connection>::notify_nil_handles(CacheKey p_cache_key)
 	return;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 void
-IdentityMap<T, Connection>::enable_caching()
+IdentityMap<T>::enable_caching()
 {
 	m_is_caching = true;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 void
-IdentityMap<T, Connection>::disable_caching()
+IdentityMap<T>::disable_caching()
 {
 	if (m_is_caching)
 	{
@@ -730,17 +728,17 @@ IdentityMap<T, Connection>::disable_caching()
 	return;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 inline
-Connection&
-IdentityMap<T, Connection>::connection()
+typename T::Connection&
+IdentityMap<T>::connection()
 {
 	return m_connection;
 }
 
-template <typename T, typename Connection>
-typename IdentityMap<T, Connection>::CacheKey
-IdentityMap<T, Connection>::provide_cache_key()
+template <typename T>
+typename IdentityMap<T>::CacheKey
+IdentityMap<T>::provide_cache_key()
 {
 	static CacheKey const maximum = std::numeric_limits<CacheKey>::max();
 	typename CacheKeyMap::size_type const sz = m_cache_key_map.size();

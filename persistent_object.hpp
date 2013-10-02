@@ -52,9 +52,9 @@ class PersistentObjectHandleAttorney;
  * Architecture"). To enable this, sqloxx::PersistentObject is intended to
  * work in conjunction with sqloxx::IdentityMap and sqloxx::Handle.
  *
- * Instances of Derived should only ever be handled via a Handle.
+ * Instances of DerivedT should only ever be handled via a Handle.
  * Handles can be copied around, dereferenced, and otherwise treated
- * similarly to a shared_ptr. The PersistentObject part of the Derived
+ * similarly to a shared_ptr. The PersistentObject part of the DerivedT
  * instance, together
  * with Handle and IdentityMap, will work behind the scenes to ensure
  * that, for each record in the database, at most one object is loaded
@@ -74,7 +74,7 @@ class PersistentObjectHandleAttorney;
  * keeping track of the loading status of each in-memory object
  * ("loaded", "loading" or "ghost").
  *
- * in the Derived class, the intention is that some or all data members
+ * in the DerivedT class, the intention is that some or all data members
  * declared in that class, can be "lazy". This means that they are not
  * initialized in the derived object's constructor, but are rather only
  * initialized at a later time via a call to load(), which in turn calls
@@ -85,7 +85,7 @@ class PersistentObjectHandleAttorney;
  * for attributes
  * other than those that are loaded immediately on construction, should
  * have \e load() as their first statement. (This means that getters in
- * Derived cannot
+ * DerivedT cannot
  * be const.) (See documentation for \e load().)
  *
  * In addition, implementations of \e all setters in the
@@ -97,7 +97,7 @@ class PersistentObjectHandleAttorney;
  * will result in loud, rather than silent, failure, in the event of an
  * attempt to access such an attribute before it has been initialized.
  *
- * Derived classes are free to initialize all attributes on construction of
+ * DerivedT classes are free to initialize all attributes on construction of
  * an instance. This avoids the complications described above associated
  * with lazy loading, while giving up the potential runtime efficiencies
  * that lazy loading can provide.
@@ -106,7 +106,7 @@ class PersistentObjectHandleAttorney;
  * <b>Virtual functions</b>
  *
  * The following functions need to be provided with definitions
- * provided in the Derived class:
+ * provided in the DerivedT class:
  *
  * <em>static std::string exclusive_table_name();</em>\n
  * Should return, without side effects, the name of table in which
@@ -125,10 +125,10 @@ class PersistentObjectHandleAttorney;
  * must be a single-column integer primary key that is autoincrementing
  * (using the SQLite "autoincrement" key word).
  * If PersistentTraits<...> has been specialized for T, then it
- * is the class PersistenceTraits<T>::PrimaryT for which primary_key_name()
+ * is the class PersistenceTraits<T>::Base for which primary_key_name()
  * must be defined, rather than T per se. The primary key name must
  * be the same both in the table name by T::exclusive_table_name() and
- * PrimaryT::exclusive_table_name().
+ * Base::exclusive_table_name().
  *
  * <em>virtual void do_load() = 0;</em>\n
  * See documentation of load() function.
@@ -143,7 +143,7 @@ class PersistentObjectHandleAttorney;
  * See documentation for ghostify() function.
  *
  * In addition the following function \e may be provided with a definition
- * in the Derived class, although the PersistentObject base class provides
+ * in the DerivedT class, although the PersistentObject base class provides
  * a default implementation which is suitable in many cases:
  *
  * <em>virtual void do_remove();\n
@@ -152,12 +152,12 @@ class PersistentObjectHandleAttorney;
  *
  * <b>Template parameters</b>
  *
- * @param Derived The derived class. Derived should inherit publicly
- * from PersistentObject<Derived, Connection> per the Curiously Recurring
+ * @param DerivedT The derived class. DerivedT should inherit publicly
+ * from PersistentObject<DerivedT, ConnectionT> per the Curiously Recurring
  * Template Pattern (CRTP).
  *
- * @param Connection The type of the database connection through which
- * instances of Derived will be persisted to the database. Connection
+ * @param ConnectionT The type of the database connection through which
+ * instances of DerivedT will be persisted to the database. ConnectionT
  * should be a class derived from sqloxx::DatabaseConnection.
  * 
  * @todo Go through all the client classes in Phatbooks and ensure the
@@ -173,13 +173,14 @@ class PersistentObjectHandleAttorney;
  *
  * @todo Have a single location for documenting use of Sqloxx holistically.
  */
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 class PersistentObject
 {
 public:
 
-	typedef typename sqloxx::PersistenceTraits<Derived>::PrimaryT PrimaryT;
-	typedef sqloxx::IdentityMap<PrimaryT, Connection> IdentityMap;
+	typedef ConnectionT Connection;
+	typedef typename sqloxx::PersistenceTraits<DerivedT>::Base Base;
+	typedef sqloxx::IdentityMap<Base> IdentityMap;
 
 	template <typename T> friend class Handle;
 
@@ -190,7 +191,7 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	Connection& database_connection() const;
+	ConnectionT& database_connection() const;
 
 	// note copy constructor is protected
 
@@ -206,7 +207,7 @@ public:
 	virtual ~PersistentObject() = default;
 
 	/**
-	 * @returns PersistenceTraits<T>::PrimaryT::exclusive_table_name().
+	 * @returns PersistenceTraits<T>::Base::exclusive_table_name().
 	 *
 	 * @todo Document exception throwing behaviour and test.
 	 */
@@ -234,10 +235,10 @@ public:
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	static bool exists(Connection& p_database_connection, Id p_id);
+	static bool exists(ConnectionT& p_database_connection, Id p_id);
 
 	/**
-	 * @returns true if and only if there are no objects of type Derived
+	 * @returns true if and only if there are no objects of type DerivedT
 	 * saved in the database.
 	 * Note the database is always checked, not the
 	 * cache.
@@ -255,11 +256,11 @@ public:
 	 *
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
-	static bool none_saved(Connection& p_database_connection);
+	static bool none_saved(ConnectionT& p_database_connection);
 
 	/**
 	 * Preconditions:\n
-	 * The destructor of Derived must be non-throwing;\n
+	 * The destructor of DerivedT must be non-throwing;\n
 	 * We have handled this object only via a Handle, with
 	 * the Handle having been copied or assigned from another
 	 * Handle, or obtained by a call to one of Handle's
@@ -273,11 +274,11 @@ public:
 	 * do_save_existing() and do_save_new() must be been defined so that
 	 * if they fail, they throw std::exception or an exception derived
 	 * therefrom;\n
-	 * Every setter and getter method defined in the Derived class must have
+	 * Every setter and getter method defined in the DerivedT class must have
 	 * a call to load() as its first statement (see below for
 	 * explanation);\n
-	 * Derived::do_ghostify() must be defined so as to be non-throwing;\n
-	 * Derived::do_load() preconditions must be met (see documentation
+	 * DerivedT::do_ghostify() must be defined so as to be non-throwing;\n
+	 * DerivedT::do_load() preconditions must be met (see documentation
 	 * for load());
 	 * 
 	 * The result of calling save() depends on whether the in-memory
@@ -292,7 +293,7 @@ public:
 	 * the state of the current in-memory object.
 	 * This is done by a call
 	 * to virtual function do_save_existing(), which much be defined
-	 * in the class Derived. The base method save() takes care of wrapping
+	 * in the class DerivedT. The base method save() takes care of wrapping
 	 * the call to do_save_existing() as a single SQL transaction by calling
 	 * begin_transaction() and end_transaction() on the database connection.
 	 * 
@@ -317,7 +318,7 @@ public:
 	 * are subsequently written to the database
 	 * when save() is called, you should always call load() as
 	 * the \e first statement in the implementation of any \e setter method in
-	 * the Derived class.
+	 * the DerivedT class.
 	 * 
 	 * (2) <b>Object does not have id</b>
 	 *
@@ -328,7 +329,7 @@ public:
 	 * In other words, a new record will be created in the database.
 	 * This is done
 	 * via a call to virtual function do_save_new(), which must be defined in
-	 * the class Derived. The base save() function takes care of wrapping
+	 * the class DerivedT. The base save() function takes care of wrapping
 	 * this call as a SQL transaction. The base function also takes care of:
 	 * assigning an id to the newly saved object in the database; recording
 	 * this id in the in-memory object; and notifying the IdentityMap
@@ -339,7 +340,7 @@ public:
 	 * object is marked internally as being in a fully loaded, i.e.
 	 * "complete" state.
 	 *
-	 * In defining do_save_new(), the class Derived should ensure that a call
+	 * In defining do_save_new(), the class DerivedT should ensure that a call
 	 * to do_save_new() results in a \e complete object of its type being
 	 * inserted into the database. The semantics of save() here only make
 	 * sense if this is the case. The Sqloxx framework does not provide for
@@ -347,7 +348,7 @@ public:
 	 *
 	 * @throws TableSizeException if the object does not have an id, but
 	 * the greatest primary key value already in the primary table for the
-	 * type Derived is
+	 * type DerivedT is
 	 * the maximum possible value for the type Id, so that another row
 	 * could not be inserted without overflow.
 	 * 
@@ -394,33 +395,33 @@ public:
 	 * Note that (b) and (c) are functionally equivalent to one another
 	 * as far as client
 	 * code is concerned, providing the preconditions are met, and in
-	 * particular, providing client Derived class always calls load() as
+	 * particular, providing client DerivedT class always calls load() as
 	 * the first statement of any getter.
 	 */
 	void save();
 
 	/**
-	 * Delete an object of type Derived from the database. The
+	 * Delete an object of type DerivedT from the database. The
 	 * function will also inform the IdentityMap in which this
 	 * object is cached, and the cache will update itself accordingly.
 	 * After calling remove(), the object will no longer have an id;
 	 * however its other attributes will be unaltered (assuming the
-	 * Derived class doesn't define do_remove() in such a way as to
+	 * DerivedT class doesn't define do_remove() in such a way as to
 	 * alter them - see below).
 	 *
 	 * Preconditions:\n
 	 * If the default implementation of do_remove() is not redefined
-	 * by the class Derived, then the preconditions of do_remove()
+	 * by the class DerivedT, then the preconditions of do_remove()
 	 * must be satisfied (see separate documentation for do_remove());\n
-	 * If do_remove() is redefined by Derived, then it should offer the
+	 * If do_remove() is redefined by DerivedT, then it should offer the
 	 * strong guarantee, i.e. be atomic, in respect of the state of
 	 * the in-memory objects (but note, the base remove() method takes
 	 * care of wrapping the implementation as a SQL transaction, so
 	 * in general, do_removed() doesn't need to worry about atomicity
 	 * in regards to the database);\n
-	 * Derived::do_ghostify() should be defined so as to adhere to the
+	 * DerivedT::do_ghostify() should be defined so as to adhere to the
 	 * preconditions detailed in the documentation for ghostify();\n and
-	 * Getters and setters in Derived should always call load() as their
+	 * Getters and setters in DerivedT should always call load() as their
 	 * first statement.
 	 *
 	 * @throws std::bad_alloc in the unlikely event of mememory allocation
@@ -477,15 +478,15 @@ public:
 	 * Reverts the object to a "ghost state". This is a state in
 	 * which only certain member variables (typically, only the id)
 	 * are initialized. This is done by calling the private virtual
-	 * function do_ghostify(). This must be defined by class Derived.
+	 * function do_ghostify(). This must be defined by class DerivedT.
 	 * Then, the base ghostify() method marks the object as being in a
 	 * "ghost" state.
 	 *
-	 * Derived::do_ghostify() should be defined in such a way that,
+	 * DerivedT::do_ghostify() should be defined in such a way that,
 	 * when executed, the object is put into such a state that, the
 	 * next time load() is called, the object can be fully reloaded to
 	 * a valid loaded state without any issues of duplication or etc.
-	 * For example, if one of the member variables of Derived is a
+	 * For example, if one of the member variables of DerivedT is a
 	 * vector, and if loading the object involves pushing elements
 	 * onto the vector, then do_ghostify() should ensure that the
 	 * vector is emptied, so that after load() is called next, the
@@ -497,7 +498,7 @@ public:
 	 * </em>
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>, provided the
-	 * Derived::do_ghostify() method is non-throwing.
+	 * DerivedT::do_ghostify() method is non-throwing.
 	 *
 	 * @todo Determine if this really needs to be public.
 	 */
@@ -506,23 +507,23 @@ public:
 	/**
 	 * Provides access to get m_cache_key, set m_cache_key,
 	 * and clear m_id, only to
-	 * to IdentityMap<PrimaryT, Connection>.
+	 * to IdentityMap<Base>.
 	 */
 	class KeyAttorney
 	{
 	public:
-		friend class sqloxx::IdentityMap<PrimaryT, Connection>;
+		friend class sqloxx::IdentityMap<Base>;
 	private:
-		static void set_cache_key(Derived& p_obj, Id p_cache_key)
+		static void set_cache_key(DerivedT& p_obj, Id p_cache_key)
 		{
 			p_obj.set_cache_key(p_cache_key);
 			return;
 		}
-		static Id cache_key(Derived& p_obj)
+		static Id cache_key(DerivedT& p_obj)
 		{
 			return jewel::value(p_obj.m_cache_key);
 		}
-		static void clear_id(Derived& p_obj)
+		static void clear_id(DerivedT& p_obj)
 		{
 			p_obj.clear_id();
 			return;
@@ -534,19 +535,19 @@ public:
 	/**
 	 * Controls access to functions that monitor the number of
 	 * Handle instances pointing to a given instance of
-	 * PersistentObject<T, Connection>, deliberately restricting
-	 * this access to IdentityMap<PrimaryT, Connection>
+	 * PersistentObject<T, ConnectionT>, deliberately restricting
+	 * this access to IdentityMap<Base>
 	 */
 	class HandleMonitorAttorney
 	{
 	public:
-		friend class sqloxx::IdentityMap<PrimaryT, Connection>;
+		friend class sqloxx::IdentityMap<Base>;
 	private:
-		static bool is_orphaned(Derived const& p_obj)
+		static bool is_orphaned(DerivedT const& p_obj)
 		{
 			return p_obj.is_orphaned();
 		}
-		static bool has_high_handle_count(Derived const& p_obj)
+		static bool has_high_handle_count(DerivedT const& p_obj)
 		{
 			return p_obj.has_high_handle_count();
 		}
@@ -557,7 +558,7 @@ public:
 protected:
 
 	/**
-	 * This should only be called by Derived.
+	 * This should only be called by DerivedT.
 	 *
 	 * Create a PersistentObject that corresponds (or purports to correspond)
 	 * to one that already exists in the database.
@@ -574,7 +575,7 @@ protected:
 	 * complaint. The constructor does not actually perform any checks on the
 	 * validity either of p_database_connection or of p_id. The caller should
 	 * be sure, before calling this function, that there exists in the
-	 * database a row representing an instance of the Derived type, with p_id
+	 * database a row representing an instance of the DerivedT type, with p_id
 	 * as it primary key. If no such row exists, then UNDEFINED BEHAVIOUR will
 	 * result, including the possibility of silent or delayed corruption of
 	 * data.
@@ -584,7 +585,7 @@ protected:
 	PersistentObject(IdentityMap& p_identity_map, Id p_id);
 
 	/** 
-	 * This should only be called by Derived.
+	 * This should only be called by DerivedT.
 	 *
 	 * Create a PersistentObject that does \e not correspond to
 	 * one that already exists in the database.
@@ -605,15 +606,15 @@ protected:
 	 * to load.
 	 *
 	 * Preconditions:\n
-	 * In defining do_load(), the Derived class should throw an instance
+	 * In defining do_load(), the DerivedT class should throw an instance
 	 * of std::exception (which may be an instance of any exception class
 	 * derived therefrom) in the event that the load fails;\n
 	 * do_load() should not perform any write operations on the database,
 	 * and should provide 
 	 * the strong exception-safety guarantee;\n
-	 * The Derived class should define do_ghostify() according to the
+	 * The DerivedT class should define do_ghostify() according to the
 	 * preconditions specified in the documentaton of ghostify(); and\n
-	 * The destructor of Derived must be non-throwing.
+	 * The destructor of DerivedT must be non-throwing.
 	 *
 	 * Note the implementation is wrapped as a transaction
 	 * by calls to begin_transaction and end_transaction
@@ -712,11 +713,11 @@ protected:
 	 * documentation for remove().
 	 *
 	 * The following relates the default implementation of do_remove()
-	 * provided by PersistentObject<Derived, Connection>.
+	 * provided by PersistentObject<DerivedT, ConnectionT>.
 	 *
 	 * The default implementation of this function will simply delete
 	 * the row with the primary key returned by id(), in the table
-	 * named by PersistenceTraits<Derived>::PrimaryT::exclusive_table_name().
+	 * named by PersistenceTraits<DerivedT>::Base::exclusive_table_name().
 	 *
 	 * @throws InvalidConnection if the database connection is invalid.
 	 *
@@ -770,9 +771,9 @@ private:
 	 *
 	 * Preconditions:\n
 	 * This function should only be called from Handle.
-	 * This instance of Derived must have been handled throughout
+	 * This instance of DerivedT must have been handled throughout
 	 * its life only via instances of Handle, that have been obtained
-	 * from a single instance of IdentityMap<PrimaryT, Connection>
+	 * from a single instance of IdentityMap<Base>
 	 * via calls to the IdentityMap API, or else have been copied from other
 	 * instances of Handle; and\n
 	 * The destructor of derived must be non-throwing.
@@ -783,7 +784,7 @@ private:
 	void decrement_handle_counter();
 
 	/**
-	 * Called by IdentityMap<PrimaryT, Connection> via KeyAttorney to
+	 * Called by IdentityMap<Base> via KeyAttorney to
 	 * provide a "cache
 	 * key" to the object. The cache key is used by IdentityMap to
 	 * identify the object in its internal cache. Every object created by
@@ -818,7 +819,7 @@ private:
 	boost::optional<Id> m_id;
 	
 	// Represents the identifier, in the IdentityMap for
-	// m_database_connection, of an instance of Derived. The
+	// m_database_connection, of an instance of DerivedT. The
 	// IdentityMap can look up a PersistentObject either via its id
 	// (which corresponds to its primary key in the database), or via
 	// its cache_key. PersistentObject instances that are newly created and
@@ -836,8 +837,8 @@ private:
 
 
 
-template <typename Derived, typename Connection>
-PersistentObject<Derived, Connection>::PersistentObject
+template <typename DerivedT, typename ConnectionT>
+PersistentObject<DerivedT, ConnectionT>::PersistentObject
 (	IdentityMap& p_identity_map,
 	Id p_id
 ):
@@ -848,9 +849,9 @@ PersistentObject<Derived, Connection>::PersistentObject
 {
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 inline
-PersistentObject<Derived, Connection>::PersistentObject
+PersistentObject<DerivedT, ConnectionT>::PersistentObject
 (	IdentityMap& p_identity_map	
 ):
 	m_identity_map(&p_identity_map),
@@ -858,31 +859,31 @@ PersistentObject<Derived, Connection>::PersistentObject
 	m_handle_counter(0)
 	// Note m_cache_key is left unitialized. It is the responsibility
 	// of IdentityMap to call set_cache_key after construction,
-	// before providing a Handle to a newly created Derived instance.
+	// before providing a Handle to a newly created DerivedT instance.
 {
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 inline
 std::string
-PersistentObject<Derived, Connection>::primary_table_name()
+PersistentObject<DerivedT, ConnectionT>::primary_table_name()
 {
-	return PrimaryT::exclusive_table_name();
+	return Base::exclusive_table_name();
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 bool
-PersistentObject<Derived, Connection>::exists
-(	Connection& p_database_connection,
+PersistentObject<DerivedT, ConnectionT>::exists
+(	ConnectionT& p_database_connection,
 	Id p_id
 )
 {
 	// Could throw std::bad_alloc
 	static std::string const text =
 		"select * from " +
-		Derived::exclusive_table_name() +
+		DerivedT::exclusive_table_name() +
 		" where " +
-		PrimaryT::primary_key_name() +
+		Base::primary_key_name() +
 		" = :p";
 	// Could throw InvalidConnection or SQLiteException
 	SQLStatement statement(p_database_connection, text);
@@ -892,25 +893,25 @@ PersistentObject<Derived, Connection>::exists
 	return statement.step();
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 bool
-PersistentObject<Derived, Connection>::none_saved
-(	Connection& p_database_connection
+PersistentObject<DerivedT, ConnectionT>::none_saved
+(	ConnectionT& p_database_connection
 )
 {
 	// Could throw std::bad_alloc
 	static std::string const text =
 		"select * from " +
-		Derived::exclusive_table_name();
+		DerivedT::exclusive_table_name();
 	// Could throw InvalidConnection or SQLiteException
 	SQLStatement statement(p_database_connection, text);
 	// Could throw InvalidConnection or SQLiteException
 	return !statement.step();
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 void
-PersistentObject<Derived, Connection>::load()
+PersistentObject<DerivedT, ConnectionT>::load()
 {
 	while (m_loading_status == loading)
 	{
@@ -936,9 +937,9 @@ PersistentObject<Derived, Connection>::load()
 	return;
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 void
-PersistentObject<Derived, Connection>::save()
+PersistentObject<DerivedT, ConnectionT>::save()
 {
 	JEWEL_ASSERT (m_cache_key);  // precondition
 	if (has_id())  // nothrow
@@ -950,7 +951,7 @@ PersistentObject<Derived, Connection>::save()
 		DatabaseTransaction transaction(database_connection());
 		try
 		{
-			do_save_existing();  // Safety depends on Derived
+			do_save_existing();  // Safety depends on DerivedT
 			transaction.commit();  // Strong guarantee
 		}
 		catch (std::exception&)
@@ -966,7 +967,7 @@ PersistentObject<Derived, Connection>::save()
 		DatabaseTransaction transaction(database_connection());// strong guar.
 		try
 		{
-			do_save_new();  // Safety depends on Derived
+			do_save_new();  // Safety depends on DerivedT
 
 			// strong guarantee
 			IdentityMap::PersistentObjectAttorney::register_id
@@ -1000,9 +1001,9 @@ PersistentObject<Derived, Connection>::save()
 	return;
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 void
-PersistentObject<Derived, Connection>::remove()
+PersistentObject<DerivedT, ConnectionT>::remove()
 {
 	if (has_id())
 	{
@@ -1029,36 +1030,36 @@ PersistentObject<Derived, Connection>::remove()
 	return;
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 inline
 Id
-PersistentObject<Derived, Connection>::id() const
+PersistentObject<DerivedT, ConnectionT>::id() const
 {
 	return jewel::value(m_id);
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 inline
 void
-PersistentObject<Derived, Connection>::set_cache_key(Id p_cache_key)
+PersistentObject<DerivedT, ConnectionT>::set_cache_key(Id p_cache_key)
 {
 	m_cache_key = p_cache_key;
 	return;
 }
 
 template
-<typename Derived, typename Connection>
+<typename DerivedT, typename ConnectionT>
 void
-PersistentObject<Derived, Connection>::clear_id()
+PersistentObject<DerivedT, ConnectionT>::clear_id()
 {
 	jewel::clear(m_id);
 	return;
 }
 
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 void
-PersistentObject<Derived, Connection>::increment_handle_counter()
+PersistentObject<DerivedT, ConnectionT>::increment_handle_counter()
 {
 	if (m_handle_counter == std::numeric_limits<HandleCounter>::max())
 	{
@@ -1072,15 +1073,15 @@ PersistentObject<Derived, Connection>::increment_handle_counter()
 	return;
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 void
-PersistentObject<Derived, Connection>::decrement_handle_counter()
+PersistentObject<DerivedT, ConnectionT>::decrement_handle_counter()
 {
 	switch (m_handle_counter)
 	{
 	case 1:
 		--m_handle_counter;
-		// Will not throw, provided the destructor of Derived
+		// Will not throw, provided the destructor of DerivedT
 		// is non-throwing, and the object is saved in the cache
 		// under m_cache_key.
 		if (m_cache_key)
@@ -1101,18 +1102,18 @@ PersistentObject<Derived, Connection>::decrement_handle_counter()
 	return;
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 inline
-Connection&
-PersistentObject<Derived, Connection>::database_connection() const
+ConnectionT&
+PersistentObject<DerivedT, ConnectionT>::database_connection() const
 {
 	JEWEL_ASSERT (m_identity_map);
 	return m_identity_map->connection();
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 Id
-PersistentObject<Derived, Connection>::prospective_key() const
+PersistentObject<DerivedT, ConnectionT>::prospective_key() const
 {
 	if (has_id())
 	{
@@ -1121,22 +1122,22 @@ PersistentObject<Derived, Connection>::prospective_key() const
 			"Object already has id so prospective_key does not apply."
 		);
 	}
-	return next_auto_key<Connection, Id>
+	return next_auto_key<ConnectionT, Id>
 	(	database_connection(),
 		primary_table_name()
 	);
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 void
-PersistentObject<Derived, Connection>::do_remove()
+PersistentObject<DerivedT, ConnectionT>::do_remove()
 {
 	// primary_table_name() might throw std::bad_alloc (strong guar.).
 	// primary_key_name() might throw might throw InvalidConnection or
 	// std::bad_alloc.
 	std::string const statement_text =
 		"delete from " + primary_table_name() + " where " +
-		PrimaryT::primary_key_name() + " = :p";
+		Base::primary_key_name() + " = :p";
 	
 	// Might throw InvalidConnection or std::bad_alloc
 	SQLStatement statement(database_connection(), statement_text);
@@ -1147,37 +1148,37 @@ PersistentObject<Derived, Connection>::do_remove()
 	return;
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 inline
 bool
-PersistentObject<Derived, Connection>::has_id() const
+PersistentObject<DerivedT, ConnectionT>::has_id() const
 {
 	// Relies on the fact that m_id is a boost::optional<Id>, and
 	// will convert to true if and only if it has been initialized.
 	return m_id;
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 inline
 bool
-PersistentObject<Derived, Connection>::is_orphaned() const
+PersistentObject<DerivedT, ConnectionT>::is_orphaned() const
 {
 	return m_handle_counter == 0;
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 inline
 bool
-PersistentObject<Derived, Connection>::has_high_handle_count() const
+PersistentObject<DerivedT, ConnectionT>::has_high_handle_count() const
 {
 	static HandleCounter const safe_limit =
 		std::numeric_limits<HandleCounter>::max() - 2;
 	return m_handle_counter >= safe_limit;
 }
 
-template <typename Derived, typename Connection>
+template <typename DerivedT, typename ConnectionT>
 void
-PersistentObject<Derived, Connection>::
+PersistentObject<DerivedT, ConnectionT>::
 ghostify()
 {
 	do_ghostify();
@@ -1186,9 +1187,9 @@ ghostify()
 }
 		
 template
-<typename Derived, typename Connection>
+<typename DerivedT, typename ConnectionT>
 void
-PersistentObject<Derived, Connection>::swap_base_internals
+PersistentObject<DerivedT, ConnectionT>::swap_base_internals
 (	PersistentObject& rhs
 )
 {

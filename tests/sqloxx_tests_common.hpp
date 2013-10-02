@@ -36,6 +36,7 @@ void abort_if_exists(boost::filesystem::path const& filepath);
 // evaluate effectiveness of caching in latter.
 void do_speed_test();
 
+
 // Fixture that creates a DatabaseConnection and database file for
 // reuse in tests.
 struct DatabaseConnectionFixture

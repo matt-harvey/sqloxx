@@ -13,15 +13,15 @@ template <typename T>
 struct PersistenceTraits
 {
 	/**
-	 * The PrimaryT is the type such that its primary key is
+	 * The Base is the type such that its primary key is
 	 * \e ultimately stored in this table. Typically
 	 * where we have a Base and a Derived class, both of
 	 * which are PersistentObject instantiations, the Base
-	 * class will be the PrimaryT of Derived. The primary
+	 * class will be the Base of Derived. The primary
 	 * key of Derived will be in a column in the "Base table"
 	 * in the database. Then Derived may have its own table with
 	 * a column that references the primary key column in the
-	 * Base table. The PrimaryT class must have the following functions
+	 * Base table. The Base class must have the following functions
 	 * defined:
 	 *
 	 * <em>static std::string exclusive_table_name();</em>.
@@ -36,7 +36,7 @@ struct PersistenceTraits
 	 *
 	 * @todo Improve this explanation.
 	 */
-	typedef T PrimaryT;
+	typedef T Base;
 
 };  // class PersistenceTraits
 
