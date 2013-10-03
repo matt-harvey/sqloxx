@@ -15,7 +15,7 @@ namespace tests
 
 // Our base TableIterator class for reading DerivedPO
 typedef
-	TableIterator< Handle<DerivedPO>, DerivedDatabaseConnection >
+	TableIterator< Handle<DerivedPO> >
 	DerivedPOHandleIter;
 
 // A derived TableIterator class

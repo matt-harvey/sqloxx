@@ -20,53 +20,27 @@ namespace sqloxx
  * table from which instances of some type T can be extracted by reference
  * to a column in the table.
  *
- * The template parameter \e Connection should be \e
- * sqloxx::DatabaseConnection, or a type derived therefrom.
+ * The template parameter T should be an instantiation of sqloxx::Handle<R>
+ * for some R.
  *
- * In order for this to
- * work, there must be a static member function of T such that the
- * following expression will evaluate to a valid instance of T, assuming
- * \e connection is an open instance of \e Connection and assuming
- * \e statement is a SQLStatement corresponding to the string passed
- * to the two-parameter constructor for TableIterator<Connection, T>.
- *
- *	<tt>
- *
- *	T::create_unchecked(connection, statement.extract<sqloxx::Id>(0));
- *
- *	</tt>
- * 
- * T might (but need not be) an instantiation of sqloxx::Handle. (The
- * "create_unchecked" function in sqloxx::Handle is so named because
- * it creates a Handle without first checking that the Id passed
- * actually exists in the database. This form is relevant for TableIterator
- * because if we have a valid TableIterator, then it \e must be pointing
- * to an existing row in the database table, so there is no need to check
- * for existence.)
- *
- * The API is similar to \e std::istream_iterator. For example -
- *
- * Suppose \e Conn
- * is a type of database connection derived from \e sqloxx::DatabaseConnection
- * and \e Dog is a type with a \e Dog::create_unchecked function of the
- * form described above, and there is a
- * database table named "dog" with the a dolumn "dog_id" being the primary
- * key. Then we can might copy all the \e Dogs into a vector as follows:
+ * The API is similar to \e std::istream_iterator. For example, suppose
+ * \e Connection is some class derived from sqloxx::DatabaseConnection.
  *
  * <tt>
  *
- * 	Conn dbc;
+ *  using sqloxx::Handle;
+ * 	Connection dbc;
  * 	dbc.open("animals.db");
- * 	std::vector<Dog> vec;
+ * 	std::vector<Handle<Dog> > vec;
  * 	std::copy
- * 	(	TableIterator<Dog, Conn>(dbc, "select dog_id from dogs"),
- * 		(TableIterator<Dog, Conn>()),
+ * 	(	TableIterator<Handle<Dog> >(dbc, "select dog_id from dogs"),
+ * 		(TableIterator<Handle<Dog> >()),
  * 		std::back_inserter(vec)
  * 	);
  *
  * </tt>
  */
-template <typename T, typename Connection>
+template <typename T>
 class TableIterator:
 	public std::iterator
 	<	std::input_iterator_tag,
@@ -77,6 +51,8 @@ class TableIterator:
 	>
 {
 public:
+
+	typedef typename T::Connection Connection;
 
 	/**
 	 * Creates a "null" TableIterator. If we are using a "begin" and "end"
@@ -340,9 +316,9 @@ private:
 
 // IMPLEMENTATION
 
-template <typename T, typename Connection>
+template <typename T>
 inline
-TableIterator<T, Connection>::TableIterator
+TableIterator<T>::TableIterator
 (	Connection& p_connection,
 	std::string const& p_statement_text
 ):
@@ -352,70 +328,70 @@ TableIterator<T, Connection>::TableIterator
 	advance();
 }
 
-template <typename T, typename Connection>
+template <typename T>
 inline
 T const&
-TableIterator<T, Connection>::operator*() const
+TableIterator<T>::operator*() const
 {
 	JEWEL_ASSERT (m_maybe_object);  // precondition
 	return *m_maybe_object;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 inline
 T const*
-TableIterator<T, Connection>::operator->() const
+TableIterator<T>::operator->() const
 {
 	JEWEL_ASSERT (m_maybe_object);  // precondition
 	return m_maybe_object.operator->();
 }
 
-template <typename T, typename Connection>
+template <typename T>
 inline
-TableIterator<T, Connection>&
-TableIterator<T, Connection>::operator++()
+TableIterator<T>&
+TableIterator<T>::operator++()
 {
 	advance();
 	return *this;
 }
 
-template <typename T, typename Connection>
-TableIterator<T, Connection>
-TableIterator<T, Connection>::operator++(int)
+template <typename T>
+TableIterator<T>
+TableIterator<T>::operator++(int)
 {
 	TableIterator ret(*this);
 	advance();
 	return ret;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 inline
 bool
-TableIterator<T, Connection>::operator==(TableIterator const& rhs) const
+TableIterator<T>::operator==(TableIterator const& rhs) const
 {
 	return !(*this != rhs);
 }
 
-template <typename T, typename Connection>
+template <typename T>
 inline
 bool
-TableIterator<T, Connection>::operator!=(TableIterator const& rhs) const
+TableIterator<T>::operator!=(TableIterator const& rhs) const
 {
 	return m_maybe_object || rhs.m_maybe_object;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 inline
 void
-TableIterator<T, Connection>::advance()
+TableIterator<T>::advance()
 {
 	if (m_impl) m_impl->next(m_maybe_object);
 	return;
 }
 
-template <typename T, typename Connection>
+template <typename T>
 inline
-TableIterator<T, Connection>::Impl::Impl
+TableIterator<T>::Impl::Impl
 (	Connection& p_connection,
 	std::string const& p_statement_text
 ):
@@ -424,9 +400,9 @@ TableIterator<T, Connection>::Impl::Impl
 {
 }
 
-template <typename T, typename Connection>
+template <typename T>
 void
-TableIterator<T, Connection>::Impl::next
+TableIterator<T>::Impl::next
 (	boost::optional<T>& out
 )
 {
