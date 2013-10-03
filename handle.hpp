@@ -56,7 +56,7 @@ public:
 	 *
 	 * @todo test
 	 */
-	Handle() = default;
+	Handle();
 
 	/**
 	 * Preconditions:\n
@@ -192,7 +192,7 @@ private:
 
 	explicit Handle(T* p_pointer);
 
-	T* m_pointer = nullptr;
+	T* m_pointer;
 };
 
 // NON-MEMBER FUNCTIONS
@@ -249,13 +249,19 @@ Handle<T>::exclusive_table_name()
 
 template <typename T>
 inline
+Handle<T>::Handle(): m_pointer(nullptr)
+{
+}
+
+template <typename T>
+inline
 Handle<T>::~Handle()
 {
 	if (m_pointer) m_pointer->decrement_handle_counter();
 }
 
 template <typename T>
-Handle<T>::Handle(Connection& p_connection)
+Handle<T>::Handle(Connection& p_connection): m_pointer(nullptr)
 {
 	m_pointer = AttorneyT::get_pointer
 	(	p_connection.template identity_map<Base>()
@@ -265,7 +271,7 @@ Handle<T>::Handle(Connection& p_connection)
 }
 
 template <typename T>
-Handle<T>::Handle(Connection& p_connection, Id p_id)
+Handle<T>::Handle(Connection& p_connection, Id p_id): m_pointer(nullptr)
 {
 	m_pointer = AttorneyT::get_pointer
 	(	p_connection.template identity_map<Base>(),

@@ -450,20 +450,22 @@ private:
 
 	// The last key to have been assigned as an index into m_cache_key_map -
 	// or 0 if none have been assigned.
-	CacheKey m_last_cache_key = 0;
+	CacheKey m_last_cache_key;
 
 	// Indicates whether the IdentityMap is currently holding objects
 	// indefinitely in the cache (m_caching == true), or whether
 	// it is clearing each object out when there are no longer
 	// handles pointing to it (m_caching == false).
-	bool m_is_caching = false;
+	bool m_is_caching;
 };
 
 
 template <typename T>
 inline
 IdentityMap<T>::IdentityMap(Connection& p_connection):
-	m_connection(p_connection)
+	m_connection(p_connection),
+	m_last_cache_key(0),
+	m_is_caching(false)
 {
 	JEWEL_ASSERT (m_id_map.empty());
 	JEWEL_ASSERT (m_cache_key_map.empty());

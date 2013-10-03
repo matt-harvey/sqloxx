@@ -203,7 +203,6 @@ public:
 	 */
 	void clear_bindings();
 
-
 private:
 
 	std::shared_ptr<detail::SQLStatementImpl> m_sql_statement;
