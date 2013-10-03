@@ -69,8 +69,7 @@ public:
 	 * Creates a TableIterator that can traverse a table in the database
 	 * \e p_connection, by stepping through the results obtained from
 	 * executing an SQL statement constructed using \e p_statement_text.
-	 * Note the default value for \e p_statement_text (which will work
-	 * in case \e T is an instantiation of \e sqloxx::Handle). If caller
+	 * Note the default value for \e p_statement_text. If caller
 	 * passes a custom statement to \e p_statement_text, it should be
 	 * a SELECT statement, and only the first column of results will
 	 * be relevant, where the first column should contain the primary
