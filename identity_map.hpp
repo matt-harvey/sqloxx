@@ -12,7 +12,6 @@
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <jewel/log.hpp>
-#include <jewel/signature.hpp>
 #include <map>
 #include <memory>
 #include <stdexcept>
@@ -67,7 +66,19 @@ public:
 
 	typedef typename T::Connection Connection;
 	typedef sqloxx::Id CacheKey;
-	typedef jewel::Signature<IdentityMap> Signature;
+
+	class Signature
+	{
+	public:
+		friend class IdentityMap;
+		Signature(Signature const&) = delete;
+		Signature(Signature&&) = delete;
+		Signature& operator=(Signature const&) = delete;
+		Signature& operator=(Signature&&) = delete;
+		~Signature() = default;
+	private:
+		Signature() = default;
+	};
 
 	/**
 	 * Construct an IdentityMap associated with the database

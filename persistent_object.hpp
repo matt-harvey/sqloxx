@@ -207,7 +207,7 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	virtual ~PersistentObject() = default;
+	virtual ~PersistentObject();
 
 	/**
 	 * @returns PersistenceTraits<T>::Base::exclusive_table_name().
@@ -863,6 +863,12 @@ PersistentObject<DerivedT, ConnectionT>::PersistentObject
 	// Note m_cache_key is left unitialized. It is the responsibility
 	// of IdentityMap to call set_cache_key after construction,
 	// before providing a Handle to a newly created DerivedT instance.
+{
+}
+
+template <typename DerivedT, typename ConnectionT>
+inline
+PersistentObject<DerivedT, ConnectionT>::~PersistentObject()
 {
 }
 

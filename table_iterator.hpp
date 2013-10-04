@@ -63,7 +63,7 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	TableIterator() = default;
+	TableIterator();
 
 	/**
 	 * Creates a TableIterator that can traverse a table in the database
@@ -144,12 +144,12 @@ public:
 	 * Exception safety: <em>strong guarantee</em>, providing that the
 	 * copy constructor for T offers at least the strong guarantee.
 	 */
-	TableIterator(TableIterator const&) = default;
+	TableIterator(TableIterator const&);
 
 	/**
 	 * @todo HIGH PRIORITY Test, and document esp. re. exception-safety.
 	 */
-	TableIterator(TableIterator&&) = default;
+	TableIterator(TableIterator&&);
 
 	TableIterator& operator=(TableIterator const&) = delete;
 	TableIterator& operator=(TableIterator&&) = delete;
@@ -161,7 +161,7 @@ public:
 	 * Exception safety: will never throw, assuming the destructor for T will
 	 * never throw.
 	 */
-	~TableIterator() = default;
+	~TableIterator();
 
 	/**
 	 * @returns a constant reference to the instance of T that is currently
@@ -317,6 +317,14 @@ private:
 
 template <typename T>
 inline
+TableIterator<T>::TableIterator()
+{
+	JEWEL_ASSERT (!m_impl);
+	JEWEL_ASSERT (!m_maybe_object);
+}
+
+template <typename T>
+inline
 TableIterator<T>::TableIterator
 (	Connection& p_connection,
 	std::string const& p_statement_text
@@ -325,6 +333,28 @@ TableIterator<T>::TableIterator
 {
 	JEWEL_LOG_TRACE();
 	advance();
+}
+
+template <typename T>
+inline
+TableIterator<T>::TableIterator(TableIterator const& rhs):
+	m_impl(rhs.m_impl),
+	m_maybe_object(rhs.m_maybe_object)
+{
+}
+
+template <typename T>
+inline
+TableIterator<T>::TableIterator(TableIterator&& rhs):
+	m_impl(std::move(rhs.m_impl)),
+	m_maybe_object(std::move(rhs.m_maybe_object))
+{
+}
+
+template <typename T>
+inline
+TableIterator<T>::~TableIterator()
+{
 }
 
 template <typename T>
