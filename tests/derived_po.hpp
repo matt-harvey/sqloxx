@@ -6,10 +6,10 @@
 // Hide from Doxygen
 /// @cond
 
+#include "database_connection.hpp"
+#include "identity_map.hpp"
+#include "persistent_object.hpp"
 #include "sqloxx_tests_common.hpp"
-#include "../database_connection.hpp"
-#include "../identity_map.hpp"
-#include "../persistent_object.hpp"
 #include <string>
 
 namespace sqloxx

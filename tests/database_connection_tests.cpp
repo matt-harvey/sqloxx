@@ -1,10 +1,10 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
+#include "database_connection.hpp"
+#include "sql_statement.hpp"
+#include "sqloxx_exceptions.hpp"
 #include "sqloxx_tests_common.hpp"
-#include "../database_connection.hpp"
-#include "../sql_statement.hpp"
-#include "../sqloxx_exceptions.hpp"
-#include "../detail/sql_statement_impl.hpp"
+#include "detail/sql_statement_impl.hpp"
 #include <UnitTest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
 #include <jewel/assert.hpp>

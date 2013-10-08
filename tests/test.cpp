@@ -16,13 +16,11 @@
  */
 
 
-#include "tests/atomicity_test.hpp"
+#include "atomicity_test.hpp"
+#include "sqloxx_tests_common.hpp"
 #include <UnitTest++/UnitTest++.h>
 #include <stdexcept>
 #include <iostream>
-
-// Should pull in a better way.
-#include "tests/sqloxx_tests_common.hpp"
 
 using sqloxx::DatabaseConnection;
 using sqloxx::SQLStatement;

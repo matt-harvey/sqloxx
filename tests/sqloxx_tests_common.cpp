@@ -1,11 +1,11 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "sqloxx_tests_common.hpp"
+#include "database_connection.hpp"
 #include "derived_po.hpp"
-#include "../database_connection.hpp"
-#include "../detail/sql_statement_impl.hpp"
-#include "../detail/sqlite_dbconn.hpp"
-#include "../sql_statement.hpp"
+#include "sql_statement.hpp"
+#include "detail/sql_statement_impl.hpp"
+#include "detail/sqlite_dbconn.hpp"
 #include <boost/filesystem.hpp>
 #include <jewel/on_windows.hpp>
 #include <jewel/stopwatch.hpp>

@@ -1,8 +1,8 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
 #include "derived_po.hpp"
+#include "handle.hpp"
 #include "sqloxx_tests_common.hpp"
-#include "../handle.hpp"
 #include <jewel/optional.hpp>
 #include <UnitTest++/UnitTest++.h>
 

@@ -1,7 +1,7 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
-#include "sql_statement_impl.hpp"
-#include "sqlite_dbconn.hpp"
+#include "detail/sql_statement_impl.hpp"
+#include "detail/sqlite_dbconn.hpp"
 
 #include "sqlite3.h" // Compiling directly into build
 #include <jewel/assert.hpp>

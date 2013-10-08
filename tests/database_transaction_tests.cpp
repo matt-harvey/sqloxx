@@ -1,9 +1,9 @@
 // Copyright (c) 2013, Matthew Harvey. All rights reserved.
 
+#include "database_transaction.hpp"
+#include "sql_statement.hpp"
+#include "sqloxx_exceptions.hpp"
 #include "sqloxx_tests_common.hpp"
-#include "../database_transaction.hpp"
-#include "../sqloxx_exceptions.hpp"
-#include "../sql_statement.hpp"
 #include <UnitTest++/UnitTest++.h>
 
 namespace sqloxx

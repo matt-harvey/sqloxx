@@ -9,13 +9,8 @@
  * Copyright (c) 2012, Matthew Harvey. All rights reserved.
  */
 
-
-
-
-
-
-#include "sqlite_dbconn.hpp"
-#include "../sqloxx_exceptions.hpp"
+#include "sqloxx_exceptions.hpp"
+#include "detail/sqlite_dbconn.hpp"
 #include <boost/filesystem.hpp>
 #include "sqlite3.h" // Compiling directly into build
 #include <jewel/assert.hpp>

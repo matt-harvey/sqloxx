@@ -14,7 +14,7 @@
  * than specific to any particular class).
  */
 
-#include "../database_connection.hpp"
+#include "database_connection.hpp"
 #include <UnitTest++/UnitTest++.h>
 #include <boost/filesystem.hpp>
 #include <iostream>

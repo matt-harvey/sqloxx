@@ -6,8 +6,8 @@
 // Hide from Doxygen
 /// @cond
 
-#include "../database_connection_fwd.hpp"
-#include "../sql_statement.hpp"
+#include "database_connection_fwd.hpp"
+#include "sql_statement.hpp"
 #include <string>
 
 using std::string;

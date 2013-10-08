@@ -28,11 +28,11 @@ if {[file exists $filename] || [file exists ${filename}-journal]} {
 puts "Running atomicity test..."
 
 # This execution crashes, but we recover
-catch { exec {*}$argv ./sqloxx_test $filename 2>@ stderr >@ stdout }
+catch { exec {*}$argv ./test $filename 2>@ stderr >@ stdout }
 
 # And in this second execution we inspect the database to see that it
 # reacted as expected; and then we perform the other unit tests.
-catch { exec {*}$argv ./sqloxx_test $filename 2>@ stderr >@ stdout }
+catch { exec {*}$argv ./test $filename 2>@ stderr >@ stdout }
 
 # And clean up left over files
 catch { file delete $filename }
