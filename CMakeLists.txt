@@ -7,7 +7,8 @@ add_definitions(-DJEWEL_ENABLE_LOGGING
 				-DJEWEL_ENABLE_EXCEPTION_LOGGING)
 
 if (WIN32)
-	include_directories(C:/Dev-Cpp
+	include_directories(include
+	                C:/Dev-Cpp
 					C:/include
 					C:/Dev-Cpp/include/common
 					include)
@@ -31,7 +32,6 @@ set (library_sources
 	 src/sqlite3.c)
 
 set (test_sources
-	${library_sources}
      tests/test.cpp
      tests/database_connection_tests.cpp
 	 tests/derived_po.cpp
@@ -45,7 +45,7 @@ set (test_sources
 	 tests/next_auto_key_tests.cpp
 	 tests/table_iterator_tests.cpp)
 
-add_executable (test ${library_sources} ${test_sources})
+add_executable (test ${test_sources})
 add_library (sqloxx ${library_sources})
 			
 if (WIN32)
@@ -73,7 +73,7 @@ else ()
 endif()
 
 target_link_libraries (sqloxx ${libaries})
-target_link_libraries (test UnitTest++ ${libraries})
+target_link_libraries (test UnitTest++ sqloxx ${libraries})
 
 if (WIN32)
 	set (lib_installation_dir C:/lib)
