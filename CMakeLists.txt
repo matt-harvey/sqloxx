@@ -75,8 +75,7 @@ set (lib_installation_dir ${CMAKE_INSTALL_PREFIX}/lib)
 
 install(TARGETS sqloxx ARCHIVE DESTINATION ${lib_installation_dir})
 
-set (inner_header_installation_dir
-	"${outer_header_installation_dir}/include/sqloxx")
+set (installation_dir "${CMAKE_INSTALL_PREFIX}/include/sqloxx")
 
 install(FILES
 		include/database_connection.hpp
@@ -97,7 +96,7 @@ install(FILES
 		include/table_iterator.hpp
 		include/table_iterator_fwd.hpp
 		DESTINATION
-		${inner_header_installation_dir})
+		${installation_dir})
 
 install(FILES
 		include/detail/sql_statement_impl.hpp
@@ -105,7 +104,7 @@ install(FILES
 		include/detail/sqlite3.h
 		include/detail/sqlite3ext.h
 		DESTINATION
-		"${inner_header_installation_dir}/detail")
+		"${installation_dir}/detail")
 		
 					
 
