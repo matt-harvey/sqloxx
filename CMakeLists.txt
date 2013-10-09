@@ -15,12 +15,32 @@ if (WIN32)
 	link_directories(C:/Dev-Cpp/lib
 					C:/Dev-Cpp/MinGW/lib
 					C:/lib)
+	set (libraries
+		boost_filesystem-mgw46-mt-1_53
+		boost_system-mgw46-mt-1_53
+		jewel
+		 winmm
+		 shell32
+		 comctl32
+		 rpcrt4
+		 wsock32
+		 odbc32
+		 opengl32)
 else ()
 	include_directories (include)
 	link_directories(/usr/local/lib
 	                 /usr/lib
 					 /usr/local/lib64
 					 /usr/lib64)
+	set (libraries
+		 boost_filesystem
+		 c
+		 stdc++
+		 boost_system
+		 dl
+		 jewel
+		 m
+		 pthread)
 endif ()
 
 set (library_sources
@@ -47,51 +67,16 @@ set (test_sources
 
 add_executable (test ${test_sources})
 add_library (sqloxx ${library_sources})
-			
-if (WIN32)
-	set (libraries
-		boost_filesystem-mgw46-mt-1_53
-		boost_system-mgw46-mt-1_53
-		jewel
-		 winmm
-		 shell32
-		 comctl32
-		 rpcrt4
-		 wsock32
-		 odbc32
-		 opengl32)
-else ()
-	set (libraries
-		 boost_filesystem
-		 c
-		 stdc++
-		 boost_system
-		 dl
-		 jewel
-		 m
-		 pthread)
-endif()
 
 target_link_libraries (sqloxx ${libaries})
 target_link_libraries (test UnitTest++ sqloxx ${libraries})
 
-if (WIN32)
-	set (lib_installation_dir C:/lib)
-else ()
-	set (lib_installation_dir ${CMAKE_INSTALL_PREFIX}/lib)
-endif ()
-
+set (lib_installation_dir ${CMAKE_INSTALL_PREFIX}/lib)
 
 install(TARGETS sqloxx ARCHIVE DESTINATION ${lib_installation_dir})
 
-
-if (WIN32)
-	set (outer_header_installation_dir C:/include)
-else ()
-	set (outer_header_installation_dir ${CMAKE_INSTALL_PREFIX}/include)
-endif ()
-
-set (inner_header_installation_dir "${outer_header_installation_dir}/sqloxx")
+set (inner_header_installation_dir
+	"${outer_header_installation_dir}/include/sqloxx")
 
 install(FILES
 		include/database_connection.hpp
