@@ -11,8 +11,8 @@
 
 #include "sqloxx_exceptions.hpp"
 #include "detail/sqlite_dbconn.hpp"
+#include "detail/sqlite3.h" // Compiling directly into build
 #include <boost/filesystem.hpp>
-#include "sqlite3.h" // Compiling directly into build
 #include <jewel/assert.hpp>
 #include <jewel/exception.hpp>
 #include <exception>
