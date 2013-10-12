@@ -32,16 +32,47 @@ namespace tests
 
 TEST_FIXTURE(DerivedPOFixture, handle_constructors)
 {
-	Handle<DerivedPO> dpo1(*pdbc);
+	JEWEL_LOG_TRACE();
+	Handle<DerivedPO> const dpo1(*pdbc);
 	dpo1->set_x(10);
 	CHECK_EQUAL(dpo1->x(), 10);
 	dpo1->set_y(50000.9812);
 	CHECK_EQUAL(dpo1->y(), 50000.9812);
 	dpo1->save();
 
-	Handle<DerivedPO> dpo1b(*pdbc, 1);
+	JEWEL_LOG_TRACE();
+	Handle<DerivedPO> const dpo1b(*pdbc, 1);
 	CHECK_EQUAL(dpo1b->x(), 10);
 	CHECK_EQUAL(dpo1b->y(), 50000.9812);
+
+	JEWEL_LOG_TRACE();
+	Handle<DerivedPO> dpo2(*pdbc);
+	dpo2->set_x(503);
+	dpo2->set_y(-1.3);
+	dpo2->save();
+
+	JEWEL_LOG_TRACE();
+	Handle<DerivedPO> const dpo2b(*pdbc, 2);
+	CHECK_EQUAL(dpo2b->x(), 503);
+	CHECK_EQUAL(dpo2b->y(), -1.3);
+
+	JEWEL_LOG_TRACE();
+	Handle<DerivedPO> dpo2c(*pdbc, 2);
+	CHECK_EQUAL(dpo2c->y(), -1.3);
+	CHECK_EQUAL(dpo2c->x(), 503);
+
+	JEWEL_LOG_TRACE();
+	CHECK_THROW
+	(	Handle<DerivedPO> const dpo3(*pdbc, 3),
+		sqloxx::BadIdentifier
+	);
+
+	JEWEL_LOG_TRACE();
+	CHECK_THROW
+	(	Handle<DerivedPO> dpo0(*pdbc, 0),
+		sqloxx::BadIdentifier
+	);
+	JEWEL_LOG_TRACE();
 }
 
 

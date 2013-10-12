@@ -307,11 +307,11 @@ private:
 	 * to a record of the corresponding type already persisted in the
 	 * database, with p_id as its primary key.
 	 *
-	 * @throws sqloxx::BadIdentifier if there is not record in the
+	 * @throws sqloxx::BadIdentifier if there is no record in the
 	 * database of type T that has p_id as its primary key. Note the
 	 * validity of p_id is always checked in the physical database
-	 * by this function, regardless of whether object yet has
-	 * yet be cached in the IdentityMap. (It is possibly in certain
+	 * by this function, regardless of whether the object has
+	 * yet to be cached in the IdentityMap. (It is possible in certain
 	 * situations for objects to be left in the cache with ids when they
 	 * no longer exist in the database. This doesn't do any harm as long
 	 * as we don't subsequently use Handles with these invalid
@@ -348,8 +348,8 @@ private:
 	 * @todo Revise tests to reflect checked nature. Test
 	 * unchecked_provide_pointer separately as well.
 	 *
-	 * @todo HIGH PRIORITY Does this check for existence in the exclusive_table
-	 * of \e DynamicT? It should.
+	 * @todo HIGH PRIORITY Does this check for existence in the
+	 * exclusive_table of \e DynamicT? It should.
 	 */
 	template <typename DynamicT>
 	DynamicT* provide_pointer(Id p_id);

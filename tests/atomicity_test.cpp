@@ -71,8 +71,8 @@ do_atomicity_test(string const& db_filename)
 	}
 	return test_result;
 
-	// WARNING Figure out why the journal file does not delete itself
-	// here - currently test.tcl is deleting this manually.
+	// TODO LOW PRIORITY Figure out why the journal file does not delete
+	// itself here - currently test.tcl is deleting this manually.
 }
 	
 
