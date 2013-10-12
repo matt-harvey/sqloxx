@@ -225,10 +225,15 @@ public:
 	 * underlying object.
 	 * 
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Test.
 	 */
 	bool operator==(Handle const& rhs) const;
+
+	/**
+	 * Handles are unequal if an only if they are handling distinct
+	 * underlying objects.
+	 *
+	 * Exception safety: <em>nothrow guarantee.
+	 */
 	bool operator!=(Handle const& rhs) const;
 
 private:
