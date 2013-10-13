@@ -194,8 +194,6 @@ public:
 	 * of T; otherwise returns \e false.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Testing.
 	 */
 	explicit operator bool() const;
 

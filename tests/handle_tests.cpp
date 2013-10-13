@@ -145,6 +145,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_conversion_to_bool)
 	Handle<DerivedPO> dpo1(*pdbc);
 	CHECK(dpo1);
 	CHECK_EQUAL(static_cast<bool>(dpo1), true);
+	CHECK(dpo1);
 	dpo1->set_y(139000000);
 	dpo1->set_x(7);
 	dpo1->save();
@@ -156,12 +157,16 @@ TEST_FIXTURE(DerivedPOFixture, handle_conversion_to_bool)
 	CHECK(dpo1);
 	CHECK_EQUAL(dpo1->x(), 7);
 	CHECK_THROW(dpo1->id(), UninitializedOptionalException);
+	CHECK_EQUAL(static_cast<bool>(dpo1), true);
+	CHECK(static_cast<bool>(dpo1));
 
-	// todo Think of a way to actually make it convert to false.
-	// If this is literally impossible, then is there any point
-	// retaining the conversion in the API? And can we do away
-	// with checking for m_pointer == 0, in operator*() and
-	// operator->() implementations for Handle?
+	// However handle is not valid if completely uninitialized.
+	Handle<DerivedPO> dpo2;
+	CHECK_EQUAL(static_cast<bool>(dpo2), false);
+	dpo1 = dpo2;
+	CHECK_EQUAL(static_cast<bool>(dpo2), false);
+	CHECK(!dpo2);
+	
 }
 
 TEST_FIXTURE(DerivedPOFixture, handle_equality_and_inequality)
