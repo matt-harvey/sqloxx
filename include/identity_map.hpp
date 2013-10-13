@@ -163,8 +163,6 @@ public:
 	 * this IdentityMap.
 	 * 
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo Is this function necessary?
 	 */
 	Connection& connection();
 

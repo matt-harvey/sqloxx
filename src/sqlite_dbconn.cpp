@@ -97,9 +97,6 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 
 }
 
-
-// Remember - don't throw exceptions from destructors!
-// Remember - don't call virtual functions from destructors!
 SQLiteDBConn::~SQLiteDBConn()
 {
 

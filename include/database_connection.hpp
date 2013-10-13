@@ -111,7 +111,7 @@ public:
 	virtual bool is_valid() const;
 
 	/**
-	 * Points the database connection to a specific file
+	 * Opens the database connection to a specific file
 	 * given by \c filename. If the file
 	 * does not already exist it is created. Note the SQLite pragma
 	 * foreign_keys is always executed immediately the file is opened, to

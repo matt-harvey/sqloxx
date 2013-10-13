@@ -28,26 +28,6 @@
  *
  * \author Matthew Harvey
  * \date 04 July 2012.
- *
- * 
- * @todo Make the SQLiteDBConn class provide for a means
- * to check whether the particular file being connected to is
- * the right kind of file for the application that is using
- * the SQLiteDBConn class. At the moment it just checks whether
- * the file exists. This could involve overriding some method or other.
- *
- * @todo There should probably be a close method. Even though the
- * connection is closed by the destructor, there should probably
- * be a way of closing it independently, so that it can be connected
- * elsewhere.
- *
- * @todo Consider supplying public member function to close any
- * database connections and shut down SQLite3. Current this is done
- * in the destructor, but this can't throw.
- *
- * @todo SQLiteDBConn::is_valid should probably do more than
- * just check whether m_connection exists. It should probably also
- * at least check SQLite error status.
  */
 
 
@@ -84,6 +64,11 @@ namespace detail
  * that provides the higher-level interface with clients outside of
  * Sqloxx, as well as a range of convenience functions that are not
  * provided by this lower-level class.
+ *
+ * @todo MEDIUM PRIORITY Supply public member functions to close
+ * any database connections and to shut down SQLite3. Current this is done
+ * in the destructor, but destructors should not throw, so the destructor
+ * calls std::terminate() if close or shut-down fails.
  */
 class SQLiteDBConn
 {
@@ -119,6 +104,9 @@ public:
 	/**
 	 * Returns \c true iff the SQLiteDBConn is connected to a 
 	 * database. Does not throw.
+	 *
+	 * @todo HIGH PRIORITY. As well as checking whether m_connection
+	 * exists, should this also check the SQLite error status?
 	 */
 	bool is_valid() const;
 
@@ -168,8 +156,6 @@ public:
 	 * Exception safety: <em>strong guarantee</em>.
 	 */
 	void throw_on_failure(int errcode);
-
-
 
 private:
 
