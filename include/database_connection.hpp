@@ -339,9 +339,6 @@ private:
 	 * entirely by calls to begin_transaction(), end_transaction() and
 	 * canced_transaction(), rather than by executing the corresponding
 	 * SQL commands directly.
-	 *
-	 * @todo Hide begin_transaction(), end_transaction() and
-	 * cancel_transaction() from everyone except DatabaseTransaction.
 	 */
 	void begin_transaction();
 

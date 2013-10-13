@@ -519,8 +519,6 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>, provided the
 	 * DerivedT::do_ghostify() method is non-throwing.
-	 *
-	 * @todo Determine if this really needs to be public.
 	 */
 	void ghostify();
 
@@ -816,8 +814,6 @@ private:
 
 	/**
 	 * Clears m_id
-	 *
-	 * @todo Testing and documentation.
 	 */
 	void clear_id();
 

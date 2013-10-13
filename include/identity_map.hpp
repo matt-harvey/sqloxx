@@ -449,9 +449,9 @@ private:
 	 */
 	void partially_uncache_object(CacheKey p_cache_key);
 
-	// Find the next available cache key
-	// WARNING Move the implementation out of the class body.
 	/**
+	 * @returns the next available cache key.
+	 *
 	 * @throws sqloxx::OverflowException if the cache has reached
 	 * its maximum size (extremely unlikely).
 	 *
