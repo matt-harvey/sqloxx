@@ -300,7 +300,7 @@ private:
  * same object of the common base type. If it fails, then the returned
  * pointer will be null.
  *
- * @todo Document exception safety, and test.
+ * @todo HIGH PRIORITY Document exception safety, and test.
  */
 template <typename L, typename R>
 Handle<L>
