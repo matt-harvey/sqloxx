@@ -102,8 +102,8 @@ public:
 	virtual ~DatabaseConnection();
 
 	/**
-	 * @returns true if and only if there is a connection to a valid
-	 * database.
+	 * @returns true if and only if the DatabaseConnection is currently
+	 * connected to a database file.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */

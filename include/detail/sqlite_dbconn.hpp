@@ -102,11 +102,8 @@ public:
 	~SQLiteDBConn();
 
 	/**
-	 * Returns \c true iff the SQLiteDBConn is connected to a 
-	 * database. Does not throw.
-	 *
-	 * @todo HIGH PRIORITY. As well as checking whether m_connection
-	 * exists, should this also check the SQLite error status?
+	 * Returns \c true iff the SQLiteDBConn is currently connected to a 
+	 * database file. Does not throw.
 	 */
 	bool is_valid() const;
 
