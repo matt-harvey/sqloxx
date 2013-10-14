@@ -31,28 +31,37 @@ template <typename T>
 struct PersistenceTraits
 {
 	/**
-	 * The Base is the type such that its primary key is
-	 * \e ultimately stored in this table. Typically
-	 * where we have a Base and a Derived class, both of
-	 * which are PersistentObject instantiations, the Base
-	 * class will be the Base of Derived. The primary
-	 * key of Derived will be in a column in the "Base table"
-	 * in the database. Then Derived may have its own table with
-	 * a column that references the primary key column in the
-	 * Base table. The Base class must have the following functions
+	 * The Base is the type such that the primary key of
+	 * T is "ultimately" stored in the table given by
+	 * Base::exclusive_table_name(). That table is the
+	 * table that maintains the incrementing primary key
+	 * sequence used both for instances of T and for instances of Base.
+	 *
+	 * Usually, T and Base are one and the same class.
+	 * But in some cases, client code might contain a
+	 * hierarchy such that one class ("Super") inherits directly
+	 * from PersistentObject<Super, Connection>, and then
+	 * another class ("Sub") inherits, in turn, from Super.
+	 * Typically the "base table" both for Super and Sub will
+	 * be the table given by Super::exclusive_table_name().
+	 * In that case, PersistenceTraits<T> should be specialized such that
+	 * PersistenceTraits<T>::Base is a typedef for Super.
+	 *
+	 * The Base class must have the following functions
 	 * defined:
 	 *
 	 * <em>static std::string exclusive_table_name();</em>.
-	 * This must return the table name of the table in which
+	 * This must return the name of the table in which
 	 * the primary key of T is ultimately stored.
 	 *
 	 * <em>static std::string primary_key_name();<em>
 	 * This must return the name of the primary key for T as it
-	 * appears in the table named by exclusive_table_name(). This
+	 * appears in the table named by Base::exclusive_table_name(). This
 	 * must be a single-column integer primary key that is
 	 * auto-incrementing (using the SQLite "autoincrement" keyword).
 	 *
-	 * @todo Improve this explanation.
+	 * @todo MEDIUM PRIORITY There should be an example, at least in
+	 * the test code, of how this all works.
 	 */
 	typedef T Base;
 
