@@ -35,6 +35,12 @@ namespace tests
 TEST_FIXTURE(DerivedPOFixture, handle_constructors)
 {
 	JEWEL_LOG_TRACE();
+
+	Handle<DerivedPO> const dpo0;
+	CHECK(!dpo0);
+	CHECK_THROW(*dpo0, UnboundHandleException);
+	CHECK_THROW(dpo0->x(), UnboundHandleException);
+
 	Handle<DerivedPO> const dpo1(*pdbc);
 	dpo1->set_x(10);
 	CHECK_EQUAL(dpo1->x(), 10);
@@ -186,6 +192,10 @@ TEST_FIXTURE(DerivedPOFixture, handle_dereferencing)
 	CHECK_EQUAL((*dpo2).x(), dpo2_dereferenced.x());
 	CHECK_EQUAL(dpo2->y(), (*dpo2).y());
 	CHECK_EQUAL(dpo2->y(), 140);
+
+	Handle<DerivedPO> dpo4;
+	CHECK_THROW(dpo4->y(), UnboundHandleException);
+	CHECK_THROW(*dpo4, UnboundHandleException);
 }
 
 TEST_FIXTURE(DerivedPOFixture, handle_conversion_to_bool)

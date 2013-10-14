@@ -48,8 +48,6 @@ namespace sqloxx
  * (See separate documentation for IdentityMap.) (By default Base will be
  * the same type as T, but it need not be; see documentation
  * for PersistenceTraits.)
- *
- * @todo Testing.
  */
 template <typename T>
 class Handle
@@ -67,11 +65,10 @@ public:
 	static std::string exclusive_table_name();
 
 	/**
-	 * Construct a null Handle. Cannot be dereferenced.
+	 * Construct a null Handle, i.e. a Handle to which no instance
+	 * of T is bound.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
-	 *
-	 * @todo test
 	 */
 	Handle();
 
@@ -158,12 +155,12 @@ public:
 	 * function should not be called unless it is known that there exists
 	 * in the database an object of type T with p_id as its primary key.
 	 *
-	 * <em>Calling create_unchecked for an object that is NOT in the database with
-	 * the given id, causes <b>undefined behaviour</b>.</em>
+	 * <em>Calling create_unchecked for an object that is NOT in the database
+	 * with the given id, causes <b>undefined behaviour</b>.</em>
 	 *
 	 * This function may be significantly faster than calling the constructor
-	 * for Handle directly, as it does not check whether the requested primary key
-	 * exists.
+	 * for Handle directly, as it does not check whether the requested primary
+	 * key exists.
 	 *
 	 * @throws std::bad_alloc if there is a memory allocation failure in the
 	 * process of loading and caching the object in the
