@@ -19,7 +19,7 @@
 
 #include "sqloxx_tests_common.hpp"
 #include "database_connection.hpp"
-#include "derived_po.hpp"
+#include "example.hpp"
 #include "sql_statement.hpp"
 #include "detail/sql_statement_impl.hpp"
 #include "detail/sqlite_dbconn.hpp"
@@ -200,7 +200,7 @@ DatabaseConnectionFixture::~DatabaseConnectionFixture()
 	JEWEL_ASSERT (!file_exists(db_filepath));
 }
 
-DerivedPOFixture::DerivedPOFixture():
+ExampleAFixture::ExampleAFixture():
 	db_filepath("Testfile_dpof"),
 	pdbc(0)
 {
@@ -208,10 +208,10 @@ DerivedPOFixture::DerivedPOFixture():
 	abort_if_exists(db_filepath);
 	pdbc->open(db_filepath);
 	JEWEL_ASSERT (pdbc->is_valid());
-	DerivedPO::setup_tables(*pdbc);
+	ExampleA::setup_tables(*pdbc);
 }
 
-DerivedPOFixture::~DerivedPOFixture()
+ExampleAFixture::~ExampleAFixture()
 {
 	JEWEL_ASSERT (pdbc->is_valid());
 	delete pdbc;

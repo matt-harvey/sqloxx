@@ -18,7 +18,7 @@
 
 
 #include "database_connection.hpp"
-#include "derived_po.hpp"
+#include "example.hpp"
 #include "handle.hpp"
 #include "table_iterator.hpp"
 #include "sqloxx_exceptions.hpp"
@@ -30,33 +30,33 @@ namespace sqloxx
 namespace tests
 {
 
-// Our base TableIterator class for reading DerivedPO
+// Our base TableIterator class for reading ExampleA
 typedef
-	TableIterator< Handle<DerivedPO> >
-	DerivedPOHandleIter;
+	TableIterator< Handle<ExampleA> >
+	ExampleAHandleIter;
 
 // A derived TableIterator class
-class FiveIter: public DerivedPOHandleIter
+class FiveIter: public ExampleAHandleIter
 {
 public:
 	FiveIter(DerivedDatabaseConnection& p_database_connection):
-		DerivedPOHandleIter
+		ExampleAHandleIter
 		(	p_database_connection,
-			"select derived_po_id from derived_pos where x = 5"
+			"select example_a_id from example_as where x = 5"
 		)
 	{
 	}
-};  // DerivedPOHandleIter
+};  // ExampleAHandleIter
 
 
 // Setup
 void setup_table_iterator_test(DerivedDatabaseConnection& dbc)
 {
-	Handle<DerivedPO> dpo1(dbc);
-	Handle<DerivedPO> dpo2(dbc);
-	Handle<DerivedPO> dpo3(dbc);
-	Handle<DerivedPO> dpo4(dbc);
-	Handle<DerivedPO> dpo5(dbc);
+	Handle<ExampleA> dpo1(dbc);
+	Handle<ExampleA> dpo2(dbc);
+	Handle<ExampleA> dpo3(dbc);
+	Handle<ExampleA> dpo4(dbc);
+	Handle<ExampleA> dpo5(dbc);
 
 	dpo1->set_x(0);
 	dpo1->set_y(14.1);
@@ -81,20 +81,20 @@ void setup_table_iterator_test(DerivedDatabaseConnection& dbc)
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_constructor_and_basic_functioning_1
 )
 {
 	setup_table_iterator_test(*pdbc);
 
-	DerivedPOHandleIter const null_iter;
+	ExampleAHandleIter const null_iter;
 
 	size_t count = 0;
-	for (DerivedPOHandleIter it(*pdbc); it != null_iter; ++it) ++count;
+	for (ExampleAHandleIter it(*pdbc); it != null_iter; ++it) ++count;
 	CHECK_EQUAL(count, static_cast<size_t>(5));
 
 	int max = 0;
-	for (DerivedPOHandleIter it(*pdbc); it != null_iter; ++it)
+	for (ExampleAHandleIter it(*pdbc); it != null_iter; ++it)
 	{
 		max =
 		(	((*it)->x() > max)?
@@ -106,15 +106,15 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_constructor_and_basic_functioning_2
 )
 {
 	setup_table_iterator_test(*pdbc);
-	DerivedPOHandleIter const null_iter;
-	DerivedPOHandleIter it
+	ExampleAHandleIter const null_iter;
+	ExampleAHandleIter it
 	(	*pdbc,
-		"select derived_po_id from derived_pos where y > 14.2"
+		"select example_a_id from example_as where y > 14.2"
 	);
 	size_t count = 0;
 	for ( ; it != null_iter; ++it) ++count;
@@ -122,93 +122,93 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_constructor_exceptions
 )
 {
 	DerivedDatabaseConnection invalid_dbc;
-	CHECK_THROW(DerivedPOHandleIter it(invalid_dbc), InvalidConnection);
+	CHECK_THROW(ExampleAHandleIter it(invalid_dbc), InvalidConnection);
 	CHECK_THROW(FiveIter it(invalid_dbc), InvalidConnection);
 
 	setup_table_iterator_test(*pdbc);
 
 	CHECK_THROW
-	(	DerivedPOHandleIter it
+	(	ExampleAHandleIter it
 		(	*pdbc,
 			"qselect unsyntactical gobbledigook from jbooble"
 		),
 		SQLiteException
 	);
 	CHECK_THROW
-	(	DerivedPOHandleIter it
+	(	ExampleAHandleIter it
 		(	*pdbc,
-			"select nonexistent_column from derived_pos"
+			"select nonexistent_column from example_as"
 		),
 		SQLiteException
 	);
 	CHECK_THROW
-	(	DerivedPOHandleIter it
+	(	ExampleAHandleIter it
 		(	*pdbc,
-			"select derived_po_id from nonexistent_table"
+			"select example_a_id from nonexistent_table"
 		),
 		SQLiteException
 	);
 	CHECK_THROW
-	(	DerivedPOHandleIter it
+	(	ExampleAHandleIter it
 		(	*pdbc,
-			"select derived_po_id from derived_pos; "
-			"select derived_po_id from derived_pos where x = 5"
+			"select example_a_id from example_as; "
+			"select example_a_id from example_as where x = 5"
 		),
 		TooManyStatements
 	);
 	CHECK_THROW
-	(	DerivedPOHandleIter it
+	(	ExampleAHandleIter it
 		(	*pdbc,
-			"select derived_po_id from derived_pos; um"
+			"select example_a_id from example_as; um"
 		),
 		TooManyStatements
 	);
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_copy_constructor
 )
 {
 	setup_table_iterator_test(*pdbc);
-	DerivedPOHandleIter it(*pdbc);
+	ExampleAHandleIter it(*pdbc);
 	++it;
 	CHECK_EQUAL((*it)->id(), 2);
-	DerivedPOHandleIter it2(it);
+	ExampleAHandleIter it2(it);
 	CHECK_EQUAL((*it2)->id(), 2);
 	++it2;
 	CHECK_EQUAL((*it)->id(), 2);
 	++it;
 	CHECK_EQUAL((*it)->id(), 4);
 
-	DerivedPOHandleIter null_iter;
-	DerivedPOHandleIter it3(null_iter);
+	ExampleAHandleIter null_iter;
+	ExampleAHandleIter it3(null_iter);
 	CHECK(it3 == null_iter);
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_empty_result_set
 )
 {
 	setup_table_iterator_test(*pdbc);
 	CHECK
-	(	DerivedPOHandleIter
+	(	ExampleAHandleIter
 		(	*pdbc,
-			"select derived_po_id from derived_pos where x = 76898"
+			"select example_a_id from example_as where x = 76898"
 		) ==
-		(DerivedPOHandleIter())
+		(ExampleAHandleIter())
 	);
-	DerivedPOHandleIter it
+	ExampleAHandleIter it
 	(	*pdbc,
-		"select derived_po_id from derived_pos where 1 = 2"
+		"select example_a_id from example_as where 1 = 2"
 	);
-	DerivedPOHandleIter null_iter;
+	ExampleAHandleIter null_iter;
 	CHECK(it == null_iter);
 	++it;
 	CHECK(it == null_iter);
@@ -217,34 +217,34 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_completely_empty_table
 )
 {
-	CHECK(DerivedPOHandleIter(*pdbc) == (DerivedPOHandleIter()));
-	DerivedPOHandleIter it(*pdbc);
+	CHECK(ExampleAHandleIter(*pdbc) == (ExampleAHandleIter()));
+	ExampleAHandleIter it(*pdbc);
 	for (size_t i = 0; i != 189; ++i)
 	{
 		++it;
-		CHECK(it == (DerivedPOHandleIter()));
+		CHECK(it == (ExampleAHandleIter()));
 	}
 	it++;
 	it++;
-	CHECK(it == (DerivedPOHandleIter()));
+	CHECK(it == (ExampleAHandleIter()));
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_increment_and_deref
 )
 {
 	setup_table_iterator_test(*pdbc);
 
-	DerivedPOHandleIter const null_it;
+	ExampleAHandleIter const null_it;
 
-	DerivedPOHandleIter it1
+	ExampleAHandleIter it1
 	(	*pdbc,
-		"select derived_po_id from derived_pos order by derived_po_id"
+		"select example_a_id from example_as order by example_a_id"
 	);
 	int i = 1;
 	for ( ; it1 != null_it; ++it1, ++i)
@@ -252,9 +252,9 @@ TEST_FIXTURE
 		CHECK_EQUAL((*it1)->id(), i);
 	}
 
-	for (DerivedPOHandleIter it(*pdbc) ; it != null_it; ++it)
+	for (ExampleAHandleIter it(*pdbc) ; it != null_it; ++it)
 	{
-		Handle<DerivedPO> dpo2 = *it;
+		Handle<ExampleA> dpo2 = *it;
 		int const id = dpo2->id();
 		switch (id)
 		{
@@ -286,18 +286,18 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_cycling_through_results_set
 )
 {
 	setup_table_iterator_test(*pdbc);
-	DerivedPOHandleIter it(*pdbc);
-	DerivedPOHandleIter const null_iter;
+	ExampleAHandleIter it(*pdbc);
+	ExampleAHandleIter const null_iter;
 	CHECK_EQUAL((*it)->id(), 1);
 	++it;
 	CHECK_EQUAL((*it)->id(), 2);
 	while (it != null_iter) ++it;
-	CHECK(it == DerivedPOHandleIter());
+	CHECK(it == ExampleAHandleIter());
 	++it;
 	CHECK(it != null_iter);
 	CHECK_EQUAL((*it)->id(), 1);
@@ -306,25 +306,25 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_postfix_increment
 )
 {
-	DerivedPOHandleIter null_iter;
+	ExampleAHandleIter null_iter;
 	null_iter++;  // Does nothing
 
 	setup_table_iterator_test(*pdbc);
-	DerivedPOHandleIter it(*pdbc);
+	ExampleAHandleIter it(*pdbc);
 	CHECK_EQUAL((*it)->id(), 1);
 	it++;	
 	CHECK_EQUAL((*it)->id(), 2);
 	CHECK_EQUAL((*it++)->id(), 2);
 	CHECK_EQUAL((*it)->id(), 3);
 
-	DerivedPOHandleIter jt(*pdbc);
+	ExampleAHandleIter jt(*pdbc);
 	jt++;
 	CHECK_EQUAL((*jt)->id(), 2);
-	DerivedPOHandleIter jt2(jt++);
+	ExampleAHandleIter jt2(jt++);
 	CHECK_EQUAL((*jt2)->id(), 2);
 	CHECK_EQUAL((*jt2)->id(), 2);
 	++jt2;
@@ -335,16 +335,16 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	DerivedPOFixture,
+(	ExampleAFixture,
 	test_table_iterator_equality_and_inequality
 )
 {
 	setup_table_iterator_test(*pdbc);
 
-	DerivedPOHandleIter it1(*pdbc);
-	DerivedPOHandleIter it2(*pdbc);
-	DerivedPOHandleIter const null_iter1;
-	DerivedPOHandleIter const null_iter2;
+	ExampleAHandleIter it1(*pdbc);
+	ExampleAHandleIter it2(*pdbc);
+	ExampleAHandleIter const null_iter1;
+	ExampleAHandleIter const null_iter2;
 
 	CHECK(it1 != it2);
 	CHECK(null_iter1 == null_iter2);

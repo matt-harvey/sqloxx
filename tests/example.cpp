@@ -18,7 +18,7 @@
 
 
 #include "database_connection.hpp"
-#include "derived_po.hpp"
+#include "example.hpp"
 #include "handle.hpp"
 #include "persistent_object.hpp"
 #include "sql_statement.hpp"
@@ -35,17 +35,17 @@ namespace tests
 {
 
 void
-DerivedPO::setup_tables(DatabaseConnection& dbc)
+ExampleA::setup_tables(DatabaseConnection& dbc)
 {
 	dbc.execute_sql
-	(	"create table derived_pos"
-		"(derived_po_id integer primary key autoincrement, "
+	(	"create table example_as"
+		"(example_a_id integer primary key autoincrement, "
 		"x integer not null, y float not null)"
 	);
 	return;
 }
 
-DerivedPO::DerivedPO
+ExampleA::ExampleA
 (	IdentityMap& p_identity_map,
 	Id p_id,
 	IdentityMap::Signature const& p_sig
@@ -60,7 +60,7 @@ DerivedPO::DerivedPO
 	(void)p_sig;  // silence compiler re. unused param.
 }
 
-DerivedPO::DerivedPO
+ExampleA::ExampleA
 (	IdentityMap& p_identity_map,
 	IdentityMap::Signature const& p_sig
 ):
@@ -72,32 +72,32 @@ DerivedPO::DerivedPO
 }
 
 int
-DerivedPO::x()
+ExampleA::x()
 {
 	load();
 	return m_x;
 }
 
 int
-DerivedPO::self_test()
+ExampleA::self_test()
 {
 	int num_failures = 0;
-	DerivedPOFixture fixture;
+	ExampleAFixture fixture;
 	DerivedDatabaseConnection& dbc = *fixture.pdbc;
-	Handle<DerivedPO> dpo1(dbc);
+	Handle<ExampleA> dpo1(dbc);
 	dpo1->set_x(3);
 	dpo1->set_y(4.08);
 	dpo1->save();
 	if (dpo1->id() != 1) ++num_failures;
 	if (dpo1->x() != 3) ++num_failures;
 	if (dpo1->y() != 4.08) ++num_failures;
-	Handle<DerivedPO> dpo2(dbc, 1);
+	Handle<ExampleA> dpo2(dbc, 1);
 	if (dpo2->id() != 1) ++num_failures;
 	if (dpo2->x() != 3) ++num_failures;
 	if (dpo2->y() != 4.08) ++num_failures;
 
 	// Check prospective_key() && do_calculate_prospective_key() (default)
-	Handle<DerivedPO> dpo5(dbc);
+	Handle<ExampleA> dpo5(dbc);
 	if (dpo5->prospective_key() != 2) ++num_failures;
 	dpo5->set_x(-100);
 	dpo5->set_y(982734);
@@ -115,21 +115,21 @@ DerivedPO::self_test()
 	
 	// Check has_id()
 	if (!dpo1->has_id()) ++num_failures;
-	Handle<DerivedPO> dpo7(dbc);
+	Handle<ExampleA> dpo7(dbc);
 	if (dpo7->has_id()) ++num_failures;
 
 	return num_failures;
 }
 
 double
-DerivedPO::y()
+ExampleA::y()
 {
 	load();
 	return m_y;
 }
 
 void
-DerivedPO::set_x(int p_x)
+ExampleA::set_x(int p_x)
 {
 	load();
 	m_x = p_x;
@@ -137,14 +137,14 @@ DerivedPO::set_x(int p_x)
 }
 
 void
-DerivedPO::set_y(double p_y)
+ExampleA::set_y(double p_y)
 {
 	load();
 	m_y = p_y;
 	return;
 }
 
-DerivedPO::DerivedPO(DerivedPO const& rhs):
+ExampleA::ExampleA(ExampleA const& rhs):
 	DPersistentObject(rhs),
 	m_x(rhs.m_x),
 	m_y(rhs.m_y)
@@ -152,11 +152,11 @@ DerivedPO::DerivedPO(DerivedPO const& rhs):
 }
 
 void
-DerivedPO::do_load()
+ExampleA::do_load()
 {
 	SQLStatement selector
 	(	database_connection(),
-		"select x, y from derived_pos where derived_po_id = :p"
+		"select x, y from example_as where example_a_id = :p"
 	);
 	selector.bind(":p", id());
 	selector.step();
@@ -168,11 +168,11 @@ DerivedPO::do_load()
 }
 
 void
-DerivedPO::do_save_existing()
+ExampleA::do_save_existing()
 {
 	SQLStatement updater
 	(	database_connection(),
-		"update derived_pos set x = :x, y = :y where derived_po_id = :id"
+		"update example_as set x = :x, y = :y where example_a_id = :id"
 	);
 	updater.bind(":x", m_x);
 	updater.bind(":y", m_y);
@@ -182,11 +182,11 @@ DerivedPO::do_save_existing()
 }
 
 void
-DerivedPO::do_save_new()
+ExampleA::do_save_new()
 {
 	SQLStatement inserter
 	(	database_connection(),
-		"insert into derived_pos(x, y) values(:x, :y)"
+		"insert into example_as(x, y) values(:x, :y)"
 	);
 	inserter.bind(":x", m_x);
 	inserter.bind(":y", m_y);
@@ -194,7 +194,7 @@ DerivedPO::do_save_new()
 }
 
 void
-DerivedPO::do_ghostify()
+ExampleA::do_ghostify()
 {
 	// No point doing anything here really, but in any
 	// case let's set m_x and m_y to values that look
@@ -204,20 +204,20 @@ DerivedPO::do_ghostify()
 }
 
 string
-DerivedPO::exclusive_table_name()
+ExampleA::exclusive_table_name()
 {
-	return "derived_pos";
+	return "example_as";
 }
 
 string
-DerivedPO::primary_key_name()
+ExampleA::primary_key_name()
 {
-	return "derived_po_id";
+	return "example_a_id";
 }
 
 DerivedDatabaseConnection::DerivedDatabaseConnection():
 	DatabaseConnection(),
-	m_derived_po_map(*this)
+	m_example_a_map(*this)
 {
 }
 

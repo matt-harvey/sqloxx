@@ -17,8 +17,8 @@
  */
 
 
-#ifndef GUARD_derived_po_hpp_7678596874549332
-#define GUARD_derived_po_hpp_7678596874549332
+#ifndef GUARD_example_hpp_7678596874549332
+#define GUARD_example_hpp_7678596874549332
 
 // Hide from Doxygen
 /// @cond
@@ -37,22 +37,22 @@ namespace tests
 
 // Dummy class inheriting from PersistentObject, for the purpose
 // of testing PersistentObject class.
-class DerivedPO: public PersistentObject<DerivedPO, DerivedDatabaseConnection>
+class ExampleA: public PersistentObject<ExampleA, DerivedDatabaseConnection>
 {
 
 public:
 	typedef sqloxx::Id Id;
-	typedef PersistentObject<DerivedPO, DerivedDatabaseConnection>
+	typedef PersistentObject<ExampleA, DerivedDatabaseConnection>
 		DPersistentObject;
 
 	static void setup_tables(DatabaseConnection& dbc);
 
-	DerivedPO
+	ExampleA
 	(	IdentityMap& p_identity_map,
 		IdentityMap::Signature const& p_sig
 	);
 
-	DerivedPO
+	ExampleA
 	(	IdentityMap& p_identity_map,
 		Id p_id,
 		IdentityMap::Signature const& p_sig
@@ -71,7 +71,7 @@ public:
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
 protected:
-	DerivedPO(DerivedPO const& rhs);
+	ExampleA(ExampleA const& rhs);
 
 private:
 	void do_load();
@@ -85,30 +85,30 @@ private:
 
 
 // Dummy class derived from DatabaseConnection, to provide
-// IdentityMap<DerivedPO>
+// IdentityMap<ExampleA>
 class DerivedDatabaseConnection: public DatabaseConnection
 {
 public:
 
 	DerivedDatabaseConnection();
 
-	typedef sqloxx::IdentityMap<DerivedPO> IdentityMap;
+	typedef sqloxx::IdentityMap<ExampleA> IdentityMap;
 
 	template <typename T>
 	IdentityMap& identity_map();
 
 private:
 
-	IdentityMap m_derived_po_map;
+	IdentityMap m_example_a_map;
 };
 
 
 template <>
 inline
-IdentityMap<DerivedPO>&
-DerivedDatabaseConnection::identity_map<DerivedPO>()
+IdentityMap<ExampleA>&
+DerivedDatabaseConnection::identity_map<ExampleA>()
 {
-	return m_derived_po_map;
+	return m_example_a_map;
 }
 
 
@@ -118,4 +118,4 @@ DerivedDatabaseConnection::identity_map<DerivedPO>()
 /// @endcond
 // End hiding from Doxygen
 
-#endif  // GUARD_derived_po_hpp_7678596874549332
+#endif  // GUARD_example_hpp_7678596874549332

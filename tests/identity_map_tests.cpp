@@ -17,7 +17,7 @@
  */
 
 
-#include "derived_po.hpp"
+#include "example.hpp"
 #include "handle.hpp"
 #include "identity_map.hpp"
 #include "sqloxx_exceptions.hpp"
@@ -33,19 +33,19 @@ namespace tests
 // indirectly via the database connection, as they are
 // private.
 
-TEST_FIXTURE(DerivedPOFixture, identity_map_after_object_removal)
+TEST_FIXTURE(ExampleAFixture, identity_map_after_object_removal)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
-	Handle<DerivedPO> dpo1(dbc);
+	Handle<ExampleA> dpo1(dbc);
 	dpo1->set_x(10);
 	dpo1->set_y(-1298);
 	dpo1->save();
-	Handle<DerivedPO> dpo1b(dbc, 1);  // OK
+	Handle<ExampleA> dpo1b(dbc, 1);  // OK
 	dpo1->remove();
 	bool ok = false;
 	try
 	{
-		Handle<DerivedPO> dpo1c(*pdbc, 1);
+		Handle<ExampleA> dpo1c(*pdbc, 1);
 	}
 	catch (BadIdentifier&)
 	{
@@ -53,15 +53,15 @@ TEST_FIXTURE(DerivedPOFixture, identity_map_after_object_removal)
 	}
 	CHECK(ok);
 	// But this doesn't throw
-	Handle<DerivedPO> dpo1d
-	(	Handle<DerivedPO>::create_unchecked(dbc, 1)
+	Handle<ExampleA> dpo1d
+	(	Handle<ExampleA>::create_unchecked(dbc, 1)
 	);
 }
 
-TEST_FIXTURE(DerivedPOFixture, identity_map_connection)
+TEST_FIXTURE(ExampleAFixture, identity_map_connection)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
-	IdentityMap<DerivedPO> idm(dbc);
+	IdentityMap<ExampleA> idm(dbc);
 	CHECK_EQUAL(&(idm.connection()), &dbc);
 }
 

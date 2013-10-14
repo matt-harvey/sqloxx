@@ -55,7 +55,7 @@ set (library_sources
 set (test_sources
      tests/test.cpp
      tests/database_connection_tests.cpp
-	 tests/derived_po.cpp
+	 tests/example.cpp
 	 tests/persistent_object_tests.cpp
 	 tests/sql_statement_tests.cpp
 	 tests/sqloxx_tests_common.cpp
