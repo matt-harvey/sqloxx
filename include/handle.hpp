@@ -34,8 +34,8 @@ namespace sqloxx
 
 /**
  * Handle for handling business objects of type T where T is a class
- * derived from PersistentObject<T, Connection> for some type Connection, and is
- * managed via IdentityMap<PersistenceTraits<T>::Base> to ensure only one
+ * derived from PersistentObject<T, Connection> for some type Connection, and
+ * is managed via IdentityMap<PersistenceTraits<T>::Base> to ensure only one
  * instance of T exists in memory at any one time, in relation to any given
  * record in the database.
  *
@@ -152,10 +152,48 @@ public:
 	Handle(Connection& p_connection, Id p_id);
 
 	/**
-	 * Calling create_unchecked for an object that is NOT in the database with
-	 * the given id, causes UNDEFINED BEHAVIOUR.
+	 * @returns a Handle to an instance of T corresponding to one that has
+	 * already been persisted to the database represented by p_connection
+	 * with a primary key of p_id, assuming such an instance of T exists. This
+	 * function should not be called unless it is known that there exists
+	 * in the database an object of type T with p_id as its primary key.
 	 *
-	 * @todo Documentation and testing.
+	 * <em>Calling create_unchecked for an object that is NOT in the database with
+	 * the given id, causes <b>undefined behaviour</b>.</em>
+	 *
+	 * This function may be significantly faster than calling the constructor
+	 * for Handle directly, as it does not check whether the requested primary key
+	 * exists.
+	 *
+	 * @throws std::bad_alloc if there is a memory allocation failure in the
+	 * process of loading and caching the object in the
+	 * relevant sqloxx::IdentityMap (in case it is not already
+	 * cached).
+	 *
+	 * @throws sqloxx::OverflowException in the extremely unlikely
+	 * event that the in-memory cache already has so many objects loaded that
+	 * an additional object could not be cached without causing
+	 * arithmetic overflow in the process of assigning it a key.
+	 *
+	 * @throws InvalidConnection in case the database connection is invalid.
+	 *
+	 * @throws SQLiteException, or a derivative thereof, in the extremely
+	 * unlikely event of an error during execution thrown up by the underlying
+	 * SQLite API.
+	 *
+	 * <em>In addition</em>, any exceptions thrown from the T constructor
+	 * may also be thrown by this function.
+	 *
+	 * Exception safety depends on the constructor of T of the form
+	 * T(IdentityMapT&, Id, IdentityMap::Signature const&).
+	 * Provided this constructor offers at least the
+	 * <em>strong guarantee</em>, then create_unchecked() offers the
+	 * <em>strong guarantee</em> (although there may be some internal cache
+	 * state that is not rolled back but which does not affect client code).
+	 * For this guarantee to hold, it is also required that the destructor
+	 * of T not throw. Remember also that if no object of type T exists in
+	 * the database with p_id as its primary key, then behaviour is
+	 * undefined.
 	 */
 	static Handle create_unchecked(Connection& p_connection, Id p_id);
 

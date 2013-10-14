@@ -20,14 +20,13 @@
 #ifndef GUARD_database_connection_hpp_4041979952734886
 #define GUARD_database_connection_hpp_4041979952734886
 
+#include "sqloxx_exceptions.hpp"
 #include <boost/filesystem/path.hpp>
 #include <boost/optional.hpp>
 #include <memory>
 #include <set>
 #include <string>
 #include <unordered_map>
-#include "sqloxx_exceptions.hpp"
-
 
 /**
  * Namespace for housing all Sqloxx code. Sqloxx is intended as a
