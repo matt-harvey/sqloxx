@@ -446,7 +446,12 @@ private:
 	 * The object will be retained in the cache, but will not be identified
 	 * with any in-database object.
 	 *
-	 * @todo Testing and documentation of exceptions and exception-safety.
+	 * Preconditions:\n
+	 * The destructor of T must be nothrow; and\n
+	 * There is an object cached under p_cache_key in the cache_key_map.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>, provided preconditions
+	 * are met.
 	 */
 	void partially_uncache_object(CacheKey p_cache_key);
 
