@@ -713,7 +713,7 @@ IdentityMap<T>::partially_uncache_object(CacheKey p_cache_key)
 {
 	// Precondition
 	JEWEL_ASSERT (m_cache_key_map.find(p_cache_key) != m_cache_key_map.end());
-	Record const record = m_cache_key_map.find(p_cache_key)->second;
+	Record const& record = m_cache_key_map.find(p_cache_key)->second;
 	if (record->has_id())
 	{
 		JEWEL_ASSERT (m_id_map.find(record->id()) != m_id_map.end());
@@ -749,14 +749,28 @@ IdentityMap<T>::disable_caching()
 {
 	if (m_is_caching)
 	{
-		for (auto& cache_entry: m_cache_key_map)
+		auto it = m_cache_key_map.begin();
+		auto const end = m_cache_key_map.end();
+		while (it != end)
 		{
 			if
 			(	PersistentObject<T, Connection>::HandleMonitorAttorney::
-					is_orphaned(*(cache_entry.second))
+					is_orphaned(*(it->second))
 			)
 			{
-				uncache_object(cache_entry.first);  // TODO Should this be partially_uncache_object?
+				auto doomed_it = it;
+				++it;
+
+				Record const& record = doomed_it->second;
+				if (record->has_id())
+				{
+					JEWEL_ASSERT
+					(	m_id_map.find(record->id()) !=
+						m_id_map.end()
+					);
+					m_id_map.erase(record->id());
+				}
+				m_cache_key_map.erase(doomed_it);
 			}
 		}
 		m_is_caching = false;
