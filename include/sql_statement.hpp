@@ -110,6 +110,15 @@ public:
 	
 	/**
 	 * Wrappers around SQLite bind functions.
+	 *
+	 * This is only supported with the following types for T:\n
+	 * int, long, long long, double, std::string const& and char const*.
+	 *
+	 * <b>NOTE</b>
+	 * If x is of an integral type that is wider than 64 bits, then any
+	 * attempt instantiate this function with x will result in compilation
+	 * failure. This is done to rule out any possibility of overflow within
+	 * SQLite.
 	 * 
 	 * @throws InvalidConnection if the database connection is invalid.
 	 * If this occurs, the state of the SQLStatement will be
@@ -126,10 +135,8 @@ public:
 	 *
 	 * Exception safety: <em>basic guarantee</em>.
 	 */
-	void bind(std::string const& parameter_name, int x);
-	void bind(std::string const& parameter_name, long x);
-	void bind(std::string const& parameter_name, long long x);
-	void bind(std::string const& parameter_name, double x);
+	template <typename T>
+	void bind(std::string const& parameter_name, T x);
 	void bind(std::string const& parameter_name, std::string const& x);
 
 	/**
@@ -239,6 +246,59 @@ SQLStatement::SQLStatement
 		)
 	)
 {
+}
+		
+template <>
+inline
+void
+SQLStatement::bind(std::string const& parameter_name, int x)
+{
+	m_sql_statement->bind(parameter_name, x);
+	return;
+}
+
+template <>
+inline
+void
+SQLStatement::bind(std::string const& parameter_name, long x)
+{
+	m_sql_statement->bind(parameter_name, x);
+	return;
+}
+
+template <>
+inline
+void
+SQLStatement::bind(std::string const& parameter_name, long long x)
+{
+	m_sql_statement->bind(parameter_name, x);
+	return;
+}
+
+template <>
+inline
+void
+SQLStatement::bind(std::string const& parameter_name, double x)
+{
+	m_sql_statement->bind(parameter_name, x);
+	return;
+}
+
+inline
+void
+SQLStatement::bind(std::string const& parameter_name, std::string const& x)
+{
+	m_sql_statement->bind(parameter_name, x.c_str());
+	return;
+}
+
+template <>
+inline
+void
+SQLStatement::bind(std::string const& parameter_name, char const* x)
+{
+	m_sql_statement->bind(parameter_name, x);
+	return;
 }
 
 

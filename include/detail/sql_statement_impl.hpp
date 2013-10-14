@@ -31,16 +31,15 @@
  *
  */
 
-
-#include "../sqloxx_exceptions.hpp"
-#include <jewel/checked_arithmetic.hpp>
 #include "sqlite3.h"  // Compiling directly into build
+#include "../sqloxx_exceptions.hpp"
 #include <boost/filesystem/path.hpp>
-#include <limits>
+#include <jewel/assert.hpp>
+#include <jewel/checked_arithmetic.hpp>
+#include <climits>
 #include <string>
+#include <type_traits>
 #include <vector>
-
-
 
 namespace sqloxx
 {
@@ -54,11 +53,6 @@ class SQLiteDBConn;
  * Wrapper class for sqlite_stmt*. This class is should not be
  * used except internally by the Sqloxx library. SQLStatementImpl instances
  * are themselves encapsulated by SQLStatement instances.
- *
- * @todo HIGH PRIORITY Could long long overflow the SQLite 64-bit integer
- * type on some platforms? Possibly. We have a static assertion (below) to
- * break compilation on such platforms. This is unsatisfying though. Can we
- * use enable_if instead?
  */
 class SQLStatementImpl
 {
@@ -82,8 +76,8 @@ public:
 	 * in str is syntactically acceptable to SQLite, <em>but</em> there
 	 * are characters in str after this statement, other than ';' and ' '.
 	 * This includes the case where there are further syntactically
-	 * acceptable SQL statements after the first one - as each SQLStatementImpl
-	 * can encapsulate only one statement.
+	 * acceptable SQL statements after the first one - as each
+	 * SQLStatementImpl can encapsulate only one statement.
 	 */
 	SQLStatementImpl(SQLiteDBConn& p_sqlite_dbconn, std::string const& str);
 
@@ -106,6 +100,12 @@ public:
 	 * long long\n
 	 * double\n
 	 * std::string\n
+	 * char const*
+	 *
+	 * <b>NOTE</b>
+	 * If x is of an integral type that is wider than 64 bits, then any
+	 * attempt instantiate this function with x will result in compilation
+	 * failure. This is done to rule out any overflow within SQLite.
 	 */
 	template <typename T>
 	void bind(std::string const& parameter_name, T const& x);
@@ -234,16 +234,8 @@ private:
 	 */
 	void check_column(int index, int value_type);
 
-	void do_bind(std::string const& parameter_name, int x);
-	void do_bind(std::string const& parameter_name, long x);
-	void do_bind(std::string const& parameter_name, long long x);
-	void do_bind(std::string const& parameter_name, double x);
-	void do_bind(std::string const& parameter_name, std::string const& x);
-	// Not implemented for other types, so capture here to prevent compilation
-	// if other types passed
 	template <typename T>
-	void do_bind(std::string const& parameter_name, T t);
-
+	void do_bind(std::string const& parameter_name, T x);
 
 	sqlite3_stmt* m_statement;
 	SQLiteDBConn& m_sqlite_dbconn;
@@ -290,18 +282,6 @@ SQLStatementImpl::extract<long>(int index)
 	check_column(index, SQLITE_INTEGER);
 	return sqlite3_column_int64(m_statement, index);
 }
-
-
-// long long is guaranteed to be at least 8 bytes. But
-// if it's <em>greater than 64 bits</em>, this causes a danger
-// of overflow of SQLite's 64-bit integer type column, in
-// which we will want to store values of long long type.
-// Compilation should fail in this case.
-static_assert
-(	CHAR_BIT * sizeof(long long) == 64,
-	"For SQLStatementImpl to work safetly, sizeof(long long) must be 64 bits."
-);
-
 
 template <>
 inline
@@ -357,7 +337,6 @@ SQLStatementImpl::clear_bindings()
 	return;
 }
 
-
 inline
 bool
 SQLStatementImpl::is_locked() const
@@ -380,6 +359,120 @@ SQLStatementImpl::unlock()
 	m_is_locked = false;
 	return;
 }
+
+#if INT_MAX <= 9223372036854775807
+	template <>
+	inline
+	void
+	SQLStatementImpl::do_bind(std::string const& parameter_name, int x)
+	{
+#		if INT_MAX <= 2147483647
+			JEWEL_ASSERT (CHAR_BIT * sizeof(x) <= 32);
+			throw_on_failure
+			(	sqlite3_bind_int
+				(	m_statement,
+					parameter_index(parameter_name),
+					x
+				)
+			);
+#		else
+			JEWEL_ASSERT (CHAR_BIT * sizeof(x) <= 64);
+			throw_on_failure
+			(	sqlite3_bind_int64
+				(	m_statement,
+					parameter_index(parameter_name),
+					x
+				)
+			);
+#		endif
+		return;
+}
+#endif
+
+#if LONG_MAX <= 9223372036854775807
+	template <>
+	inline
+	void
+	SQLStatementImpl::do_bind(std::string const& parameter_name, long x)
+	{
+#		if LONG_MAX <= 2147483647
+			JEWEL_ASSERT (CHAR_BIT * sizeof(x) <= 32);
+			throw_on_failure
+			(	sqlite3_bind_int
+				(	m_statement,
+					parameter_index(parameter_name),
+					x
+				)
+			);
+#		else
+			JEWEL_ASSERT (CHAR_BIT * sizeof(x) <= 64);
+			throw_on_failure
+			(	sqlite3_bind_int64
+				(	m_statement,
+					parameter_index(parameter_name),
+					x
+				)
+			);
+#		endif
+		return;
+	}
+#endif
+
+#if LLONG_MAX <= 9223372036854775807
+	template <>
+	inline
+	void
+	SQLStatementImpl::do_bind
+	(	std::string const& parameter_name,
+		long long x
+	)
+	{
+		// long long is guaranteed to be at least 8 bytes. But
+		// if it's greater than 64 bits, this causes a danger
+		// of overflow of SQLite's 64-bit integer type column, in
+		// which we will want to store values of long long type.
+		// In this case, this enable_if should have ensured that
+		// compilation failed; to this assertion should always hold
+		// at runtime.
+		JEWEL_ASSERT (CHAR_BIT * sizeof(x) <= 64);
+		throw_on_failure
+		(	sqlite3_bind_int64
+			(	m_statement,
+				parameter_index(parameter_name),
+				x
+			)
+		);
+		return;
+	}
+# endif
+
+template <>
+inline
+void
+SQLStatementImpl::do_bind(std::string const& parameter_name, double x)
+{
+	throw_on_failure
+	(	sqlite3_bind_double(m_statement, parameter_index(parameter_name), x)
+	);
+	return;
+}
+
+template <>
+inline
+void
+SQLStatementImpl::do_bind(std::string const& parameter_name, char const* x)
+{
+	throw_on_failure
+	(	sqlite3_bind_text
+		(	m_statement,
+			parameter_index(parameter_name),
+			x,
+			-1,
+			SQLITE_TRANSIENT
+		)
+	);
+}
+
 
 
 }  // namespace detail

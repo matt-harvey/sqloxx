@@ -131,62 +131,6 @@ SQLStatementImpl::throw_on_failure(int errcode)
 	return;
 }
 
-
-void
-SQLStatementImpl::do_bind(string const& parameter_name, int x)
-{
-	throw_on_failure
-	(	sqlite3_bind_int(m_statement, parameter_index(parameter_name), x)
-	);
-	return;
-}
-
-
-void
-SQLStatementImpl::do_bind(string const& parameter_name, long x)
-{
-	throw_on_failure
-	(	sqlite3_bind_int64(m_statement, parameter_index(parameter_name), x)
-	);
-	return;
-}
-
-
-void
-SQLStatementImpl::do_bind(string const& parameter_name, long long x)
-{
-	throw_on_failure
-	(	sqlite3_bind_int64(m_statement, parameter_index(parameter_name), x)
-	);
-	return;
-}
-
-void
-SQLStatementImpl::do_bind(string const& parameter_name, double x)
-{
-	throw_on_failure
-	(	sqlite3_bind_double(m_statement, parameter_index(parameter_name), x)
-	);
-	return;
-}
-
-
-void
-SQLStatementImpl::do_bind(string const& parameter_name, string const& x)
-{
-	throw_on_failure
-	(	sqlite3_bind_text
-		(	m_statement,
-			parameter_index(parameter_name),
-			x.c_str(),
-			-1,
-			SQLITE_TRANSIENT
-		)
-	);
-	return;
-}
-		
-
 bool
 SQLStatementImpl::step()
 {

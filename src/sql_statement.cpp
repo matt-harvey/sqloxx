@@ -85,44 +85,6 @@ SQLStatement::extract<string>(int index)
 	return m_sql_statement->extract<string>(index);
 }
 
-
-void
-SQLStatement::bind(string const& parameter_name, int x)
-{
-	m_sql_statement->bind(parameter_name, x);
-	return;
-}
-
-
-void
-SQLStatement::bind(string const& parameter_name, long x)
-{
-	m_sql_statement->bind(parameter_name, x);
-	return;
-}
-
-void
-SQLStatement::bind(string const& parameter_name, long long x)
-{
-	m_sql_statement->bind(parameter_name, x);
-	return;
-}
-
-
-void
-SQLStatement::bind(string const& parameter_name, double x)
-{
-	m_sql_statement->bind(parameter_name, x);
-}
-
-void
-SQLStatement::bind(string const& parameter_name, string const& x)
-{
-	m_sql_statement->bind(parameter_name, x);
-	return;
-}
-
-
 bool
 SQLStatement::step()
 {
