@@ -55,9 +55,10 @@ class SQLiteDBConn;
  * used except internally by the Sqloxx library. SQLStatementImpl instances
  * are themselves encapsulated by SQLStatement instances.
  *
- * @todo Could long long overflow the SQLite 64-bit integer type on some
- * platforms? Possibly. We have a static assertion (below) to break
- * compilation on such platforms. This is unsatisfying though.
+ * @todo HIGH PRIORITY Could long long overflow the SQLite 64-bit integer
+ * type on some platforms? Possibly. We have a static assertion (below) to
+ * break compilation on such platforms. This is unsatisfying though. Can we
+ * use enable_if instead?
  */
 class SQLStatementImpl
 {

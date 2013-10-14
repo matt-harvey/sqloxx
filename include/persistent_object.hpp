@@ -50,7 +50,8 @@ class PersistentObjectHandleAttorney;
 /**
  * Class template for creating objects persisted to a database. This
  * should be inherited by a derived class that defines certain
- * functions as detailed below.
+ * functions as detailed below. For an example of such a derived
+ * client class, see "tests/deri
  *
  * An instance of (a class deriving from an instantiation of)
  * PersistentObject represents a "business object" for which the
@@ -80,7 +81,6 @@ class PersistentObjectHandleAttorney;
  *	
  * See sqloxx::IdentityMap and sqloxx::Handle for further documentation
  * here.
- *
  *
  * <b>Lazy Loading</b>
  *
@@ -177,15 +177,6 @@ class PersistentObjectHandleAttorney;
  * instances of DerivedT will be persisted to the database. ConnectionT
  * should be a class derived from sqloxx::DatabaseConnection.
  * 
- * @todo Go through all the client classes in Phatbooks and ensure the
- * do_save... functions in each are atomic with respect to
- * the in-memory objects, and conform to the restrictions detailed in the
- * PersistentObject API documentation. (Note I have already done this
- * for \e load functions.)
- *
- * @todo If Sqloxx is ever moved to a separate library, then the documentation
- * for PersistentObject should include code for an exemplary derived class.
- *
  * @todo Centralize list of preconditions in a single location.
  *
  * @todo Have a single location for documenting use of Sqloxx holistically.

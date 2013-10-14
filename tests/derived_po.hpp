@@ -44,9 +44,20 @@ public:
 	typedef sqloxx::Id Id;
 	typedef PersistentObject<DerivedPO, DerivedDatabaseConnection>
 		DPersistentObject;
+
 	static void setup_tables(DatabaseConnection& dbc);
-	DerivedPO(IdentityMap& p_identity_map, IdentityMap::Signature const& p_sig);
-	DerivedPO(IdentityMap& p_identity_map, Id p_id, IdentityMap::Signature const& p_sig);
+
+	DerivedPO
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_sig
+	);
+
+	DerivedPO
+	(	IdentityMap& p_identity_map,
+		Id p_id,
+		IdentityMap::Signature const& p_sig
+	);
+
 	int x();
 	double y();
 	void set_x(int p_x);
