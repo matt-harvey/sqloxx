@@ -33,10 +33,6 @@ namespace tests
 // indirectly via the database connection, as they are
 // private.
 
-// TODO Uncomment the commented-out tests and adjust them to
-// reflect that those functions are now private.
-
-
 TEST_FIXTURE(DerivedPOFixture, identity_map_after_object_removal)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
