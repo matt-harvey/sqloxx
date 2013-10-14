@@ -164,10 +164,10 @@ public:
 	 */
 	TableIterator(TableIterator const&);
 
-	/**
-	 * @todo HIGH PRIORITY Test, and document esp. re. exception-safety.
-	 */
-	TableIterator(TableIterator&&);
+	// Move constructor is deliberately not declared. It is hard to make
+	// move exception-safe due to boost::optional not having a move constructor.
+	// TODO LOW PRIORITY Provide a move constructor (and make sure it is
+	// exception-safe).
 
 	TableIterator& operator=(TableIterator const&) = delete;
 	TableIterator& operator=(TableIterator&&) = delete;
@@ -358,14 +358,6 @@ inline
 TableIterator<T>::TableIterator(TableIterator const& rhs):
 	m_impl(rhs.m_impl),
 	m_maybe_object(rhs.m_maybe_object)
-{
-}
-
-template <typename T>
-inline
-TableIterator<T>::TableIterator(TableIterator&& rhs):
-	m_impl(std::move(rhs.m_impl)),
-	m_maybe_object(std::move(rhs.m_maybe_object))
 {
 }
 

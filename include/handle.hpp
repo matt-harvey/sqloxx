@@ -218,13 +218,13 @@ public:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	Handle(Handle&& rhs);
+	Handle(Handle&& rhs) noexcept;
 
 	/** Move assignment.
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
-	Handle& operator=(Handle&&);
+	Handle& operator=(Handle&&) noexcept;
 
 	/**
 	 * @returns \e true if this Handle<T> is bound to some instance
@@ -340,13 +340,6 @@ Handle<T>::Handle(): m_pointer(nullptr)
 }
 
 template <typename T>
-inline
-Handle<T>::~Handle()
-{
-	if (m_pointer) m_pointer->decrement_handle_counter();
-}
-
-template <typename T>
 Handle<T>::Handle(Connection& p_connection): m_pointer(nullptr)
 {
 	m_pointer = AttorneyT::get_pointer
@@ -365,6 +358,13 @@ Handle<T>::Handle(Connection& p_connection, Id p_id): m_pointer(nullptr)
 	);
 	JEWEL_ASSERT (m_pointer);
 	m_pointer->increment_handle_counter();
+}
+
+template <typename T>
+inline
+Handle<T>::~Handle()
+{
+	if (m_pointer) m_pointer->decrement_handle_counter();
 }
 
 template <typename T>
@@ -404,14 +404,14 @@ Handle<T>::operator=(Handle const& rhs)
 
 template <typename T>
 inline
-Handle<T>::Handle(Handle&& rhs): m_pointer(std::move(rhs.m_pointer))
+Handle<T>::Handle(Handle&& rhs) noexcept: m_pointer(std::move(rhs.m_pointer))
 {
 	rhs.m_pointer = nullptr;
 }
 
 template <typename T>
 Handle<T>&
-Handle<T>::operator=(Handle&& rhs)
+Handle<T>::operator=(Handle&& rhs) noexcept
 {
 	if (this != &rhs)
 	{
