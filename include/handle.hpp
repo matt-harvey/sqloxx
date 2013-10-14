@@ -76,19 +76,6 @@ public:
 	Handle();
 
 	/**
-	 * Preconditions:\n
-	 * the object must have been managed
-	 * throughout its life by (a single instance of) IdentityMap,
-	 * and must only have ever been
-	 * accessed via instances of Handle<Derived>; and\n
-	 * The destructor of Derived must be non-throwing.
-	 *
-	 * Exception safety: <em>nothrow guarantee</em>, provided the
-	 * preconditions are met.
-	 */
-	~Handle();
-
-	/**
 	 * Constructs a Handle to a new instance of T, which has \e not yet
 	 * been persisted to the database represented by p_connection.
 	 * The handled object will be persisted to p_connection if and when it is
@@ -150,6 +137,19 @@ public:
 	 * that the destructor for T not throw.
 	 */
 	Handle(Connection& p_connection, Id p_id);
+
+	/**
+	 * Preconditions:\n
+	 * the object must have been managed
+	 * throughout its life by (a single instance of) IdentityMap,
+	 * and must only have ever been
+	 * accessed via instances of Handle<Derived>; and\n
+	 * The destructor of Derived must be non-throwing.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>, provided the
+	 * preconditions are met.
+	 */
+	~Handle();
 
 	/**
 	 * @returns a Handle to an instance of T corresponding to one that has
@@ -217,13 +217,15 @@ public:
 	 */
 	Handle& operator=(Handle const& rhs);
 
-	/**
-	 * @todo HIGH PRIORITY Testing and documentation.
+	/** Move constructor.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	Handle(Handle&& rhs);
 
-	/**
-	 * @todo HIGH PRIORITY Testing and documentation.
+	/** Move assignment.
+	 *
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	Handle& operator=(Handle&&);
 

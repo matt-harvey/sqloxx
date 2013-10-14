@@ -22,8 +22,10 @@
 #include "sqloxx_tests_common.hpp"
 #include <jewel/optional.hpp>
 #include <UnitTest++/UnitTest++.h>
+#include <utility>
 
 using jewel::UninitializedOptionalException;
+using std::move;
 
 namespace sqloxx
 {
@@ -116,6 +118,20 @@ TEST_FIXTURE(DerivedPOFixture, handle_copy_constructor_and_indirection)
 	CHECK_EQUAL(dpo3->x(), dpo1->x());
 }
 
+TEST_FIXTURE(DerivedPOFixture, handle_move_constructor_and_indirection)
+{
+	Handle<DerivedPO> dpo1(*pdbc);
+	dpo1->set_x(-9);
+	dpo1->set_y(102928);
+	dpo1->save();
+	Handle<DerivedPO> dpo2(move(dpo1));
+
+	// dpo1 is now "taboo".
+	CHECK_EQUAL(dpo2->id(), 1);
+	CHECK_EQUAL(dpo2->y(), 102928);
+	CHECK_EQUAL(dpo2->x(), -9);
+}
+
 TEST_FIXTURE(DerivedPOFixture, handle_assignment_and_indirection)
 {
 	Handle<DerivedPO> dpo1(*pdbc);
@@ -125,7 +141,7 @@ TEST_FIXTURE(DerivedPOFixture, handle_assignment_and_indirection)
 	dpo2->save();
 	dpo1->set_x(897);
 	dpo1->set_y(30978);
-	dpo2 = dpo1;
+	dpo2 = dpo1;  // copy assignment
 	CHECK_EQUAL(dpo2->x(), dpo1->x());
 	CHECK_EQUAL(dpo2->y(), 30978);
 	dpo1->save();
@@ -133,12 +149,21 @@ TEST_FIXTURE(DerivedPOFixture, handle_assignment_and_indirection)
 	Handle<DerivedPO> dpo3(*pdbc, 1);
 	CHECK_EQUAL(dpo3->id(), 1);
 	dpo3->set_x(-188342392);
-	dpo1 = dpo3;
+	dpo1 = dpo3;  // copy assignment
 	CHECK_EQUAL(dpo1->x(), -188342392);
 	dpo1->set_y(50);
 	CHECK_EQUAL(dpo1->y(), 50);
 	dpo1->save();
 	CHECK_EQUAL(dpo3->id(), 1);
+
+	Handle<DerivedPO> dpo4(*pdbc);
+	dpo4 = Handle<DerivedPO>(*pdbc,  2);  // move assignment
+	CHECK_EQUAL(dpo4->x(), 897);
+	CHECK_EQUAL(dpo4->y(), 30978);
+	dpo4 = Handle<DerivedPO>();  // move assignment
+	CHECK(!dpo4);
+	dpo4 = Handle<DerivedPO>(*pdbc);  // move assignment
+	CHECK(dpo4);
 }
 
 TEST_FIXTURE(DerivedPOFixture, handle_dereferencing)
