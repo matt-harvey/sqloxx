@@ -60,7 +60,6 @@ namespace sqloxx
 int const
 DatabaseConnection::s_max_nesting = INT_MAX;
 
-
 DatabaseConnection::DatabaseConnection
 (	StatementCache::size_type p_cache_capacity
 ):
@@ -69,7 +68,6 @@ DatabaseConnection::DatabaseConnection
 	m_cache_capacity(p_cache_capacity)
 {
 }
-
 
 DatabaseConnection::~DatabaseConnection()
 {
@@ -87,13 +85,11 @@ DatabaseConnection::~DatabaseConnection()
 	m_statement_cache.clear();
 }
 
-
 bool
 DatabaseConnection::is_valid() const
 {
 	return m_sqlite_dbconn->is_valid();
 }
-
 
 void
 DatabaseConnection::open(boost::filesystem::path const& p_filepath)
@@ -104,14 +100,12 @@ DatabaseConnection::open(boost::filesystem::path const& p_filepath)
 	return;
 }
 
-
 void
 DatabaseConnection::execute_sql(string const& str)
 {
 	m_sqlite_dbconn->execute_sql(str);
 	return;
 }
-
 
 void
 DatabaseConnection::setup_boolean_table()
@@ -156,7 +150,6 @@ DatabaseConnection::filepath() const
 	return value(m_filepath);
 }
 
-
 void
 DatabaseConnection::begin_transaction()
 {
@@ -179,7 +172,6 @@ DatabaseConnection::begin_transaction()
 	++m_transaction_nesting_level;
 	return;
 }
-
 
 void
 DatabaseConnection::end_transaction()
@@ -346,7 +338,5 @@ DatabaseConnection::self_test()
 	return ret;
 
 }
-
-
 
 }  // namespace sqloxx

@@ -118,25 +118,12 @@ public:
 	 * enable foreign key constraints.
 	 *
 	 * As a final step in this, function, do_setup() is called.
-	 * This is
-	 * a private virtual function which by default does nothing. Derived
-	 * classes may override it to provide their own initialization code.
-	 *
-	 * @todo This should be made to support Unicode filepaths, which
-	 * apparently are used on Windows.
-	 *
-	 * @todo It appears that boost::filesystem::path::string() produces
-	 * a GENERIC string (safely passable to SQLite database connection
-	 * opening function) in Boost Version 1.42; but that in Version 1.46
-	 * this produces a NATIVE string! Currently this function relies on the
-	 * behaviour in version 1.42. I should use a macro or something to
-	 * make it portable between versions of Boost.
+	 * This is a private virtual function which by default does nothing.
+	 * Derived classes may override it to provide their own initialization
+	 * code.
 	 *
 	 * @param filepath File to connect to. The is in the form of a
 	 * \c boost::filesystem::path to facilitate portability.
-	 *
-	 * @todo Do a full portability test to Windows, especially for cases
-	 * involving escape characters and such.
 	 *
 	 * @throws sqloxx::InvalidFilename if filename is an empty string.
 	 *

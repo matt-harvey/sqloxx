@@ -48,10 +48,11 @@ class PersistentObjectHandleAttorney;
 // end forward declarations
 
 /**
- * Class template for creating objects persisted to a database. This
- * should be inherited by a derived class that defines certain
+ * Class template for creating objects persisted to a database. In client
+ * code, this should be inherited by a derived class that defines certain
  * functions as detailed below. For an example of such a derived
- * client class, see "tests/deri
+ * client class, see the class sqloxx::tests::DerivedPO, in
+ * "tests/derived_po.hpp" and "tests/derived_po.cpp".
  *
  * An instance of (a class deriving from an instantiation of)
  * PersistentObject represents a "business object" for which the
@@ -137,14 +138,14 @@ class PersistentObjectHandleAttorney;
  *
  * <em>static std::string primary_key_name();<em>\n
  * Should return, without side effects, the name of the primary
- * key column for T. This primary key column must appear in
+ * key column for DerivedT. This primary key column must appear in
  * the table named by \e exclusive_table_name(). The primary key
  * must be a single-column integer primary key that is autoincrementing
  * (using the SQLite "autoincrement" key word).
- * If PersistentTraits<...> has been specialized for T, then it
+ * If PersistentTraits<...> has been specialized for DerivedT, then it
  * is the class PersistenceTraits<T>::Base for which primary_key_name()
- * must be defined, rather than T per se. The primary key name must
- * be the same both in the table name by T::exclusive_table_name() and
+ * must be defined, rather than DerivedT per se. The primary key name must
+ * be the same both in the table name by DerivedT::exclusive_table_name() and
  * Base::exclusive_table_name().
  *
  * <em>virtual void do_load() = 0;</em>\n
@@ -177,9 +178,9 @@ class PersistentObjectHandleAttorney;
  * instances of DerivedT will be persisted to the database. ConnectionT
  * should be a class derived from sqloxx::DatabaseConnection.
  * 
- * @todo Centralize list of preconditions in a single location.
+ * @todo MEDIUM PRIORITY Centralize list of preconditions in a single location.
  *
- * @todo Have a single location for documenting use of Sqloxx holistically.
+ * @todo MEDIUM PRIORITY Have a single location for documenting use of Sqloxx holistically.
  */
 template <typename DerivedT, typename ConnectionT>
 class PersistentObject
@@ -220,7 +221,10 @@ public:
 	/**
 	 * @returns PersistenceTraits<T>::Base::exclusive_table_name().
 	 *
-	 * @todo Document exception throwing behaviour and test.
+	 * Behaviour regarding exceptions and exception safety is determined
+	 * by the behaviour of
+	 * PersistenceTraits<T>::Base::exclusive_table_name(), which
+	 * is provided by the client.
 	 */
 	static std::string primary_table_name();
 	

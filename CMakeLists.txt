@@ -4,7 +4,8 @@ project (sqloxx)
 
 add_definitions(-DJEWEL_ENABLE_LOGGING
 		        -DJEWEL_ENABLE_ASSERTION_LOGGING
-				-DJEWEL_ENABLE_EXCEPTION_LOGGING)
+				-DJEWEL_ENABLE_EXCEPTION_LOGGING
+				-DBOOST_FILESYSTEM_VERSION=3)
 
 if (WIN32)
 	include_directories(include

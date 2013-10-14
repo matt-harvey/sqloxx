@@ -67,7 +67,6 @@ SQLiteDBConn::SQLiteDBConn():
 
 }
 
-
 void
 SQLiteDBConn::open(boost::filesystem::path const& filepath)
 {
@@ -86,7 +85,7 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 	// Open the connection
 	throw_on_failure	
 	(	sqlite3_open_v2
-		(	filepath.string().c_str(),
+		(	filepath.generic_string().c_str(),
 			&m_connection,
 			SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
 			0
@@ -94,7 +93,6 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 	);
 	execute_sql("pragma foreign_keys = on;");
 	return;
-
 }
 
 SQLiteDBConn::~SQLiteDBConn()
