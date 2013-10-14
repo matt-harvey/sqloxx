@@ -293,14 +293,22 @@ private:
  * Finally, L must be a base class of R, or must be one and the same
  * type as R, or else R must be a base class of L.
  *
- * These preconditions enforced using static_asserts.
+ * These preconditions enforced using static_asserts, i.e. compilation
+ * will fail if any of these preconditions fails.
  *
  * A dynamic_cast is attempted on the underlying pointer. If it
  * succeeds, then the returned Handle<L> will point to one and the
  * same object of the common base type. If it fails, then the returned
  * pointer will be null.
  *
- * @todo HIGH PRIORITY Document exception safety, and test.
+ * @throws sqloxx::OverflowException in the extremely unlikely
+ * event that the number of Handle instances pointing to the
+ * underlying instance of T is too large to be safely counted
+ * by the type PersistentObject<T, Connection>::HandleCounter.
+ *
+ * Exception safety: <em>strong guarantee</em>.
+ *
+ * @todo HIGH PRIORITY Testing.
  */
 template <typename L, typename R>
 Handle<L>
@@ -499,11 +507,15 @@ handle_cast(Handle<R> const& rhs)
 		>::value,
 		"Invalid instantiation of sqloxx::handle_cast."
 	);
-	Handle<L> ret;
-	if (rhs.m_pointer)
+	Handle<L> ret;  // nothrow
+	if (rhs.m_pointer)  // nothrow
 	{
-		ret.m_pointer = dynamic_cast<L*>(rhs.m_pointer);
-		if (ret.m_pointer) ret.m_pointer->increment_handle_counter();
+		ret.m_pointer = dynamic_cast<L*>(rhs.m_pointer);  // nothrow
+		if (ret.m_pointer)
+		{
+			// might throw sqloxx::OverflowException - strong guarantee
+			ret.m_pointer->increment_handle_counter();
+		}
 	}
 	return ret;
 }
