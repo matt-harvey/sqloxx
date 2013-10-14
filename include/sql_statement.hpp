@@ -91,8 +91,8 @@ public:
 		std::string const& p_statement_text
 	);
 
-	// TODO Provide a move constructor, even if I don't provide a copy
-	// constructor.
+	// TODO LOW PRIORITY Provide a move constructor (even though
+	// I don't want to provide a copy constructor)?
 	SQLStatement(SQLStatement const&) = delete;
 	SQLStatement(SQLStatement&&) = delete;
 	SQLStatement& operator=(SQLStatement const&) = delete;
