@@ -342,12 +342,6 @@ private:
 	 * state that is not rolled back but which does not affect client code).
 	 * For this guarantee to hold, it is also required that the destructor
 	 * of T not throw.
-	 *
-	 * @todo Revise tests to reflect checked nature. Test
-	 * unchecked_provide_pointer separately as well.
-	 *
-	 * @todo HIGH PRIORITY Does this check for existence in the
-	 * exclusive_table of \e DynamicT? It should.
 	 */
 	template <typename DynamicT>
 	DynamicT* provide_pointer(Id p_id);
@@ -564,7 +558,7 @@ IdentityMap<T>::provide_pointer(Id p_id)
 		"Invalid instantiation of provide_pointer template."
 	);
 
-	if (!PersistentObject<T, Connection>::exists(m_connection, p_id))
+	if (!PersistentObject<DynamicT, Connection>::exists(m_connection, p_id))
 	{
 		JEWEL_THROW
 		(	BadIdentifier,
