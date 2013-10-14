@@ -122,10 +122,19 @@ public:
 	 * by the IdentityMap is \e not destructed merely by virtue
 	 * of the destruction of the IdentityMap.
 	 *
+	 * TODO HIGH PRIORITY Care needs to be taken when instances of
+	 * PersistentObject reference each other. Within a given IdentityMap,
+	 * there is no guarantee about the order of destruction of individual
+	 * objects cached in the IdentityMap. Also if a Handle destructor
+	 * is called
+	 * after its IdentityMap has been destroyed, this may result in
+	 * undefined behaviour. So when PersistentObjects are holding Handles to
+	 * other PersistentObjects, this needs to be borne in mind. We need to
+	 * warn about this in the API documentation for Handle and/or
+	 * PersistentObject and/or IdentityMap.
+	 *
 	 * Exception safety: the <em>nothrow guarantee</em> is provided,
 	 * providing the destructor of T does not throw.
-	 *
-	 * @todo Testing.
 	 */
 	~IdentityMap() = default;
 
