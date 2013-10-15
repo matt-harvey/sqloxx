@@ -157,16 +157,15 @@ class PersistentObjectHandleAttorney;
  * <em>virtual void do_save_new() = 0;</em>\n
  * See documentation for save_new() function.
  *
- * <em>virtual void do_ghostify() = 0;\n
- * See documentation for ghostify() function.
- *
- * In addition the following function \e may be provided with a definition
+ * In addition the following functions \e may be provided with a definition
  * in the DerivedT class, although the PersistentObject base class provides
  * a default implementation which is suitable in many cases:
  *
  * <em>virtual void do_remove();\n
  * See documentation for remove() function.
  *
+ * <em>virtual void do_ghostify();\n
+ * See documentation for ghostify() function.
  *
  * <b>Template parameters</b>
  *
@@ -622,9 +621,12 @@ protected:
 	 * In defining do_load(), the DerivedT class should throw an instance
 	 * of std::exception (which may be an instance of any exception class
 	 * derived therefrom) in the event that the load fails;\n
-	 * do_load() should not perform any write operations on the database,
-	 * and should provide 
-	 * the strong exception-safety guarantee;\n
+	 * do_load() should not perform any write operations on the database;\n
+	 * do_load() should be such that if it fails, ghostify() can safely be
+	 * called on the object;\n
+	 * do_load() should be such that if it fails, any external state
+	 * (outside of the object itself) will then be just
+	 * as it was prior to the unsuccessful call to load();\n
 	 * The DerivedT class should define do_ghostify() according to the
 	 * preconditions specified in the documentaton of ghostify(); and\n
 	 * The destructor of DerivedT must be non-throwing.
