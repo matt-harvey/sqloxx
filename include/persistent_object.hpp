@@ -967,7 +967,7 @@ PersistentObject<DerivedT, ConnectionT>::save()
 	JEWEL_ASSERT (m_cache_key);  // precondition
 	if (has_id())  // nothrow
 	{
-		// strong guarantee, under preconditions of do_load (see load())
+		// basic guarantee, under preconditions of do_load (see load())
 		load(); 
 
 		// strong guarantee
