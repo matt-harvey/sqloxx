@@ -57,14 +57,17 @@ public:
 		IdentityMap::Signature const& p_sig
 	);
 
+	// Move constructor deliberately undefined
+	
 	ExampleA& operator=(ExampleA const&) = delete;
 	ExampleA& operator=(ExampleA&&) = delete;
+
+	~ExampleA() = default;
 
 	int x();
 	double y();
 	void set_x(int p_x);
 	void set_y(double p_y);
-	// Default destructor is OK.
 	
 	// To test protected functions of PersistentObject. Returns number
 	// of failing checks in test.
@@ -72,9 +75,6 @@ public:
 
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
-
-protected:
-	ExampleA(ExampleA const& rhs);
 
 private:
 	void do_load() override;
@@ -118,14 +118,11 @@ public:
 	static std::string primary_key_name();
 
 protected:
-	ExampleB(ExampleB const& rhs);
+	void load_core();
+	void save_existing_core();
+	Id save_new_core();
 
 private:
-	void do_load() override;
-	// Uses default version of do_calculate_prospective_key
-	void do_save_existing() override;
-	void do_save_new() override;
-	// Uses default version of do_ghostify
 	std::string m_s;
 };
 
@@ -133,7 +130,6 @@ private:
 // begin forward declarations
 
 class ExampleC;
-class ExampleD;
 
 // end forward declarations
 
@@ -147,14 +143,47 @@ template <> struct PersistenceTraits<tests::ExampleC>
 	typedef tests::ExampleB Base;
 };
 
-template <> struct PersistenceTraits<tests::ExampleD>
-{
-	typedef tests::ExampleB Base;
-};
-
 
 namespace tests
 {
+
+class ExampleC: public ExampleB
+{
+public:
+	
+	static void setup_tables(DatabaseConnection& dbc);
+
+	ExampleC
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_sig
+	);
+	
+	ExampleC
+	(	IdentityMap& p_identity_map,
+		Id p_id,
+		IdentityMap::Signature const& p_sig
+	);
+
+	ExampleC& operator=(ExampleC const&) = delete;
+	ExampleC& operator=(ExampleC&&) = delete;
+	~ExampleC() = default;
+
+	int p();
+	int q();
+	void set_p(int p_p);
+	void set_q(int p_q);
+
+	static std::string exclusive_table_name();
+
+private:
+	void do_load() override;
+	void do_save_existing() override;
+	void do_save_new() override;
+	void do_remove() override;
+	int m_p;
+	int m_q;
+};
+
 
 // Dummy class derived from DatabaseConnection, for testing
 // purposes

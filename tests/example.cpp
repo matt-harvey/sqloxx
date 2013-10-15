@@ -141,13 +141,6 @@ ExampleA::set_y(double p_y)
 	return;
 }
 
-ExampleA::ExampleA(ExampleA const& rhs):
-	DPersistentObject(rhs),
-	m_x(rhs.m_x),
-	m_y(rhs.m_y)
-{
-}
-
 void
 ExampleA::do_load()
 {
@@ -254,14 +247,16 @@ ExampleB::set_s(string const& p_s)
 	return;
 }
 
+/*
 ExampleB::ExampleB(ExampleB const& rhs):
 	DPersistentObject(rhs),
 	m_s(rhs.m_s)
 {
 }
+*/
 
 void
-ExampleB::do_load()
+ExampleB::load_core()
 {
 	SQLStatement selector
 	(	database_connection(),
@@ -274,7 +269,7 @@ ExampleB::do_load()
 }
 
 void
-ExampleB::do_save_existing()
+ExampleB::save_existing_core()
 {
 	SQLStatement updater
 	(	database_connection(),
@@ -285,16 +280,20 @@ ExampleB::do_save_existing()
 	return;
 }
 
-void
-ExampleB::do_save_new()
+Id
+ExampleB::save_new_core()
 {
+	Id const new_id = next_auto_key
+	<	DerivedDatabaseConnection,
+		Id
+	>	(database_connection(), primary_table_name());
 	SQLStatement inserter
 	(	database_connection(),
 		"insert into example_bs(s) values(:s)"
 	);
 	inserter.bind(":s", m_s);
 	inserter.step_final();
-	return;
+	return new_id;
 }
 
 string
@@ -307,6 +306,134 @@ string
 ExampleB::primary_key_name()
 {
 	return "example_b_id";
+}
+
+void
+ExampleC::setup_tables(DatabaseConnection& dbc)
+{
+	dbc.execute_sql
+	(	"create table example_cs"
+		"(example_b_id references example_bs, "
+		"p integer not null, "
+		"q integer not null)"
+	);
+	return;
+}
+
+ExampleC::ExampleC
+(	IdentityMap& p_identity_map,
+	IdentityMap::Signature const& p_sig
+):
+	ExampleB(p_identity_map, p_sig),
+	m_p(0),
+	m_q(0)
+{
+}
+
+ExampleC::ExampleC
+(	IdentityMap& p_identity_map,
+	Id p_id,
+	IdentityMap::Signature const& p_sig
+):
+	ExampleB(p_identity_map, p_id, p_sig),
+	m_p(0),
+	m_q(0)
+{
+}
+
+int
+ExampleC::p()
+{
+	load();
+	return m_p;
+}
+
+int
+ExampleC::q()
+{
+	load();
+	return m_q;
+}
+
+void
+ExampleC::set_p(int p_p)
+{
+	load();
+	m_p = p_p;
+	return;
+}
+
+void
+ExampleC::set_q(int p_q)
+{
+	load();
+	m_q = p_q;
+	return;
+}
+
+string
+ExampleC::exclusive_table_name()
+{
+	return "example_cs";
+}
+
+void
+ExampleC::do_load()
+{
+	load_core();
+	SQLStatement selector
+	(	database_connection(),
+		"select p, q from example_cs where example_b_id = :p"
+	);
+	selector.bind(":p", id());
+	selector.step();
+	m_p = selector.extract<int>(0);
+	m_q = selector.extract<int>(1);
+	return;
+}
+
+void
+ExampleC::do_save_existing()
+{
+	save_existing_core();
+	SQLStatement statement
+	(	database_connection(),
+		"update example_cs set p = :p, q = :q where example_b_id = :id"
+	);
+	statement.bind(":p", m_p);
+	statement.bind(":q", m_q);
+	statement.bind(":example_b_id", id());
+	statement.step_final();
+	return;
+}
+
+void
+ExampleC::do_save_new()
+{
+	Id const new_id = save_new_core();	
+	SQLStatement statement
+	(	database_connection(),
+		"insert into example_cs (example_b_id, p, q) "
+		"values(:example_b_id, :p, :q)"
+	);
+	statement.bind(":example_b_id", new_id);
+	statement.bind(":p", m_p);
+	statement.bind(":q", m_q);
+	statement.step_final();
+	return;
+}
+
+void
+ExampleC::do_remove()
+{
+	SQLStatement statement
+	(	database_connection(),
+		"delete from example_cs where example_b_id = :id"
+	);
+	statement.bind(":id", id());
+	statement.step_final();
+	ExampleB::do_remove();
+	return;
 }
 
 DerivedDatabaseConnection::DerivedDatabaseConnection():
