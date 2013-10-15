@@ -122,16 +122,26 @@ public:
 	 * by the IdentityMap is \e not destructed merely by virtue
 	 * of the destruction of the IdentityMap.
 	 *
-	 * TODO HIGH PRIORITY Care needs to be taken when instances of
-	 * PersistentObject reference each other. Within a given IdentityMap,
-	 * there is no guarantee about the order of destruction of individual
-	 * objects cached in the IdentityMap. Also if a Handle destructor
-	 * is called
-	 * after its IdentityMap has been destroyed, this may result in
-	 * undefined behaviour. So when PersistentObjects are holding Handles to
-	 * other PersistentObjects, this needs to be borne in mind. We need to
-	 * warn about this in the API documentation for Handle and/or
-	 * PersistentObject and/or IdentityMap.
+	 * Care needs to be taken when instances of
+	 * PersistentObject hold references to each other. Within a given
+	 * IdentityMap, there is no guarantee about the order of destruction of
+	 * individual objects cached in the IdentityMap.
+	 * Also if a Handle destructor
+	 * is called after the IdentityMap for its type has been destroyed, this
+	 * may result in undefined behaviour. When PersistentObjects are holding
+	 * Handles to other PersistentObjects, this needs to be borne in mind.
+	 * When one type of PersistentObject holds a Handle or reference to
+	 * another type of PersistentObject (with a different IdentityMap),
+	 * client code should ensure that the IdentityMap for the
+	 * referring type is be destructed before the IdentityMap for
+	 * the referred-to type is destructed. This ensures that the Handle
+	 * or reference to the referred-to type will not be left dangling.
+	 * If PersistentObject instances of the \e same type need to hold
+	 * references to each other, it may be safer for the referring object to
+	 * hold just the Id of the referred-to object, rather than holding a
+	 * Handle or reference. This rules out possibility of dangling
+	 * references or Handles during the IdentityMap destruction
+	 * process.
 	 *
 	 * Exception safety: the <em>nothrow guarantee</em> is provided,
 	 * providing the destructor of T does not throw.

@@ -129,7 +129,7 @@ namespace sqloxx
  * occur (this generally corresponds to the derived class table, not
  * the base class table).
  *
- * <em>static std::string primary_key_name();<em>\n
+ * <em>static std::string primary_key_name();</em>\n
  * Should return, without side effects, the name of the primary
  * key column for DerivedT. This primary key column must appear in
  * the table named by \e exclusive_table_name(). The primary key
@@ -142,23 +142,23 @@ namespace sqloxx
  * Base::exclusive_table_name().
  *
  * <em>virtual void do_load() = 0;</em>\n
- * See documentation of load() function.
+ * See documentation of \e load() function.
  *
  * <em>virtual void do_save_existing() = 0;</em>\n
- * See documentation for save_existing() function.
+ * See documentation for \e save_existing() function.
  *
  * <em>virtual void do_save_new() = 0;</em>\n
- * See documentation for save_new() function.
+ * See documentation for \e save_new() function.
  *
  * In addition the following functions \e may be provided with a definition
  * in the DerivedT class, although the PersistentObject base class provides
  * a default implementation which is suitable in many cases:
  *
- * <em>virtual void do_remove();\n
- * See documentation for remove() function.
+ * <em>virtual void do_remove()</em>;\n
+ * See documentation for \e remove() function.
  *
- * <em>virtual void do_ghostify();\n
- * See documentation for ghostify() function.
+ * <em>virtual void do_ghostify()</em>;\n
+ * See documentation for \e ghostify() function.
  *
  * <b>Template parameters</b>
  *
@@ -172,6 +172,12 @@ namespace sqloxx
  *
  * @todo MEDIUM PRIORITY Have a single location for documenting use of Sqloxx
  * holistically.
+ * 
+ * <b>Pitfalls</b>
+ *
+ * Care needs to be taken when different PersistentObject instances
+ * hold references or Handles to each other. For more on this issue, see the
+ * documentation for <em>IdentityMap::~IdentityMap</em>.
  */
 template <typename DerivedT, typename ConnectionT>
 class PersistentObject
