@@ -71,7 +71,7 @@ TEST_FIXTURE(ExampleFixture, handle_constructors)
 	);
 
 	CHECK_THROW
-	(	Handle<ExampleA> dpo0(*pdbc, 0),
+	(	Handle<ExampleA> dpo100(*pdbc, 0),
 		sqloxx::BadIdentifier
 	);
 	JEWEL_LOG_TRACE();
