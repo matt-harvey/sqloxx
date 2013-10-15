@@ -35,13 +35,12 @@ namespace tests
 {
 
 
-// Dummy class inheriting from PersistentObject, for the purpose
-// of testing PersistentObject class.
+// Dummy classes inheriting from PersistentObject, for the purpose
+// of testing.
+
 class ExampleA: public PersistentObject<ExampleA, DerivedDatabaseConnection>
 {
-
 public:
-	typedef sqloxx::Id Id;
 	typedef PersistentObject<ExampleA, DerivedDatabaseConnection>
 		DPersistentObject;
 
@@ -58,6 +57,9 @@ public:
 		IdentityMap::Signature const& p_sig
 	);
 
+	ExampleA& operator=(ExampleA const&) = delete;
+	ExampleA& operator=(ExampleA&&) = delete;
+
 	int x();
 	double y();
 	void set_x(int p_x);
@@ -70,22 +72,93 @@ public:
 
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
+
 protected:
 	ExampleA(ExampleA const& rhs);
 
 private:
-	void do_load();
+	void do_load() override;
 	// Uses default version of do_calculate_prospective_key
-	void do_save_existing();
-	void do_save_new();
-	void do_ghostify();
+	void do_save_existing() override;
+	void do_save_new() override;
+	// Uses default version of do_ghostify
 	int m_x;
 	double m_y;
 };
 
 
-// Dummy class derived from DatabaseConnection, to provide
-// IdentityMap<ExampleA>
+class ExampleB: public PersistentObject<ExampleB, DerivedDatabaseConnection>
+{
+public:
+	typedef PersistentObject<ExampleB, DerivedDatabaseConnection>
+		DPersistentObject;
+	
+	static void setup_tables(DatabaseConnection& dbc);
+
+	ExampleB
+	(	IdentityMap& p_identity_map,
+		IdentityMap::Signature const& p_sig
+	);
+	
+	ExampleB
+	(	IdentityMap& p_identity_map,
+		Id p_id,
+		IdentityMap::Signature const& p_sig
+	);
+
+	ExampleB& operator=(ExampleB const&) = delete;
+	ExampleB& operator=(ExampleB&&) = delete;
+
+	std::string s();
+	void set_s(std::string const& p_s);
+
+	// Default destructor is OK.
+
+	static std::string exclusive_table_name();
+	static std::string primary_key_name();
+
+protected:
+	ExampleB(ExampleB const& rhs);
+
+private:
+	void do_load() override;
+	// Uses default version of do_calculate_prospective_key
+	void do_save_existing() override;
+	void do_save_new() override;
+	// Uses default version of do_ghostify
+	std::string m_s;
+};
+
+
+// begin forward declarations
+
+class ExampleC;
+class ExampleD;
+
+// end forward declarations
+
+}  // namespace tests
+
+
+// Specialize PersistenceTraits for ExampleC and ExampleD. This needs to
+// be done in the sqloxx namespace.
+template <> struct PersistenceTraits<tests::ExampleC>
+{
+	typedef tests::ExampleB Base;
+};
+
+template <> struct PersistenceTraits<tests::ExampleD>
+{
+	typedef tests::ExampleB Base;
+};
+
+
+namespace tests
+{
+
+// Dummy class derived from DatabaseConnection, for testing
+// purposes
+
 class DerivedDatabaseConnection: public DatabaseConnection
 {
 public:

@@ -746,7 +746,11 @@ private:
 	virtual void do_load() = 0;
 	virtual void do_save_existing() = 0;
 	virtual void do_save_new() = 0;
-	virtual void do_ghostify() = 0;
+
+	/**
+	 * Unless overridden, this simply has an empty body.
+	 */
+	virtual void do_ghostify();
 
 	/**
 	 * @returns true if and only if there are no Handle
@@ -1162,6 +1166,15 @@ PersistentObject<DerivedT, ConnectionT>::do_remove()
 	// throwing above this point will have no effect
 
 	statement.step_final();  // Might throw InvalidConnection
+	return;
+}
+
+template <typename DerivedT, typename ConnectionT>
+inline
+void
+PersistentObject<DerivedT, ConnectionT>::do_ghostify()
+{
+	// do nothing
 	return;
 }
 

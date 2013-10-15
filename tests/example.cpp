@@ -47,13 +47,9 @@ ExampleA::setup_tables(DatabaseConnection& dbc)
 
 ExampleA::ExampleA
 (	IdentityMap& p_identity_map,
-	Id p_id,
 	IdentityMap::Signature const& p_sig
 ):
-	DPersistentObject
-	(	p_identity_map,
-		p_id
-	),
+	DPersistentObject(p_identity_map),
 	m_x(0),
 	m_y(0)
 {
@@ -62,9 +58,10 @@ ExampleA::ExampleA
 
 ExampleA::ExampleA
 (	IdentityMap& p_identity_map,
+	Id p_id,
 	IdentityMap::Signature const& p_sig
 ):
-	DPersistentObject(p_identity_map),
+	DPersistentObject(p_identity_map, p_id),
 	m_x(0),
 	m_y(0)
 {
@@ -165,6 +162,7 @@ ExampleA::do_load()
 	selector.step_final();
 	m_x = temp_x;
 	m_y = temp_y;
+	return;
 }
 
 void
@@ -191,16 +189,7 @@ ExampleA::do_save_new()
 	inserter.bind(":x", m_x);
 	inserter.bind(":y", m_y);
 	inserter.step_final();
-}
-
-void
-ExampleA::do_ghostify()
-{
-	// No point doing anything here really, but in any
-	// case let's set m_x and m_y to values that look
-	// suspicious, to suggest ghostness.
-	m_x = -999999999;
-	m_y = -9.99999999;
+	return;
 }
 
 string
@@ -215,11 +204,113 @@ ExampleA::primary_key_name()
 	return "example_a_id";
 }
 
+void
+ExampleB::setup_tables(DatabaseConnection& dbc)
+{
+	dbc.execute_sql
+	(	"create table example_bs"
+		"(example_b_id integer primary key autoincrement, "
+		"s text not null)"
+	);
+	return;
+}
+
+ExampleB::ExampleB
+(	IdentityMap& p_identity_map,
+	IdentityMap::Signature const& p_sig
+):
+	DPersistentObject(p_identity_map)
+{
+	(void)p_sig;  // silence compiler re. unused param.
+}
+
+ExampleB::ExampleB
+(	IdentityMap& p_identity_map,
+	Id p_id,
+	IdentityMap::Signature const& p_sig
+):
+	DPersistentObject(p_identity_map, p_id),
+	m_s("")
+{
+	(void)p_sig;  // silence compiler re. unused param.
+}
+
+string
+ExampleB::s()
+{
+	load();
+	return m_s;
+}
+
+void
+ExampleB::set_s(string const& p_s)
+{
+	load();
+	m_s = p_s;
+	return;
+}
+
+ExampleB::ExampleB(ExampleB const& rhs):
+	DPersistentObject(rhs),
+	m_s(rhs.m_s)
+{
+}
+
+void
+ExampleB::do_load()
+{
+	SQLStatement selector
+	(	database_connection(),
+		"select s from example_bs where example_b_id = :p"
+	);
+	selector.bind(":p", id());
+	selector.step();
+	m_s = selector.extract<string>(0);
+	return;
+}
+
+void
+ExampleB::do_save_existing()
+{
+	SQLStatement updater
+	(	database_connection(),
+		"update example_bs set s = :s where example_b_id = :id"
+	);
+	updater.bind(":s", m_s);
+	updater.step_final();
+	return;
+}
+
+void
+ExampleB::do_save_new()
+{
+	SQLStatement inserter
+	(	database_connection(),
+		"insert into example_bs(s) values(:s)"
+	);
+	inserter.bind(":s", m_s);
+	inserter.step_final();
+	return;
+}
+
+string
+ExampleB::exclusive_table_name()
+{
+	return "example_bs";
+}
+
+string
+ExampleB::primary_key_name()
+{
+	return "example_b_id";
+}
+
 DerivedDatabaseConnection::DerivedDatabaseConnection():
 	DatabaseConnection(),
 	m_example_a_map(*this)
 {
 }
+
 
 }  // namespace tests
 }  // namespace sqloxx
