@@ -493,7 +493,8 @@ public:
 	 * Reverts the object to a "ghost state". This is a state in
 	 * which only certain member variables (typically, only the id)
 	 * are initialized. This is done by calling the private virtual
-	 * function do_ghostify(). This must be defined by class DerivedT.
+	 * function do_ghostify(). This may be redefined by class DerivedT,
+	 * but by default, do_ghostify() has an empty body.
 	 * Then, the base ghostify() method marks the object as being in a
 	 * "ghost" state.
 	 *
@@ -507,8 +508,8 @@ public:
 	 * vector is emptied, so that after load() is called next, the
 	 * object contains only one lot of elements.
 	 *
-	 * <em>It is strongly recommended that do_ghostify() be defined
-	 * such as to provide the nothrow guarantee. This makes it
+	 * <em>do_ghostify() should be defined
+	 * such as to provide the nothrow guarantee. This makes it much
 	 * easier for certain other functions to maintain exception-safety.
 	 * </em>
 	 *
