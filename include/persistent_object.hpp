@@ -177,10 +177,9 @@ class PersistentObjectHandleAttorney;
  * @param ConnectionT The type of the database connection through which
  * instances of DerivedT will be persisted to the database. ConnectionT
  * should be a class derived from sqloxx::DatabaseConnection.
- * 
- * @todo MEDIUM PRIORITY Centralize list of preconditions in a single location.
  *
- * @todo MEDIUM PRIORITY Have a single location for documenting use of Sqloxx holistically.
+ * @todo MEDIUM PRIORITY Have a single location for documenting use of Sqloxx
+ * holistically.
  */
 template <typename DerivedT, typename ConnectionT>
 class PersistentObject
