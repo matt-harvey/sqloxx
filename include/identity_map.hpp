@@ -175,6 +175,7 @@ public:
 	 */
 	Connection& connection();
 
+	/// @cond
 	/**
 	 * Control access to the provide_pointer functions, deliberately
 	 * limiting this access to the Handle class.
@@ -258,6 +259,7 @@ public:
 	};
 
 	friend class PersistentObjectAttorney;
+	/// @endcond
 
 private:
 

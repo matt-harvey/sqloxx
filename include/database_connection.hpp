@@ -198,6 +198,8 @@ public:
 	 */
 	boost::filesystem::path filepath() const;
 
+	///@cond
+
 	/**
 	 * Controls access to DatabaseConnection::provide_sql_statement,
 	 * deliberately limiting this access to the class SQLStatement.
@@ -239,14 +241,13 @@ public:
 
 	friend class TransactionAttorney;
 
-
-	///@cond
 	// Self-test function, returns a number indicating the number of
 	// test failures. 0 means all pass. This is not intended to test
 	// all functions - conventional unit tests take care of that - but
 	// only to test aspects of DatabaseConnection that are difficult
 	// to test without accessing private functions and data.
 	int self_test();
+
 	///@endcond
 
 private:

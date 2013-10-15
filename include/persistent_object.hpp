@@ -40,13 +40,6 @@
 namespace sqloxx
 {
 
-// forward declarations
-
-template <typename T>
-class PersistentObjectHandleAttorney;
-
-// end forward declarations
-
 /**
  * Class template for creating objects persisted to a database. In client
  * code, this should be inherited by a derived class that defines certain
@@ -516,6 +509,7 @@ public:
 	 */
 	void ghostify();
 
+	/// @cond
 	/**
 	 * Provides access to get m_cache_key, set m_cache_key,
 	 * and clear m_id, only to
@@ -566,6 +560,8 @@ public:
 	};
 
 	friend class HandleMonitorAttorney;
+
+	/// @endcond
 
 protected:
 
@@ -771,8 +767,7 @@ private:
 	bool has_high_handle_count() const;
 
 	/**
-	 * Called by Handle via PersistentObjectHandleAttorney
-	 * to trigger increment of reference count.
+	 * Called by Handle to trigger increment of reference count.
 	 * constructed, but ordinarily constructed).
 	 * 
 	 * @throws sqloxx::OverflowException if the maximum value
@@ -785,8 +780,7 @@ private:
 	void increment_handle_counter();
 	
 	/**
-	 * Called by Handle via PersistentObjectHandleAttorney
-	 * to decrement reference count.
+	 * Called by Handle via to decrement reference count.
 	 *
 	 * Preconditions:\n
 	 * This function should only be called from Handle.
