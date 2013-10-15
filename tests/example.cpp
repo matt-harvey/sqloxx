@@ -235,6 +235,10 @@ ExampleB::ExampleB
 	(void)p_sig;  // silence compiler re. unused param.
 }
 
+ExampleB::~ExampleB()
+{
+}
+
 string
 ExampleB::s()
 {

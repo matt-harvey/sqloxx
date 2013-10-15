@@ -112,8 +112,8 @@ public:
 	std::string s();
 	void set_s(std::string const& p_s);
 
-	// Default destructor is OK.
-
+	virtual ~ExampleB();
+	
 	static std::string exclusive_table_name();
 	static std::string primary_key_name();
 
