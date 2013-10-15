@@ -40,7 +40,11 @@ using std::endl;
 using std::numeric_limits;
 using std::shared_ptr;
 
-
+// TODO MEDIUM PRIORITY These tests use ExampleA, which is fine but
+// we should also test using ExampleC, as this will ensure things
+// work properly when we have a hierarchy of client classes, not
+// just a single simple class as in ExampleA. Should probably also
+// use ExampleC in other Sqloxx tests (not just the ones in this file).
 
 namespace sqloxx
 {
@@ -49,7 +53,7 @@ namespace tests
 
 namespace filesystem = boost::filesystem;
 
-TEST_FIXTURE(ExampleAFixture, test_example_a_constructor_one_param)
+TEST_FIXTURE(ExampleFixture, test_example_a_constructor_one_param)
 {
 	Handle<ExampleA> dpo(*pdbc);
 	CHECK_THROW(dpo->id(), UninitializedOptionalException);
@@ -58,8 +62,7 @@ TEST_FIXTURE(ExampleAFixture, test_example_a_constructor_one_param)
 	CHECK_EQUAL(dpo->y(), 3.3);
 }
 
-
-TEST_FIXTURE(ExampleAFixture, test_example_a_constructor_two_params)
+TEST_FIXTURE(ExampleFixture, test_example_a_constructor_two_params)
 {
 	Handle<ExampleA> dpo(*pdbc);
 	dpo->set_x(10);
@@ -75,7 +78,7 @@ TEST_FIXTURE(ExampleAFixture, test_example_a_constructor_two_params)
 	CHECK_EQUAL(e->y(), 3.23);
 }
 
-TEST_FIXTURE(ExampleAFixture, test_example_a_save_1)
+TEST_FIXTURE(ExampleFixture, test_example_a_save_1)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	dpo1->set_x(78);
@@ -112,7 +115,7 @@ TEST_FIXTURE(ExampleAFixture, test_example_a_save_1)
 	CHECK_EQUAL(dpo1->x(), 1000);
 }
 
-TEST_FIXTURE(ExampleAFixture, test_example_a_save_2)
+TEST_FIXTURE(ExampleFixture, test_example_a_save_2)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	dpo1->set_x(978);
@@ -160,7 +163,7 @@ TEST_FIXTURE(ExampleAFixture, test_example_a_save_2)
 }
 
 
-TEST_FIXTURE(ExampleAFixture, test_example_a_save_and_transactions)
+TEST_FIXTURE(ExampleFixture, test_example_a_save_and_transactions)
 {
 	// Test interaction of save() with DatabaseTransaction
 
@@ -170,7 +173,6 @@ TEST_FIXTURE(ExampleAFixture, test_example_a_save_and_transactions)
 	dpo1->save();
 
 	DatabaseTransaction transaction1(*pdbc);
-
 
 	Handle<ExampleA> dpo2(*pdbc);
 	dpo2->set_x(-17);
@@ -281,7 +283,7 @@ TEST_FIXTURE(ExampleAFixture, test_example_a_save_and_transactions)
 	CHECK_EQUAL(dpo4->y(), 1324.6);
 }
 
-TEST_FIXTURE(ExampleAFixture, test_example_a_exists_and_remove)
+TEST_FIXTURE(ExampleFixture, test_example_a_exists_and_remove)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	dpo1->set_x(7);
@@ -346,7 +348,7 @@ TEST_FIXTURE(ExampleAFixture, test_example_a_exists_and_remove)
 	CHECK_EQUAL(dpo2c->x(), 10);
 }
 
-TEST_FIXTURE(ExampleAFixture, test_example_a_none_saved)
+TEST_FIXTURE(ExampleFixture, test_example_a_none_saved)
 {
 	typedef PersistentObject<ExampleA, DerivedDatabaseConnection> DPO;
 	bool none_saved = DPO::none_saved(*pdbc);
@@ -394,7 +396,7 @@ TEST_FIXTURE(ExampleAFixture, test_example_a_none_saved)
 	CHECK(none_saved);
 }
 
-TEST_FIXTURE(ExampleAFixture, test_example_a_id_getter)
+TEST_FIXTURE(ExampleFixture, test_example_a_id_getter)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	CHECK_THROW(dpo1->id(), UninitializedOptionalException);
@@ -411,7 +413,7 @@ TEST_FIXTURE(ExampleAFixture, test_example_a_id_getter)
 	CHECK_THROW(dpo2->id(), UninitializedOptionalException);
 }
 
-TEST_FIXTURE(ExampleAFixture, test_load_indirectly)
+TEST_FIXTURE(ExampleFixture, test_load_indirectly)
 {
 	// load is protected method but we here we test it indirectly
 	// via getting functions we know call it
@@ -430,7 +432,7 @@ TEST_FIXTURE(ExampleAFixture, test_load_indirectly)
 	CHECK_EQUAL(dpo2->y(), b);  // and here
 }
 
-TEST_FIXTURE(ExampleAFixture, test_ghostify)
+TEST_FIXTURE(ExampleFixture, test_ghostify)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	dpo1->set_x(1290387);

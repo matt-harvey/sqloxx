@@ -32,7 +32,7 @@ namespace sqloxx
 namespace tests
 {
 
-TEST_FIXTURE(ExampleAFixture, handle_constructors)
+TEST_FIXTURE(ExampleFixture, handle_constructors)
 {
 	JEWEL_LOG_TRACE();
 
@@ -77,7 +77,7 @@ TEST_FIXTURE(ExampleAFixture, handle_constructors)
 	JEWEL_LOG_TRACE();
 }
 
-TEST_FIXTURE(ExampleAFixture, handle_create_unchecked)
+TEST_FIXTURE(ExampleFixture, handle_create_unchecked)
 {
 	JEWEL_LOG_TRACE();
 
@@ -107,7 +107,7 @@ TEST_FIXTURE(ExampleAFixture, handle_create_unchecked)
 	JEWEL_LOG_TRACE();
 }
 
-TEST_FIXTURE(ExampleAFixture, handle_copy_constructor_and_indirection)
+TEST_FIXTURE(ExampleFixture, handle_copy_constructor_and_indirection)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	dpo1->set_x(-9);
@@ -124,7 +124,7 @@ TEST_FIXTURE(ExampleAFixture, handle_copy_constructor_and_indirection)
 	CHECK_EQUAL(dpo3->x(), dpo1->x());
 }
 
-TEST_FIXTURE(ExampleAFixture, handle_move_constructor_and_indirection)
+TEST_FIXTURE(ExampleFixture, handle_move_constructor_and_indirection)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	dpo1->set_x(-9);
@@ -138,7 +138,7 @@ TEST_FIXTURE(ExampleAFixture, handle_move_constructor_and_indirection)
 	CHECK_EQUAL(dpo2->x(), -9);
 }
 
-TEST_FIXTURE(ExampleAFixture, handle_assignment_and_indirection)
+TEST_FIXTURE(ExampleFixture, handle_assignment_and_indirection)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	Handle<ExampleA> dpo2(*pdbc);
@@ -172,7 +172,7 @@ TEST_FIXTURE(ExampleAFixture, handle_assignment_and_indirection)
 	CHECK(dpo4);
 }
 
-TEST_FIXTURE(ExampleAFixture, handle_dereferencing)
+TEST_FIXTURE(ExampleFixture, handle_dereferencing)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	dpo1->set_x(10);
@@ -198,7 +198,7 @@ TEST_FIXTURE(ExampleAFixture, handle_dereferencing)
 	CHECK_THROW(*dpo4, UnboundHandleException);
 }
 
-TEST_FIXTURE(ExampleAFixture, handle_conversion_to_bool)
+TEST_FIXTURE(ExampleFixture, handle_conversion_to_bool)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	CHECK(dpo1);
@@ -227,7 +227,7 @@ TEST_FIXTURE(ExampleAFixture, handle_conversion_to_bool)
 	
 }
 
-TEST_FIXTURE(ExampleAFixture, handle_equality_and_inequality)
+TEST_FIXTURE(ExampleFixture, handle_equality_and_inequality)
 {
 	Handle<ExampleA> dpo1(*pdbc);
 	Handle<ExampleA> dpo2(dpo1);
@@ -254,6 +254,53 @@ TEST_FIXTURE(ExampleAFixture, handle_equality_and_inequality)
 	CHECK(dpo6 != dpo4);
 	CHECK(dpo3 != dpo6);
 	CHECK(dpo4 != dpo6);
+}
+
+TEST_FIXTURE(ExampleFixture, handle_cast_test)
+{
+	Handle<ExampleC> dpoc1(*pdbc);
+	dpoc1->set_s("hello");
+	dpoc1->set_p(3);
+	dpoc1->set_q(50);
+	dpoc1->save();
+
+	Handle<ExampleC> dpoc2(*pdbc);
+	dpoc2->set_s("goodbye");
+	dpoc2->set_p(-309);
+	dpoc2->set_q(501);
+	dpoc2->save();
+
+	Handle<ExampleB> dpob1;
+	CHECK_THROW(*dpob1, UnboundHandleException);
+	dpob1 = handle_cast<ExampleB>(dpoc2);
+	CHECK(dpob1);
+	CHECK_EQUAL(dpob1->id(), 2);
+	CHECK_EQUAL(dpob1->s(), "goodbye");
+
+	Handle<ExampleB> dpob2 = handle_cast<ExampleB>(dpob1);
+	CHECK(dpob2);
+	CHECK_EQUAL(dpob2->id(), 2);
+	CHECK_EQUAL(dpob2->s(), "goodbye");
+	dpob2->set_s("yeah");
+	CHECK_EQUAL(dpoc2->s(), "yeah");
+	CHECK_EQUAL(dpob1->s(), "yeah");
+	dpoc2->set_s("mmm");
+	CHECK_EQUAL(dpob2->s(), "mmm");
+
+	Handle<ExampleC> dpoc3;
+	CHECK(!dpoc3);
+	dpoc3 = handle_cast<ExampleC>(dpob2);
+	CHECK(dpoc3);
+	CHECK_EQUAL(dpoc3->q(), 501);
+	CHECK_EQUAL(dpoc3->id(), 2);
+	CHECK_EQUAL(dpoc3->p(), -309);
+	CHECK_EQUAL(dpoc3->s(), "mmm");
+
+	Handle<ExampleB> dpoc4;
+	dpoc3 = handle_cast<ExampleC>(dpoc4);
+	CHECK_THROW(dpoc3->s(), UnboundHandleException);
+	CHECK_THROW(dpoc3->p(), UnboundHandleException);
+	CHECK(!dpoc3);
 }
 
 

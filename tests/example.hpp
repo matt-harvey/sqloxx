@@ -194,14 +194,13 @@ public:
 
 	DerivedDatabaseConnection();
 
-	typedef sqloxx::IdentityMap<ExampleA> IdentityMap;
-
 	template <typename T>
-	IdentityMap& identity_map();
+	IdentityMap<T>& identity_map();
 
 private:
 
-	IdentityMap m_example_a_map;
+	IdentityMap<ExampleA> m_example_a_map;
+	IdentityMap<ExampleB> m_example_b_map;
 };
 
 
@@ -211,6 +210,14 @@ IdentityMap<ExampleA>&
 DerivedDatabaseConnection::identity_map<ExampleA>()
 {
 	return m_example_a_map;
+}
+
+template <>
+inline
+IdentityMap<ExampleB>&
+DerivedDatabaseConnection::identity_map<ExampleB>()
+{
+	return m_example_b_map;
 }
 
 

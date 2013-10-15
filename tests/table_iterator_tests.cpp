@@ -81,7 +81,7 @@ void setup_table_iterator_test(DerivedDatabaseConnection& dbc)
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_constructor_and_basic_functioning_1
 )
 {
@@ -106,7 +106,7 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_constructor_and_basic_functioning_2
 )
 {
@@ -122,7 +122,7 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_constructor_exceptions
 )
 {
@@ -171,7 +171,7 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_copy_constructor
 )
 {
@@ -192,7 +192,7 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_empty_result_set
 )
 {
@@ -217,7 +217,7 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_completely_empty_table
 )
 {
@@ -234,7 +234,7 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_increment_and_deref
 )
 {
@@ -286,7 +286,7 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_cycling_through_results_set
 )
 {
@@ -306,7 +306,7 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_postfix_increment
 )
 {
@@ -335,7 +335,7 @@ TEST_FIXTURE
 }
 
 TEST_FIXTURE
-(	ExampleAFixture,
+(	ExampleFixture,
 	test_table_iterator_equality_and_inequality
 )
 {

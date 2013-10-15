@@ -60,8 +60,11 @@ struct PersistenceTraits
 	 * must be a single-column integer primary key that is
 	 * auto-incrementing (using the SQLite "autoincrement" keyword).
 	 *
-	 * @todo MEDIUM PRIORITY There should be an example, at least in
-	 * the test code, of how this all works.
+	 * For an example of how this all works, see the classes ExampleB
+	 * and ExampleC in "sqloxx/tests/example.hpp" and
+	 * "sqloxx/tests/example.cpp". Here ExampleB is the Base class for
+	 * ExampleC, and this is reflected in the specialization for
+	 * PersistenceTraits<ExampleC> contained in "example.hpp".
 	 */
 	typedef T Base;
 

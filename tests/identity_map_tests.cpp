@@ -33,7 +33,7 @@ namespace tests
 // indirectly via the database connection, as they are
 // private.
 
-TEST_FIXTURE(ExampleAFixture, identity_map_after_object_removal)
+TEST_FIXTURE(ExampleFixture, identity_map_after_object_removal)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
 	Handle<ExampleA> dpo1(dbc);
@@ -58,7 +58,7 @@ TEST_FIXTURE(ExampleAFixture, identity_map_after_object_removal)
 	);
 }
 
-TEST_FIXTURE(ExampleAFixture, identity_map_connection)
+TEST_FIXTURE(ExampleFixture, identity_map_connection)
 {
 	DerivedDatabaseConnection& dbc = *pdbc;
 	IdentityMap<ExampleA> idm(dbc);

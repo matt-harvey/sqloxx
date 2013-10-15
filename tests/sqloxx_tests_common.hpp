@@ -74,13 +74,13 @@ struct DatabaseConnectionFixture
 
 class DerivedDatabaseConnection;  // fwd decl
 
-struct ExampleAFixture
+struct ExampleFixture
 {
 	// setup
-	ExampleAFixture();
+	ExampleFixture();
 
 	// teardown
-	~ExampleAFixture();
+	~ExampleFixture();
 
 	// Database filepath
 	boost::filesystem::path db_filepath;

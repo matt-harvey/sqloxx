@@ -200,7 +200,7 @@ DatabaseConnectionFixture::~DatabaseConnectionFixture()
 	JEWEL_ASSERT (!file_exists(db_filepath));
 }
 
-ExampleAFixture::ExampleAFixture():
+ExampleFixture::ExampleFixture():
 	db_filepath("Testfile_dpof"),
 	pdbc(0)
 {
@@ -209,9 +209,11 @@ ExampleAFixture::ExampleAFixture():
 	pdbc->open(db_filepath);
 	JEWEL_ASSERT (pdbc->is_valid());
 	ExampleA::setup_tables(*pdbc);
+	ExampleB::setup_tables(*pdbc);
+	ExampleC::setup_tables(*pdbc);
 }
 
-ExampleAFixture::~ExampleAFixture()
+ExampleFixture::~ExampleFixture()
 {
 	JEWEL_ASSERT (pdbc->is_valid());
 	delete pdbc;

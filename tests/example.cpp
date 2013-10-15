@@ -79,7 +79,7 @@ int
 ExampleA::self_test()
 {
 	int num_failures = 0;
-	ExampleAFixture fixture;
+	ExampleFixture fixture;
 	DerivedDatabaseConnection& dbc = *fixture.pdbc;
 	Handle<ExampleA> dpo1(dbc);
 	dpo1->set_x(3);
@@ -438,7 +438,8 @@ ExampleC::do_remove()
 
 DerivedDatabaseConnection::DerivedDatabaseConnection():
 	DatabaseConnection(),
-	m_example_a_map(*this)
+	m_example_a_map(*this),
+	m_example_b_map(*this)
 {
 }
 

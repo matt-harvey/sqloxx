@@ -298,7 +298,7 @@ private:
  *
  * A dynamic_cast is attempted on the underlying pointer. If it
  * succeeds, then the returned Handle<L> will point to one and the
- * same object of the common base type. If it fails, then the returned
+ * same object as rhs. If it fails, then the returned
  * pointer will be null.
  *
  * @throws sqloxx::OverflowException in the extremely unlikely
@@ -307,8 +307,6 @@ private:
  * by the type PersistentObject<T, Connection>::HandleCounter.
  *
  * Exception safety: <em>strong guarantee</em>.
- *
- * @todo HIGH PRIORITY Testing.
  */
 template <typename L, typename R>
 Handle<L>
