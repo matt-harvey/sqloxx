@@ -145,7 +145,7 @@ public:
 	 * Executes a string as an SQL command on the database connection.
 	 * This should be used only where the developer has complete
 	 * control of the string being passed, to prevent SQL injection
-	 * attacks. Generally, the functions provided by SQLStatementImpl should
+	 * attacks. Generally, the functions provided by SQLStatement should
 	 * be the preferred means for building and executing SQL statements.
 	 *
 	 * @throws DatabaseException or some exception inheriting thereof,
@@ -274,8 +274,9 @@ private:
 	 * DatabaseConnection, or it has been created but is being used
 	 * elsewhere).
 	 *
-	 * This function is only intended to be called by the
-	 * constructor of SQLStatement. It should not be called elsewhere.
+	 * This function is only intended to be called by
+	 * during construction of an SQLStatement. It should not be called
+	 * elsewhere.
 	 * 
 	 * @throws InvalidConnection if p_database_connection is an invalid
 	 * connection.
