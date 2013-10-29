@@ -21,8 +21,9 @@
 #define GUARD_persistent_object_hpp_3601795073413195
 
 #include "database_transaction.hpp"
-#include "general_typedefs.hpp"
 #include "handle.hpp"
+#include "handle_counter.hpp"
+#include "id.hpp"
 #include "identity_map.hpp"
 #include "next_auto_key.hpp"
 #include "persistence_traits.hpp"

@@ -19,7 +19,7 @@
 #ifndef GUARD_table_iterator_hpp_9025044682913015
 #define GUARD_table_iterator_hpp_9025044682913015
 
-#include "general_typedefs.hpp"
+#include "id.hpp"
 #include "sqloxx_exceptions.hpp"
 #include "sql_statement.hpp"
 #include <boost/optional.hpp>

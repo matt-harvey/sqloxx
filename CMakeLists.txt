@@ -82,9 +82,10 @@ install(FILES
 		include/database_connection.hpp
 		include/database_connection_fwd.hpp
 		include/database_transaction.hpp
-		include/general_typedefs.hpp
 		include/handle.hpp
+		include/handle_counter.hpp
 		include/handle_fwd.hpp
+		include/id.hpp
 		include/identity_map.hpp
 		include/identity_map_fwd.hpp
 		include/next_auto_key.hpp

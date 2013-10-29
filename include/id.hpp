@@ -16,17 +16,19 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
-#ifndef GUARD_general_typedefs_hpp_3557065615224217
-#define GUARD_general_typedefs_hpp_3557065615224217
+#ifndef GUARD_id_hpp_3557065615224217
+#define GUARD_id_hpp_3557065615224217
 
 namespace sqloxx
 {
 
+/**
+ * Type used for unique identifier for instances of sqloxx::PersistentObject.
+ * This corresponds to the primary key of such types when persisted to
+ * a database.
+ */
 typedef int Id;
-typedef int HandleCounter;
 
 }  // namespace sqloxx
 
-
-#endif  // GUARD_general_typedefs_hpp_3557065615224217
+#endif  // GUARD_id_hpp_3557065615224217

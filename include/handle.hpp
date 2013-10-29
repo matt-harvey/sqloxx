@@ -20,7 +20,8 @@
 #ifndef GUARD_handle_hpp_03158044118042125
 #define GUARD_handle_hpp_03158044118042125
 
-#include "general_typedefs.hpp"
+#include "handle_counter.hpp"
+#include "id.hpp"
 #include "identity_map.hpp"
 #include "persistence_traits.hpp"
 #include "sqloxx_exceptions.hpp"

@@ -20,8 +20,8 @@
 #ifndef GUARD_identity_map_hpp_41089441925794556
 #define GUARD_identity_map_hpp_41089441925794556
 
-#include "general_typedefs.hpp"
 #include "handle_fwd.hpp"
+#include "id.hpp"
 #include "persistence_traits.hpp"
 #include "persistent_object_fwd.hpp"
 #include "sqloxx_exceptions.hpp"
