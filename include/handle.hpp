@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_handle_hpp_03158044118042125
 #define GUARD_handle_hpp_03158044118042125
 
@@ -41,7 +40,7 @@ namespace sqloxx
  * record in the database.
  *
  * T should be associated with a instance of T::Connection,
- * with a member function
+ * and with a member function
  * template identity_map<S>() that is specialized for
  * S = PersistentTraits<T>::Base, that returns an instance of
  * IdentityMap<Base> that is
