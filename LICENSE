@@ -204,7 +204,7 @@
 SQLOXX SUBCOMPONENTS:
 
 Sqloxx includes subcomponents which are not subject to the above license
-terms and to which the developers(s) of Sqloxx do NOT claim authorship or
+terms and to which the developer(s) of Sqloxx do NOT claim authorship or
 copyright. In particular, the files named
 	
 	"sqlite3.h"
