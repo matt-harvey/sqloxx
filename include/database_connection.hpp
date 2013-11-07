@@ -35,10 +35,6 @@
  * that the C++ API of Sqloxx will largely mirror the C API of
  * SQLite, so that Sqloxx could be used easily by anyone who is
  * familiar with SQLite (and with C++).
- *
- * @todo HIGH PRIORITY Consider
- * including a "NOTICE" file pursuant to clause 4(d) of the
- * License.
  */
 namespace sqloxx
 {
