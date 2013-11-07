@@ -297,7 +297,7 @@ private:
  * A dynamic_cast is attempted on the underlying pointer. If it
  * succeeds, then the returned Handle<L> will point to one and the
  * same object as rhs. If it fails, then the returned
- * pointer will be null.
+ * Handle<L> will be null.
  *
  * @throws sqloxx::OverflowException in the extremely unlikely
  * event that the number of Handle instances pointing to the
