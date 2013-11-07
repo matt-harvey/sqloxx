@@ -16,7 +16,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-
 #ifndef GUARD_database_connection_hpp_4041979952734886
 #define GUARD_database_connection_hpp_4041979952734886
 
@@ -38,10 +37,11 @@
  * that the C++ API of Sqloxx will largely mirror the C API of
  * SQLite, so that Sqloxx could be used easily by anyone who is
  * familiar with SQLite (and with C++).
+ *
+ * @todo HIGH PRIORITY Create licence for entire Sqloxx library.
  */
 namespace sqloxx
 {
-
 
 // Forward declarations
 
