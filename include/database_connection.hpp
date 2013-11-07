@@ -35,6 +35,16 @@
  * that the C++ API of Sqloxx will largely mirror the C API of
  * SQLite, so that Sqloxx could be used easily by anyone who is
  * familiar with SQLite (and with C++).
+ *
+ * @todo HIGH PRIORITY Include "LICENSE" document with Sqloxx source
+ * distribution, containing text of the Apache License, version 2.0,
+ * and with a "SQLOXX SUBCOMPONENTS:" section at the bottom
+ * explaining that the Sqlite source and header files (list them
+ * explicitly), though they may be included with the Sqloxx distribution,
+ * are themselves in the public domain, and that I do
+ * not claim authorship or copyright of these. Also, consider
+ * including a "NOTICE" file pursuant to clause 4(d) of the
+ * License.
  */
 namespace sqloxx
 {
