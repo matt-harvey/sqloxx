@@ -35,22 +35,9 @@ if (Boost_FOUND)
 		-DBOOST_FILESYSTEM_VERSION=3
 	)
 
+	include_directories (include ${Boost_INCLUDE_DIRS})
+
 	if (WIN32)
-
-		include_directories (
-			include
-			${Boost_INCLUDE_DIRS}
-			C:/Dev-Cpp
-			C:/include
-			C:/Dev-Cpp/include/common
-			include
-		)
-
-		link_directories (
-			C:/Dev-Cpp/lib
-			C:/Dev-Cpp/MinGW/lib
-			C:/lib
-		)
 
 		set (
 			libraries
@@ -66,15 +53,6 @@ if (Boost_FOUND)
 		)
 
 	else ()
-
-		include_directories (include ${Boost_INCLUDE_DIRS})
-
-		link_directories (
-			/usr/local/lib
-			/usr/lib
-			/usr/local/lib64
-			/usr/lib64
-		)
 
 		set (
 			libraries
