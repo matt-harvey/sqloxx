@@ -18,9 +18,6 @@ cmake_minimum_required (VERSION 2.6)
 
 project (sqloxx)
 
-set (Boost_USE_STATIC_LIBS ON)
-set (Boost_USE_MULTITHREADED ON)
-
 find_package (
 	Boost 1.53.0
 	COMPONENTS filesystem system
