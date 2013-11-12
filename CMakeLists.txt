@@ -22,24 +22,44 @@ set (version_major 1)
 set (version_minor 0)
 set (version_patch 0)
 
+option (
+	BUILD_SHARED_LIBS
+	"Build shared (rather than static) library (ON/OFF)?"
+	OFF
+)
+
+option (
+	ENABLE_ASSERTION_LOGGING
+	"Enable logging of assertion failures (ON/OFF)?"
+	ON
+)
+
+option (
+	ENABLE_EXCEPTION_LOGGING
+	"Enable logging of exceptions (ON/OFF)?"
+	ON
+)
+
+add_definitions (-std=c++11)
+
 find_package (
 	Boost 1.53.0
 	COMPONENTS filesystem system
 )
 
+find_package (Tclsh 8.4)
+
 if (Boost_FOUND)
+
+	include_directories (include ${Boost_INCLUDE_DIRS})
 
 	add_definitions (
 		-DJEWEL_ENABLE_LOGGING
-		-DJEWEL_ENABLE_ASSERTION_LOGGING
-		-DJEWEL_ENABLE_EXCEPTION_LOGGING
 		-DBOOST_FILESYSTEM_VERSION=3
 		-DSQLOXX_VERSION_MAJOR=${version_major}
 		-DSQLOXX_VERSION_MINOR=${version_minor}
 		-DSQLOXX_VERSION_PATCH=${version_patch}
 	)
-
-	include_directories (include ${Boost_INCLUDE_DIRS})
 
 	if (WIN32)
 
@@ -98,17 +118,27 @@ if (Boost_FOUND)
 		tests/table_iterator_tests.cpp
 	)
 
-	add_executable (test ${test_sources})
-	add_library (sqloxx ${library_sources})
+	if (ENABLE_ASSERTION_LOGGING)
+		add_definitions (-DJEWEL_ENABLE_ASSERTION_LOGGING)
+	endif ()
+	if (ENABLE_EXCEPTION_LOGGING)
+		add_definitions (-DJEWEL_ENABLE_EXCEPTION_LOGGING)
+	endif ()
 
-	target_link_libraries (sqloxx ${libaries})
-	target_link_libraries (test UnitTest++ sqloxx ${libraries})
+	set (library_name sqloxx)
+
+	add_library (${library_name} ${library_sources})
+
+	target_link_libraries (${library_name} ${libaries})
 
 	set (lib_installation_dir ${CMAKE_INSTALL_PREFIX}/lib)
+	set (header_installation_dir "${CMAKE_INSTALL_PREFIX}/include/${library_name}")
 
-	install(TARGETS sqloxx ARCHIVE DESTINATION ${lib_installation_dir})
-
-	set (header_installation_dir "${CMAKE_INSTALL_PREFIX}/include/sqloxx")
+	install (
+		TARGETS ${library_name}
+		ARCHIVE DESTINATION ${lib_installation_dir}
+		LIBRARY DESTINATION ${lib_installation_dir}
+	)
 
 	install (
 		FILES
@@ -144,5 +174,64 @@ if (Boost_FOUND)
 		DESTINATION
 			"${header_installation_dir}/detail"
 	)
-			
+		
+	set (
+		package_name
+		"${library_name}-${version_major}.${version_minor}.${version_patch}-working"
+	)
+	set (tarball_name "${package_name}.tar.gz")
+
+	set (
+		packaged_items
+		include
+		src
+		tests
+		CMakeLists.txt
+		Doxyfile
+		INSTALL
+		LICENSE
+		NOTICE
+		README
+		overview.dox
+		test.tcl
+	)
+
+	if (TCLSH_FOUND)
+		add_executable (test_engine ${test_sources})
+		target_link_libraries (test_engine UnitTest++ ${library_name} ${libraries})
+		add_custom_target (
+			test
+			ALL
+			COMMAND ${TCL_TCLSH} test.tcl
+			DEPENDS ${library_name} test_engine
+		)
+	else ()
+		add_custom_target (
+			test
+			ALL
+			COMMAND "cmake -E message \"Cannot run tests as Tcl interpreter not found.\""
+		)
+	endif ()
+
+	add_custom_target (
+		package
+		COMMAND
+			mkdir ${package_name} &&
+			cp -r ${packaged_items} ${package_name} &&
+			tar -sczf ${tarball_name} ${package_name} &&
+			rm -rf ${package_name}
+		DEPENDS ${library_name} test
+	)
+
+	add_custom_target (
+		docs
+		COMMAND doxygen Doxyfile
+	)
+
+	set_directory_properties (
+		PROPERTIES
+			ADDITIONAL_MAKE_CLEAN_FILES "${tarball_name}"
+	)
+
 endif ()
+
