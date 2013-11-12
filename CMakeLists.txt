@@ -18,6 +18,10 @@ cmake_minimum_required (VERSION 2.6)
 
 project (sqloxx)
 
+set (version_major 1)
+set (version_minor 0)
+set (version_patch 0)
+
 find_package (
 	Boost 1.53.0
 	COMPONENTS filesystem system
@@ -30,6 +34,9 @@ if (Boost_FOUND)
 		-DJEWEL_ENABLE_ASSERTION_LOGGING
 		-DJEWEL_ENABLE_EXCEPTION_LOGGING
 		-DBOOST_FILESYSTEM_VERSION=3
+		-DSQLOXX_VERSION_MAJOR=${version_major}
+		-DSQLOXX_VERSION_MINOR=${version_minor}
+		-DSQLOXX_VERSION_PATCH=${version_patch}
 	)
 
 	include_directories (include ${Boost_INCLUDE_DIRS})
@@ -68,6 +75,7 @@ if (Boost_FOUND)
 		library_sources
 		src/database_connection.cpp
 		src/database_transaction.cpp
+		src/info.cpp
 		src/sql_statement.cpp
 		src/sqlite_dbconn.cpp
 		src/sql_statement_impl.cpp
@@ -113,6 +121,7 @@ if (Boost_FOUND)
 			include/id.hpp
 			include/identity_map.hpp
 			include/identity_map_fwd.hpp
+			include/info.hpp
 			include/next_auto_key.hpp
 			include/persistent_object.hpp
 			include/persistent_object_fwd.hpp
