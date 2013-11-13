@@ -184,7 +184,6 @@ if (Boost_FOUND)
 		tests
 		CMakeLists.txt
 		Doxyfile
-		INSTALL
 		LICENSE
 		NOTICE
 		README
