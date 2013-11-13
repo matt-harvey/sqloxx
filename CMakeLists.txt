@@ -89,6 +89,9 @@ elseif (UNIX)
 		dl
 	)
 endif ()
+if (JEWEL_LIBRARY-NOTFOUND)
+	message ("Could not find Jewel library.")
+endif ()
 if (UNIT_TEST_LIBRARY-NOTFOUND)
 	message ("Could not find UnitTest++ - cannot build tests.")
 endif ()
@@ -98,7 +101,12 @@ endif ()
 
 # Build instructions
 
-if (Boost_FOUND AND TCLSH_FOUND AND NOT UNIT_TEST_LIBRARY-NOTFOUND)
+if (
+	Boost_FOUND AND
+	NOT JEWEL_LIBRARY-NOTFOUND AND
+	NOT UNIT_TEST_LIBRARY-NOTFOUND AND
+	TCLSH_FOUND
+)
 
 	include_directories (
 		include
