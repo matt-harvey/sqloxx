@@ -80,13 +80,9 @@ if (Boost_FOUND)
 
 		set (
 			libraries
-			${Boost_LIBRARIES}
-			c
-			stdc++
-			dl
 			jewel
-			m
-			pthread
+			${Boost_LIBRARIES}
+			dl
 		)
 
 	endif ()
