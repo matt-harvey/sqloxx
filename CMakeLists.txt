@@ -62,11 +62,8 @@ if (Boost_FOUND)
 	)
 
 	if (WIN32)
-
 		set (
-			libraries
-			${Boost_LIBRARIES}
-			jewel
+			extra_libraries
 			winmm
 			shell32
 			comctl32
@@ -75,17 +72,20 @@ if (Boost_FOUND)
 			odbc32
 			opengl32
 		)
-
-	else ()
-
+	elseif (UNIX)
 		set (
-			libraries
-			jewel
-			${Boost_LIBRARIES}
+			extra_libraries
+			pthread
 			dl
 		)
-
 	endif ()
+
+	set (
+		libraries
+		${Boost_LIBRARIES}
+		jewel
+		${extra_libraries}
+	)
 
 	set (
 		library_sources
