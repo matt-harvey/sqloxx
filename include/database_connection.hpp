@@ -25,17 +25,6 @@
 #include <string>
 #include <unordered_map>
 
-/**
- * Namespace for housing all Sqloxx code. Sqloxx is intended as a
- * thin wrapper around SQLite, to facilitate using SQLite from C++,
- * to facilitate managing the resources required by SQLite using RAII,
- * and to reduce the verbosity required in client code wishing to
- * using the SQLite library. Sqloxx will not necessarily provide
- * much in the way of objected-relational mapping. The intention is
- * that the C++ API of Sqloxx will largely mirror the C API of
- * SQLite, so that Sqloxx could be used easily by anyone who is
- * familiar with SQLite (and with C++).
- */
 namespace sqloxx
 {
 

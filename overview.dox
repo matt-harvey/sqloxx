@@ -17,4 +17,35 @@
 /** @mainpage API Documentation
  *
  * @section sec_Overview Overview
+ * 
+ * Sqloxx provides an object-oriented C++ interface to the SQLite database
+ * library. A very brief summary of the most important classes (or class
+ * templates) provided by the library is as follows.
+ * 
+ * sqloxx::DatabaseConnection: represents a connection to a database, and can be
+ * inherited by client code to provide more specialized behaviour for
+ * an application-specific database.
+ * 
+ * sqloxx::DatabaseTransaction: manages database transactions using the RAII idiom.
+ *
+ * sqloxx::SQLStatement: represents an SQL statement, with methods for easy binding
+ * of parameters to prepared statements, and with caching of the underlying
+ * statement structures transparently performed by the DatabaseConnection for
+ * efficient re-use with minimal fuss by client code.
+ *
+ * sqloxx::PersistentObject: class template which client code can instantiate and
+ * inherit, to create classes of persistent "business objects" corresponding
+ * to records in the database.
+ *
+ * sqloxx::Handle: a smart pointer type by means of which client code can refer to
+ * PersistentObjects. Managing PersistentObjects by means of Handles ensures
+ * that if a single database record is edited in multiple places in client
+ * code, the edits will update the same underlying object, avoiding errors
+ * such as where one edit unexpectedly clobbers another when the object is
+ * saved back to the database.
+ * 
+ * sqloxx::IdentityMap: provides type-specific caching facilities for given
+ * PersistentObject classes. This works in conjunction with the Handle class
+ * to ensure that each database record is represented at most once in
+ * memory at any given point in time.
  */
