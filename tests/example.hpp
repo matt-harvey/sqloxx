@@ -14,10 +14,19 @@
  * limitations under the License.
  */
 
+/**
+ * @file
+ *
+ * Contains example client code.
+ *
+ * @include example.hpp
+ *
+ * @include example.cpp
+ */
+
 #ifndef GUARD_example_hpp_7678596874549332
 #define GUARD_example_hpp_7678596874549332
 
-// Hide from Doxygen
 /// @cond
 
 #include "database_connection.hpp"
@@ -30,7 +39,6 @@ namespace sqloxx
 {
 namespace tests
 {
-
 
 // Dummy classes inheriting from PersistentObject, for the purpose
 // of testing.

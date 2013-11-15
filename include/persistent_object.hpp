@@ -43,7 +43,7 @@ namespace sqloxx
  * code, this should be inherited by a derived class that defines certain
  * functions as detailed below. For an example of such a derived
  * client class, see the class sqloxx::tests::DerivedPO, in
- * "tests/derived_po.hpp" and "tests/derived_po.cpp".
+ * example.hpp and example.cpp.
  *
  * An instance of (a class deriving from an instantiation of)
  * PersistentObject represents a "business object" for which the
@@ -168,8 +168,9 @@ namespace sqloxx
  * instances of DerivedT will be persisted to the database. ConnectionT
  * should be a class derived from sqloxx::DatabaseConnection.
  *
- * @todo MEDIUM PRIORITY Have a single location for documenting use of Sqloxx
- * holistically.
+ * @todo LOW PRIORITY Have a single location for documenting use of Sqloxx
+ * holistically, perhaps with an extended example (but see "tests/example.hpp"
+ * and "tests/example.cpp" already done).
  * 
  * <b>Pitfalls</b>
  *

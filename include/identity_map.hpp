@@ -71,7 +71,7 @@ namespace sqloxx
  * object has already been loaded.
  *
  * IdentityMap is intended to work in conjunction with sqloxx::Handle
- * and sqloxx::PersistentObject<T, Connection>. See also the documentation
+ * and sqloxx::PersistentObject<T, Connection>.
  */
 template <typename T>
 class IdentityMap
