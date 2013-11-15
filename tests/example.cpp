@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-// example.cpp
+/**
+ * @file
+ *
+ * Contains example code demonstrating the use of
+ * sqloxx::PersistentObject, etc..
+ *
+ * @see example.hpp
+ *
+ * @include example.cpp
+ */
 
 #include "database_connection.hpp"
 #include "example.hpp"

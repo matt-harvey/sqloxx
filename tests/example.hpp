@@ -17,11 +17,12 @@
 /**
  * @file
  *
- * Contains example client code.
+ * Contains example code demonstrating the use of sqloxx::PersistentObject
+ * etc..
+ *
+ * @see example.cpp
  *
  * @include example.hpp
- *
- * @include example.cpp
  */
 
 #ifndef GUARD_example_hpp_7678596874549332
