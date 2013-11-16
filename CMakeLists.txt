@@ -67,10 +67,11 @@ endif ()
 find_package (
 	Boost 1.53.0
 	COMPONENTS filesystem system
+	REQUIRED
 )
-find_library (JEWEL_LIBRARY jewel)
-find_library (UNIT_TEST_LIBRARY UnitTest++)
-find_package (Tclsh 8.4)
+find_library (JEWEL_LIBRARY jewel REQUIRED)
+find_library (UNIT_TEST_LIBRARY UnitTest++ REQUIRED)
+find_package (Tclsh 8.4 REQUIRED)
 if (WIN32)
 	set (
 		extra_libraries

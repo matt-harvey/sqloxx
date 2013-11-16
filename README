@@ -39,12 +39,10 @@ and install the library, you will need:
 	- The Jewel C++ libraries (version 1.0.0 or later)
 
 	- The Boost C++ libraries (version 1.53.0 or later)
-
-To build and run the test suite, you will need:
 	
 	- UnitTest++ (known to work with version 1.4)
 
-	- A Tcl interpreter (known to work with version 8.6)
+	- A Tcl interpreter (known to work with version 8.6) (to run the test driver)
 
 To build the API documentation, you will need:
 
