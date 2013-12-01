@@ -25,6 +25,8 @@
  * @include example.cpp
  */
 
+/// @cond
+
 #include "database_connection.hpp"
 #include "example.hpp"
 #include "handle.hpp"
@@ -451,6 +453,7 @@ DerivedDatabaseConnection::DerivedDatabaseConnection():
 {
 }
 
+/// @endcond
 
 }  // namespace tests
 }  // namespace sqloxx

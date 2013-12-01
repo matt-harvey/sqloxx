@@ -52,7 +52,7 @@ struct PersistenceTraits
 	 * This must return the name of the table in which
 	 * the primary key of T is ultimately stored.
 	 *
-	 * <em>static std::string primary_key_name();<em>
+	 * <em>static std::string primary_key_name();</em>
 	 * This must return the name of the primary key for T as it
 	 * appears in the table named by Base::exclusive_table_name(). This
 	 * must be a single-column integer primary key that is

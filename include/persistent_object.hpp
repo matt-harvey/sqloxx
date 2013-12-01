@@ -740,7 +740,7 @@ protected:
 	 * @throws std::bad_alloc in the unlikely event of a memory
 	 * allocation failure in execution.
 	 *
-	 * Exception safety:<em>strong guarantee<em>.
+	 * Exception safety:<em>strong guarantee</em>.
 	 */
 	virtual void do_remove();
 

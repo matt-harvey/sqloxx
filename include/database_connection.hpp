@@ -81,7 +81,7 @@ public:
 	DatabaseConnection& operator=(DatabaseConnection&&) = delete;
 
 	/**
-	 * Exception safety: <em>nothrow guarantee<em>. (Of course, the exception
+	 * Exception safety: <em>nothrow guarantee</em>. (Of course, the exception
 	 * safety of derived classes will depend on their own destructors.)
 	 */
 	virtual ~DatabaseConnection();
@@ -106,7 +106,7 @@ public:
 	 * Derived classes may override it to provide their own initialization
 	 * code.
 	 *
-	 * @param filepath File to connect to. The is in the form of a
+	 * @param p_filepath File to connect to. The is in the form of a
 	 * \c boost::filesystem::path to facilitate portability.
 	 *
 	 * @throws sqloxx::InvalidFilename if filename is an empty string.
@@ -374,6 +374,7 @@ private:
 	boost::optional<boost::filesystem::path> m_filepath;
 };
 
+/// @cond
 
 inline
 std::shared_ptr<detail::SQLStatementImpl>
@@ -418,7 +419,7 @@ DatabaseConnection::TransactionAttorney::cancel_transaction
 	return;
 }
 
-
+/// @endcond
 
 }  // namespace sqloxx
 

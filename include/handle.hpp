@@ -265,7 +265,7 @@ public:
 	 * Handles are unequal if an only if they are handling distinct
 	 * underlying objects.
 	 *
-	 * Exception safety: <em>nothrow guarantee.
+	 * Exception safety: <em>nothrow guarantee</em>.
 	 */
 	bool operator!=(Handle const& rhs) const;
 

@@ -231,6 +231,5 @@ DerivedDatabaseConnection::identity_map<ExampleB>()
 }  // namespace sqloxx
 
 /// @endcond
-// End hiding from Doxygen
 
 #endif  // GUARD_example_hpp_7678596874549332

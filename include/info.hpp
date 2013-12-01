@@ -32,7 +32,7 @@ public:
 	/**
 	 * @returns a jewel::Version object representing the library version.
 	 *
-	 * Exception safetly: </em>nothrow guarantee</em>
+	 * Exception safetly: <em>nothrow guarantee</em>
 	 */
 	static jewel::Version version();
 

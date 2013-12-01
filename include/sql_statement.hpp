@@ -59,9 +59,9 @@ public:
 	 * @param p_database_connection is the DatabaseConnection
 	 * on which the statement will be executed.
 	 *
-	 * @param str is the text of a single SQL statement. It can be terminated
-	 * with any mixture of semicolons and/or spaces (but not other forms
-	 * of whitespace).
+	 * @param p_statement_text is the text of a single SQL statement. It can be
+	 * terminated with any mixture of semicolons and/or spaces (but not other
+	 * forms of whitespace).
 	 *
 	 * @throws InvalidConnection if p_database_connection is an
 	 * invalid database connection (i.e. if p_database_connection.is_valid()
