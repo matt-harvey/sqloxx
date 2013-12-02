@@ -456,7 +456,7 @@ public:
 	 * application state will be effectively rolled back, and although the
 	 * object may be left in a ghost state, this should require no
 	 * special handling by the client code provided the preconditions are
-	 * met. If UnresolvedTransactionException is thrown, then, provided
+	 * met. If \b UnresolvedTransactionException is thrown, then, provided
 	 * the application exits the current session without executing any
 	 * further database transactions, the application and database state
 	 * will be in a state of having been effectively rolled back, when the
@@ -665,7 +665,7 @@ protected:
 	 * or the object will be left in a ghost state, functionally
 	 * equivalent, as far as client code is concerned, to the state
 	 * it was in prior to load() being called. The possibility of
-	 * UnresolvedTransactionException means the strong guarantee cannot
+	 * \b UnresolvedTransactionException means the strong guarantee cannot
 	 * be provided, however (see above).
 	 */
 	void load();
