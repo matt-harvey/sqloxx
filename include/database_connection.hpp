@@ -36,9 +36,6 @@ namespace detail
 	class SQLStatementImpl;
 }  // namespace detail
 
-
-
-
 /**
  * @class DatabaseConnection
  *
@@ -64,9 +61,6 @@ public:
 	 * be stored in a cache for reuse (via the class SQLStatement)
 	 * by the DatabaseConnection instance.
 	 *
-	 * Initializes SQLite3 and creates a database connection initially
-	 * set to null, i.e. not connected to any file.
-	 *
 	 * @throws SQLiteInitializationError if initialization fails
 	 * for any reason.
 	 *
@@ -87,7 +81,7 @@ public:
 	virtual ~DatabaseConnection();
 
 	/**
-	 * @returns true if and only if the DatabaseConnection is currently
+	 * @returns \e true if and only if the DatabaseConnection is currently
 	 * connected to a database file.
 	 *
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
@@ -96,12 +90,12 @@ public:
 
 	/**
 	 * Opens the database connection to a specific file
-	 * given by \c filename. If the file
+	 * given by \e filename. If the file
 	 * does not already exist it is created. Note the SQLite pragma
-	 * foreign_keys is always executed immediately the file is opened, to
+	 * \e foreign_keys is always executed immediately the file is opened, to
 	 * enable foreign key constraints.
 	 *
-	 * As a final step in this, function, do_setup() is called.
+	 * As a final step in this function, \b do_setup() is called.
 	 * This is a private virtual function which by default does nothing.
 	 * Derived classes may override it to provide their own initialization
 	 * code.
@@ -121,8 +115,8 @@ public:
 	 * <b>Exception safety</b>: appears to offer the <em>basic guarantee</em>,
 	 * <em>however</em> this has not been properly tested. This wraps
 	 * a SQLite function for which the error-safety is not clear. If the
-	 * derived class overrides do_setup(), then this may affect exception
-	 * safety, since do_setup() is called by the open() function.
+	 * derived class overrides \b do_setup(), then this may affect exception
+	 * safety, since \b do_setup() is called by the open() function.
 	 */
 	void open(boost::filesystem::path const& p_filepath);
 
@@ -151,14 +145,14 @@ public:
 	 * only.
 	 *
 	 * The table is called "booleans" and has one column, an integer
-	 * primary key field with the heading "representation". There are
+	 * primary key field named "representation". There are
 	 * two rows, one with 0 in the "representation" column, representing
 	 * \e false, and the other with 1, representing \e true.
 	 * 
-	 * @throws InvalidConnection is the database connection is invalid (e.g.
+	 * @throws InvalidConnection if the database connection is invalid (e.g.
 	 * not connected to a file).
 	 *
-	 * @throws SQLiteException, or an exception inherited therefrom, if there
+	 * @throws SQLiteException or an exception inheriting therefrom, if there
 	 * is some other error setting up the table (should be rare). For example,
 	 * if the table has been set up already.
 	 *
@@ -307,8 +301,8 @@ private:
 	 * @throws std::bad_alloc in the extremely unlikely event of a memory
 	 * allocation error in execution.
 	 *
-	 * <b>Exception safety</b>: the <em>strong guarantee</em> is provided, on the
-	 * condition that the control of SQL transactions is managed
+	 * <b>Exception safety</b>: the <em>strong guarantee</em> is provided, on
+	 * the condition that the control of SQL transactions is managed
 	 * entirely by calls to begin_transaction(), end_transaction() and
 	 * canced_transaction(), rather than by executing the corresponding
 	 * SQL commands directly.

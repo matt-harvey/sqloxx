@@ -31,21 +31,22 @@ namespace sqloxx
 {
 
 /**
- * Handle for handling business objects of type T where T is a class
- * derived from PersistentObject<T, Connection> for some type Connection, and
- * is managed via IdentityMap<PersistenceTraits<T>::Base> to ensure only one
- * instance of T exists in memory at any one time, in relation to any given
+ * Handle for handling business objects of type \b T where \b T is a class
+ * derived from <b>PersistentObject<T, Connection></b> for some type
+ * \b Connection, and is managed via \b IdentityMap<PersistenceTraits<T>::Base>
+ * to ensure that only one
+ * instance of \b T exists in memory at any one time, in relation to any given
  * record in the database.
  *
- * T should be associated with a instance of T::Connection,
+ * \b T should be associated with a instance of <b>T::Connection</b>,
  * and with a member function
- * template identity_map<S>() that is specialized for
- * S = PersistentTraits<T>::Base, that returns an instance of
- * IdentityMap<Base> that is
- * unique to that database connection, for managing instances of Base.
- * (See separate documentation for IdentityMap.) (By default Base will be
- * the same type as T, but it need not be; see documentation
- * for PersistenceTraits.)
+ * template \b T::Connection::identity_map<S>() that is specialized for \b S
+ * where \b S is <b>identity_map<PersistentTraits<T>::Base></b>, and that
+ * returns an instance of \b IdentityMap<Base> that is
+ * unique to that database connection, for managing instances of \b Base.
+ * (See separate documentation for IdentityMap.) (By default \b Base will be
+ * the same type as \b T, but it need not be; see documentation
+ * for \b PersistenceTraits.)
  */
 template <typename T>
 class Handle
@@ -64,18 +65,19 @@ public:
 
 	/**
 	 * Construct a null Handle, i.e. a Handle to which no instance
-	 * of T is bound.
+	 * of \b T is bound.
 	 *
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	Handle();
 
 	/**
-	 * Constructs a Handle to a new instance of T, which has \e not yet
-	 * been persisted to the database represented by p_connection.
-	 * The handled object will be persisted to p_connection if and when it is
-	 * saved. The object will be managed by the IdentityMap<T> associated
-	 * with p_connection (returned by p_connection.identity_map<T>()).
+	 * Constructs a Handle to a new instance of \b T, which has \e not yet
+	 * been persisted to the database represented by \e p_connection.
+	 * The handled object will be persisted to \e p_connection if and when it is
+	 * saved. The object will be managed by the \b IdentityMap<T> associated
+	 * with \e p_connection (returned by
+	 * <em>p_connection.identity_map<T>()</em>).
 	 *
 	 * @throws sqloxx::OverflowException in the extremely unlikely event that
 	 * the in-memory cache already has so many objects loaded that an
@@ -83,13 +85,14 @@ public:
 	 * overflow in the process of assigning it a key.
 	 *
 	 * @throws std::bad_allocation in the unlikely event of memory allocation
-	 * failure during the creating and caching of the instance of T.
+	 * failure during the creating and caching of the instance of \b T.
 	 *
-	 * <em>In addition</em>, any exceptions thrown from the T constructor
-	 * of the form T(IdentityMap<T>&) may also be thrown
+	 * <em>In addition</em>, any exceptions thrown from the \b T constructor
+	 * of the form <em>T(IdentityMap<T>&)</em> may also be thrown
 	 * from this Handle constructor.
 	 *
-	 * <b>Exception safety</b>: depends on the constructor for T. If this constructor
+	 * <b>Exception safety</b>: depends on the constructor for \b T. If this
+	 * constructor
 	 * offers the strong guarantee, then the Handle constructor will also
 	 * offer the <em>strong guarantee</em> (although in case of an
 	 * exception, the internal state of the IdentityMap may be altered in a
@@ -99,11 +102,11 @@ public:
 	explicit Handle(Connection& p_connection);
 
 	/**
-	 * Constructs a Handle to an instance of T corresponding to one that has
-	 * already been persisted to the database represented by p_connection,
-	 * with a primary key of p_id. The object will be managed by the
-	 * IdentityMap<T> associated with p_connection (returned by
-	 * p_connection.identity_map<T>()).
+	 * Constructs a Handle to an instance of \b T corresponding to one that has
+	 * already been persisted to the database represented by \e p_connection,
+	 * with a primary key of \e p_id. The object will be managed by the
+	 * \b IdentityMap<T> associated with \e p_connection (returned by
+	 * <em>p_connection.identity_map<T>()</em>.
 	 *
 	 * @throws sqloxx::OverflowException in the extremely unlikely event that
 	 * the in-memory cache already has so many objects loaded that an
@@ -111,25 +114,25 @@ public:
 	 * overflow in the process of assigning it a key.
 	 *
 	 * @throws std::bad_allocation in the unlikely event of memory allocation
-	 * failure during the creating and caching of the instance of T.
+	 * failure during the creating and caching of the instance of \b T.
 	 *
 	 * @throws sqloxx::BadIdentifier if there is no record in the database
-	 * of type T that has p_id as its primary key.
+	 * of type \b T that has \e p_id as its primary key.
 	 *
 	 * @throws sqloxx::InvalidConnection in case the database connection is
 	 * invalid.
 	 *
-	 * <em>In addition</em>, any exceptions thrown from the T constructor
-	 * of the form T(IdentityMap<T>&) may also be thrown
+	 * <em>In addition</em>, any exceptions thrown from the \b T constructor
+	 * of the form <em>T(IdentityMap<T>&)</em> may also be thrown
 	 * from this Handle constructor.
 	 *
-	 * <b>Exception safety</b>: depends on the constructor for T. If this constructor
-	 * offers the strong guarantee, then the Handle constructor will also
-	 * offer the <em>strong guarantee</em> (although in case of an
+	 * <b>Exception safety</b>: depends on the constructor for \b T. If this
+	 * constructoroffers the strong guarantee, then the Handle constructor will
+	 * also offer the <em>strong guarantee</em> (although in case of an
 	 * exception, the internal state of the IdentityMap may be altered in a
 	 * way that temporarily affects performance or size of allocated memory,
 	 * but not program logic). For this guarantee to hold, it is also required
-	 * that the destructor for T not throw.
+	 * that the destructor for \b T not throw.
 	 */
 	Handle(Connection& p_connection, Id p_id);
 
@@ -147,14 +150,14 @@ public:
 	~Handle();
 
 	/**
-	 * @returns a Handle to an instance of T corresponding to one that has
-	 * already been persisted to the database represented by p_connection
-	 * with a primary key of p_id, assuming such an instance of T exists. This
-	 * function should not be called unless it is known that there exists
-	 * in the database an object of type T with p_id as its primary key.
+	 * @returns a Handle to an instance of \b T corresponding to one that has
+	 * already been persisted to the database represented by \e p_connection
+	 * with a primary key of \e p_id, assuming such an instance of b T exists.
+	 * This function should not be called unless it is known that there exists
+	 * in the database an object of type \b T with \b p_id as its primary key.
 	 *
 	 * <em>Calling create_unchecked for an object that is NOT in the database
-	 * with the given id, causes <b>undefined behaviour</b>.</em>
+	 * with the given Id, causes <b>undefined behaviour</b>.</em>
 	 *
 	 * This function may be significantly faster than calling the constructor
 	 * for Handle directly, as it does not check whether the requested primary
@@ -176,18 +179,18 @@ public:
 	 * unlikely event of an error during execution thrown up by the underlying
 	 * SQLite API.
 	 *
-	 * <em>In addition</em>, any exceptions thrown from the T constructor
+	 * <em>In addition</em>, any exceptions thrown from the \b T constructor
 	 * may also be thrown by this function.
 	 *
-	 * <b>Exception safety</b> depends on the constructor of T of the form
-	 * T(IdentityMapT&, Id, IdentityMap::Signature const&).
+	 * <b>Exception safety</b> depends on the constructor of \b T of the form
+	 * <em>T(IdentityMapT&, Id, IdentityMap::Signature const&)</em>.
 	 * Provided this constructor offers at least the
 	 * <em>strong guarantee</em>, then create_unchecked() offers the
 	 * <em>strong guarantee</em> (although there may be some internal cache
 	 * state that is not rolled back but which does not affect client code).
 	 * For this guarantee to hold, it is also required that the destructor
-	 * of T not throw. Remember also that if no object of type T exists in
-	 * the database with p_id as its primary key, then behaviour is
+	 * of \b T not throw. Remember also that if no object of type \b T exists in
+	 * the database with \e p_id as its primary key, then behaviour is
 	 * undefined.
 	 */
 	static Handle create_unchecked(Connection& p_connection, Id p_id);
@@ -195,8 +198,8 @@ public:
 	/**
 	 * @throws sqloxx::OverflowException in the extremely unlikely
 	 * event that the number of Handle instances pointing to the
-	 * underlying instance of T is too large to be safely counted
-	 * by the type PersistentObject<T, Connection>::HandleCounter.
+	 * underlying instance of \b T is too large to be safely counted
+	 * by the type <em>PersistentObject<T, Connection>::HandleCounter</em>.
 	 *
 	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
@@ -205,8 +208,8 @@ public:
 	/**
 	 * @throws sqloxx::OverflowException in the extremely unlikely
 	 * event that the number of Handle instances pointing to the
-	 * underlying instance of T is too large to be safely counted
-	 * by the type PersistentObject<T, Connection>::HandleCounter.
+	 * underlying instance of \b T is too large to be safely counted
+	 * by the type <b>PersistentObject<T, Connection>::HandleCounter</b>.
 	 *
 	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
@@ -236,18 +239,18 @@ public:
 	 * @returns the instance of T that is handled by this Handle<T>.
 	 *
 	 * @throws UnboundHandleException if there is no instance of
-	 * T bound to this Handle.
+	 * \b T bound to this Handle.
 	 *
 	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	T& operator*() const;
 
 	/**
-	 * Indirection operator analagous to operator*(), for
-	 * accessing members of T via the underlying pointer.
+	 * Indirection operator analagous to <b>operator*()</b>, for
+	 * accessing members of \b T via the underlying pointer.
 	 *
 	 * @throws UnboundHandleException if there is no instance
-	 * of T bound to this Handle.
+	 * of \b T bound to this Handle.
 	 *
 	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
@@ -282,27 +285,27 @@ private:
 // NON-MEMBER FUNCTIONS
 
 /**
- * R must be such that PersistenceTraits<L>::Base is the same type
- * as PersistenceTraits<R>::Base.
- *
- * L and R must also be such that L::Connection is the same type
- * as R::Connection.
- *
- * Finally, L must be a base class of R, or must be one and the same
- * type as R, or else R must be a base class of L.
- *
- * These preconditions enforced using static_asserts, i.e. compilation
- * will fail if any of these preconditions fails.
- *
  * A dynamic_cast is attempted on the underlying pointer. If it
- * succeeds, then the returned Handle<L> will point to one and the
+ * succeeds, then the returned \b Handle<L> will point to one and the
  * same object as rhs. If it fails, then the returned
- * Handle<L> will be null.
+ * \b Handle<L> will be null.
+ *
+ * In order successfully to instantiate this function template:
+ *
+ * \b R must be such that \b PersistenceTraits<L>::Base is the same type
+ * as \b PersistenceTraits<R>::Base;\n
+ * \b L and \b R must also be such that \b L::Connection is the same type
+ * as \b R::Connection; and\n
+ * \b L must be a base class of \b R, or must be one and the same
+ * type as \b R, or else \b R must be a base class of \b L.\n
+ *
+ * These conditions are enforced statically: compilation will fail
+ * if they do not hold.
  *
  * @throws sqloxx::OverflowException in the extremely unlikely
  * event that the number of Handle instances pointing to the
- * underlying instance of T is too large to be safely counted
- * by the type PersistentObject<T, Connection>::HandleCounter.
+ * underlying instance of \b T is too large to be safely counted
+ * by the type \b PersistentObject<T, Connection>::HandleCounter.
  *
  * <b>Exception safety</b>: <em>strong guarantee</em>.
  */
@@ -515,8 +518,6 @@ handle_cast(Handle<R> const& rhs)
 	}
 	return ret;
 }
-
-
 
 }  // namespace sqloxx
 
