@@ -27,34 +27,52 @@ namespace sqloxx
 {
 
 
-/**
- * Class to handle SQL statements that may be shared instances
- * of such statements in a cache. When a
- * SQLStatement is destructed, it is automatically
- * reset. However the underlying statement remains in
- * the cache ready for deployment (unless the cache is full).
- * The details of caching are handled within the DatabaseConnection
- * class. The client just calls the constructor and uses the statement.
+/** Represents an SQL statement.
  *
- * Clients of Sqloxx should not use the underlying SQLStatementImpl class
- * directly, but only ever via SQLStatement.
+ * Sqloxx transparently implements a
+ * caching mechanism whereby the underlying structure associated with a
+ * given statement string is cached for later re-use, avoiding the
+ * runtime expense associated with parsing the same string and preparing the
+ * same underlying data structure multiple times. To access this caching
+ * mechanism, the client needs only to use the SQLStatement class,
+ * and the caching/retrieval is done automatically. Each time the client
+ * constructs an SQLStatement from a given string "xyz", Sqloxx
+ * looks in the cache to see if "xyz" has been parsed before. If it has,
+ * then, providing the corresponding
+ * SQL statement structure is not currently "checked out" i.e. in use
+ * elsewhere, then the existing structure is used rather than parsing
+ * the string anew. The caching is managed via the DatabaseConnection
+ * class. The maximum number of statement structures that can
+ * be cached is determined by the value passed to \e p_cache_capacity in
+ * the DatabaseConnection constructor. Once the cache maximum is reached,
+ * additional statement strings are no longer added to the cache, but
+ * are parsed anew each time (which, as far as client code is concerned,
+ * has a performance impact, but not a behavioural impact).
  *
- * If an exception is thrown by an method of SQLStatement, the
+ * If an exception is thrown by a method of SQLStatement, the
  * caller should in general no longer rely on the state of SQLStatement
  * being valid. However, when the SQLStatement goes out of scope or
- * is otherwise destroyed, the underlying SQLStatementImpl will be reset to a
+ * is otherwise destroyed, the underlying structure will be reset to a
  * valid state. Furthermore, a locking mechanism ensures that two
- * SQLStatements cannot share the same underlying SQLStatementImpl. This
- * prevents SQLStatementImpl instances that are in an invalid state
- * from being used unless used
- * via the very same SQLStatement that triggered the invalid state.
+ * SQLStatements cannot simultanously share the same underlying structure. This
+ * prevents statement structures that are in an invalid state
+ * from being used unless used via the very same SQLStatement that triggered
+ * the invalid state.
+ *
+ * To take best advantage of the caching mechanism, and to minimize the
+ * potential for errors and SQL injection exploits, client code should
+ * use the bind() functions as much as possible, for introducing specific
+ * data into SQL statements, rather than hard-coding data into the statement
+ * text. (The caching mechanism stores statement structures keyed by
+ * their text as it is before any data is bound into the statement.) See
+ * documentation for bind() for more detail.
  */
 class SQLStatement
 {
 public:
 
 	/**
-	 * Creates an object encapsulating a SQL statement.
+	 * Creates an object representing a single SQL statement.
 	 * 
 	 * @param p_database_connection is the DatabaseConnection
 	 * on which the statement will be executed.
@@ -63,17 +81,18 @@ public:
 	 * terminated with any mixture of semicolons and/or spaces (but not other
 	 * forms of whitespace).
 	 *
-	 * @throws InvalidConnection if p_database_connection is an
-	 * invalid database connection (i.e. if p_database_connection.is_valid()
+	 * @throws InvalidConnection if \e p_database_connection is an
+	 * invalid database connection (i.e. if \e p_database_connection.is_valid()
 	 * returns false).
 	 *
-	 * @throws SQLiteException, or an exception derived therefrom, if there
+	 * @throws SQLiteException or an exception derived therefrom, if there
 	 * is some other problem in preparing the statement, which results in a
-	 * SQLite error code (that is not SQLITE_OK) being returned.
+	 * SQLite error code (that is not \e SQLITE_OK) being returned.
 	 * 
 	 * @throws TooManyStatements if the first purported SQL statement
-	 * in str is syntactically acceptable to SQLite, <em>but</em> there
-	 * are characters in str after this statement, other than ';' and ' '.
+	 * in \e p_statement_text is syntactically acceptable to SQLite, \e but
+	 * there are characters in \e p_statement_text after this statement, other
+	 * than ';' and ' '.
 	 * This includes the case where there are further syntactically
 	 * acceptable SQL statements after the first one - as each
 	 * SQLStatement can encapsulate only one statement.
@@ -97,23 +116,37 @@ public:
 
 	/**
 	 * Destructor "clears" the state of the underlying cached
-	 * SQLStatementImpl for re-use by a subsequent SQLStatement with the
-	 * same statement text. (Client code does not need to concern itself
-	 * with the details of this.)
+	 * SQL statement structure ready for re-use by a subsequent SQLStatement
+	 * with the same statement text. (Client code does not need to concern
+	 * itself with the details of this.)
 	 *
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	~SQLStatement();
 	
 	/**
-	 * Wrappers around SQLite bind functions.
+	 * Wrapper around SQLite "bind" functions for binding named
+	 * parameters with data.
 	 *
-	 * This is only supported with the following types for T:\n
-	 * int, long, long long, double, std::string const& and char const*.
+	 * This is only supported with the following types for \b T: \n
+	 * \b int, \b long, <b>long long</b>, \b double,
+	 * <b>std::string const&</b> and <b>char const*</b>.
+	 *
+	 * Example usage: \n\n
+	 * <tt>
+  	 *	SQLStatement statement(dbc, "select name from players where score > :score");\n
+ 	 *	statement.bind(":score", 50000);
+ 	 * </tt>
+	 *
+	 * This produces a statement that is semantically equivalent to
+	 * "select name from players where score > 50000".
+	 *
+	 * Note the ":" at the start of the parameter name ":score".
+	 * This colon is required.
 	 *
 	 * <b>NOTE</b>
-	 * If x is of an integral type that is wider than 64 bits, then any
-	 * attempt instantiate this function with x will result in compilation
+	 * If \e x is of an integral type that is wider than 64 bits, then any
+	 * attempt instantiate this function with \e x will result in compilation
 	 * failure. This is done to rule out any possibility of overflow within
 	 * SQLite.
 	 * 
@@ -121,7 +154,7 @@ public:
 	 * If this occurs, the state of the SQLStatement will be
 	 * the same as before the \e bind method was called.
 	 *
-	 * @throws SQLiteException, or an exception derived therefrom,
+	 * @throws SQLiteException or an exception derived therefrom,
 	 * if SQLite could not properly bind the statement. If this occurs,
 	 * the statement will be reset and all bindings cleared.
 	 *
@@ -137,17 +170,32 @@ public:
 	void bind(std::string const& parameter_name, std::string const& x);
 
 	/**
-	 * Where a statement has a result set available,
+	 * Where an SQLStatement has a result set available,
 	 * this function (template) can be used to extract the value at
 	 * the \e indexth column of the current row (where \e index starts
 	 * counting at 0).
 	 *
 	 * Currently the following types for T are supported:\n
+	 * <b>
 	 *	int\n
 	 *	long\n
 	 *	long long\n
 	 *	double\n
 	 *	std::string\n
+	 * </b>
+	 *
+	 * Example usage:\n\n
+	 * <tt>
+	 *   std::vector<std::string> names;\n
+	 *   std::vector<int> lives;\n
+	 *   SQLStatement s("select name, lives from players where score > :score");\n
+	 *   s.bind(":score", 500);\n
+	 *   while (s.step())\n
+	 *   {\n
+	 *   	names.push_back(s.extract<std::string>(0));\n
+	 *   	lives.push_back(s.extract<int>(1));\n
+	 *   }\n
+	 * </tt>
 	 * 
 	 * @param index is the column number (starting at 0) from which to
 	 * read the value.
@@ -163,9 +211,13 @@ public:
 	T extract(int index);
 
 	/**
-	 * Wraps sqlite3_step.
-	 * Returns true only as long as there are further steps to go (i.e. result
-	 * rows to examine).
+	 * Wraps \b sqlite3_step. Used for stepping through result rows in
+	 * a "select" statement; can also be used simply to execute an "insert", or
+	 * "create table" or other statement that generally does not yield
+	 * result rows.
+	 *
+	 * Returns \e true only as long as there are further steps to go (i.e.
+	 * result rows to examine).
 	 *
 	 * On stepping beyond the last result row, step() will return false.
 	 * The statement will then be automatically reset (see reset()).
@@ -187,17 +239,17 @@ public:
 	bool step();
 
 	/**
-	 * Wraps sqlite3_step. Similar to \c step except that it throws an
+	 * Wraps \b sqlite3_step. Like step() except that it throws an
 	 * exception if a result row still remains after calling. That is,
 	 * it is equivalent to calling:\n
-	 * \c if (step()) throw UnexpectedResultRow("...");\n
+	 * <tt>if (step()) throw UnexpectedResultRow("...")</tt>;\n
 	 *
 	 * @throws UnexpectedResultRow if a result set is returned. If this
 	 * occurs, the statement is reset (but bindings are not cleared).
 	 * 
 	 * @throws InvalidConnection if the database connection is invalid. If
 	 * this occurs, the statement is left in the same state as it was before
-	 * the \e step_final method was called.
+	 * the step_final() method was called.
 	 *
 	 * @throws SQLiteException or an exception derived therefrom if there
 	 * is any other error in executing the statement. If this happens, the
@@ -210,7 +262,7 @@ public:
 	/**
 	 * Resets the statement ready for subsequent
 	 * re-execution - but does not clear the bound parameters.
-	 * This is a wrapper for sqlite3_reset.
+	 * This is a wrapper for \b sqlite3_reset.
 	 *
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
@@ -218,7 +270,7 @@ public:
 
 	/**
 	 * Clears the parameter bindings from the statement, setting all
-	 * to NULL. This is a wrapper for sqlite3_clear_bindings.
+	 * to NULL. This is a wrapper for \b sqlite3_clear_bindings.
 	 *
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
