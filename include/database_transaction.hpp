@@ -46,7 +46,7 @@ class DatabaseConnection;
  * is cancelled i.e. rolled back (or, if nested, the transaction is
  * rolled back to the last savepoint and that savepoint is released).
  *
- * Note in regards to (c) that there it is possible - albeit extremely
+ * Note in regards to (c) that it is possible - albeit extremely
  * unlikely - for the destructor to fail to cancel the transaction. If
  * this occurs, then rather than throw an exception from a destructor, the
  * destructor will call std::terminate(). (The SQLite internals will then
