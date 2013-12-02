@@ -37,30 +37,30 @@ namespace sqloxx
 {
 
 /**
- * Provides an in-memory cache for objects of type T, where such
+ * Provides an in-memory cache for objects of type \b T, where such
  * objects are persisted to a database via a database connection of
- * type T::Connection. T is passed as a template parameter
- * to the class template. It is expected that T inherits from
- * sqloxx::PersistentObject<T, Connection>.
+ * type \b T::Connection. \b T is passed as a template parameter
+ * to the class template. It is expected that \b T inherits from
+ * <b>sqloxx::PersistentObject<T, Connection></b>.
  *
- * T should define
- * constructors of the form:\n
- * T(IdentityMap&, IdentityMap::Signature const&); and\n
- * T(IdentityMap&, Id, IdentityMap::Signature const&)\n
+ * \b T should define
+ * constructors of the form
+ * <em>T(IdentityMap&, IdentityMap::Signature const&)</em> and
+ * <em>T(IdentityMap&, Id, IdentityMap::Signature const&)</em>.
  * These should then pass their parameters to the corresponding
- * constructors of PersistentObject<T, Connection>; except that the
- * final "Signature" parameter is not passed on.
+ * constructors of <b>PersistentObject<T, Connection></b>; except that the
+ * final Signature parameter is not passed on.
  * The purpose of the Signature parameter is to prevent
- * the T constructor from being called by any class other than
+ * the \b T constructor from being called by any class other than
  * IdentityMap.
  *
- * Each instance of IdentityMap has a particular Connection associated
+ * Each instance of IdentityMap has a particular \b Connection associated
  * with it. The IdentityMap caches objects loaded from the database,
  * and provides the Handle class
  * with pointers to these objects. By using IdentityMap to cache objects,
- * application code can be sure that each single record of type T
+ * application code can be sure that each single record of type \b T
  * that is stored in the database, has at most a single in-memory
- * object of type T associated with that record, loaded in memory
+ * object of type \b T associated with that record, loaded in memory
  * at any one time. IdentityMap thus implements the "Identity Map"
  * pattern detailed in Martin Fowler's book, "Patterns of Enterprise
  * Application Architecture". By having at most a single in-memory
@@ -71,7 +71,7 @@ namespace sqloxx
  * object has already been loaded.
  *
  * IdentityMap is intended to work in conjunction with sqloxx::Handle
- * and sqloxx::PersistentObject<T, Connection>.
+ * and <b>sqloxx::PersistentObject<T, Connection></b>.
  */
 template <typename T>
 class IdentityMap
@@ -110,12 +110,13 @@ public:
 	IdentityMap& operator=(IdentityMap const&) = delete;
 	IdentityMap& operator=(IdentityMap&&) = delete;
 
-	/**
-	 * Destructor. The underlying cache is automatically emptied
-	 * of all objects (i.e. instances of T) on destruction of
+	/** Destructor.
+	 *
+	 * The underlying cache is automatically emptied
+	 * of all objects (i.e. instances of \b T) on destruction of
 	 * the IdentityMap, by the calling the destructor of each
 	 * object in the cache. The cache is then itself destructed.
-	 * However the database connection (Connection instance) referenced
+	 * However the database connection (\b Connection instance) referenced
 	 * by the IdentityMap is \e not destructed merely by virtue
 	 * of the destruction of the IdentityMap.
 	 *
@@ -130,7 +131,7 @@ public:
 	 * When one type of PersistentObject holds a Handle or reference to
 	 * another type of PersistentObject (with a different IdentityMap),
 	 * client code should ensure that the IdentityMap for the
-	 * referring type is be destructed before the IdentityMap for
+	 * referring type is destructed before the IdentityMap for
 	 * the referred-to type is destructed. This ensures that the Handle
 	 * or reference to the referred-to type will not be left dangling.
 	 * If PersistentObject instances of the \e same type need to hold
@@ -141,12 +142,14 @@ public:
 	 * process.
 	 *
 	 * <b>Exception safety</b>: the <em>nothrow guarantee</em> is provided,
-	 * providing the destructor of T does not throw.
+	 * providing the destructor of \b T does not throw.
 	 */
 	~IdentityMap() = default;
 
 	/**
-	 * Turn on caching. When caching is on, objects loaded from the
+	 * Turns caching on.
+	 *
+	 * When caching is on, objects loaded from the
 	 * database are cached indefinitely in the IdentityMap. When
 	 * caching is off, each object is only cached as long as there
 	 * as at least one Handle referring to it. If enable_caching() is
@@ -159,7 +162,9 @@ public:
 	void enable_caching();
 
 	/**
-	 * Turn caching off. When caching is off, each object is only
+	 * Turns caching off.
+	 *
+	 * When caching is off, each object is only
 	 * cached as long as there is at least one Handle referring to
 	 * it. If disable_caching() is called when caching is already
 	 * off, it has no effect. If caching is on when disable_caching()
@@ -170,7 +175,7 @@ public:
 	 * Caching is off by default.
 	 * 
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, providing the
-	 * destructor of T does not throw.
+	 * destructor of \b T does not throw.
 	 */
 	void disable_caching();
 
@@ -214,8 +219,8 @@ public:
 
 	/**
 	 * Control access to the various functions of the class
-	 * IdentityMap<T>, deliberately
-	 * limiting this access to the class PersistentObject<T, Connection>.
+	 * <b>IdentityMap<T></b>, deliberately
+	 * limiting this access to the class <b>PersistentObject<T, Connection></b>.
 	 */
 	class PersistentObjectAttorney
 	{
@@ -271,20 +276,20 @@ public:
 private:
 
 	/**
-	 * Provide pointer to object of type static type T, and dynamic type
-	 * DynamicT, representing a newly created
+	 * Provide pointer to object of type static type \b T, and dynamic type
+	 * \b DynamicT, representing a newly created
 	 * object that has not yet been persisted to the database.
-	 * Typically DynamicT will be the same type as T, but it need
-	 * not be - it might be a class derived from T.
+	 * Typically \b DynamicT will be the same type as \b T, but it need
+	 * not be - it might be a class derived from \b T.
 	 *
-	 * DynamicT must also be such that PersistenceTraits<T>::Base is the
-	 * same as T. DynamicT must also be, or be derived, from T.
-	 * If derived from T, then T must
+	 * \b DynamicT must also be such that <b>PersistenceTraits<T>::Base</b> is
+	 * the same as \b T. \b DynamicT must also be, or be derived, from \b T.
+	 * If derived from \b T, then \b T must
 	 * be a polymorphic base class. If these conditions fail, compilation
 	 * will fail.
 	 *
-	 * @returns a T* pointing to a newly constructed instance of DynamicT,
-	 * that is cached in this instance of IdentityMap<T>.
+	 * @returns a \b T* pointing to a newly constructed instance of \b DynamicT,
+	 * that is cached in this instance of <b>IdentityMap<T></b>.
 	 *
 	 * @throws sqloxx::OverflowException in the extremely unlikely
 	 * event that the in-memory cache already has so many objects loaded that
@@ -292,14 +297,14 @@ private:
 	 * arithmetic overflow in the process of assigning it a key.
 	 *
 	 * @throws std::bad_alloc in the unlikely event of memory allocation
-	 * failure during the creating and caching of the instance of T.
+	 * failure during the creating and caching of the instance of \b T.
 	 *
-	 * <em>In addition</em>, any exceptions thrown from the DynamicT
+	 * <em>In addition</em>, any exceptions thrown from the \b DynamicT
 	 * constructor may also
 	 * be thrown from provide_pointer().
 	 *
-	 * <b>Exception safety</b> depends on the constructor of DerivedT of the form
-	 * DynamicT(IdentityMap&, IdentityMap::Signature const&).
+	 * <b>Exception safety</b> depends on the constructor of \b DynamicT of the
+	 * form <b>DynamicT(IdentityMap&, IdentityMap::Signature const&)</b>.
 	 * Provided this constructor offers at
 	 * least the <em>strong guarantee</em>, then provide_pointer() offers the
 	 * <em>strong guarantee</em> (although there may be some internal cache
@@ -309,22 +314,22 @@ private:
 	DynamicT* provide_pointer();
 
 	/**
-	 * Provide pointer to object of static type T, and dynamic type DynamicT,
+	 * Provide pointer to object of static type \b T, and dynamic type \b DynamicT,
 	 * representing an object
 	 * already stored in the database, with primary key (id) p_id.
 	 *
-	 * DynamicT must also be such that PersistenceTraits<T>::Base is the
-	 * same as T. DynamicT must also be, or be derived, from T.
-	 * If derived from T, then T must
+	 * \b DynamicT must also be such that PersistenceTraits<T>::Base is the
+	 * same as \b T. \b DynamicT must also be, or be derived, from \b T.
+	 * If derived from \b T, then \b T must
 	 * be a polymorphic base class. If these conditions fail, compilation
 	 * will fail.
 	 *
-	 * @returns a pointer<T> pointing to an instance of DynamicT corresponding
+	 * @returns a pointer<T> pointing to an instance of \b DynamicT corresponding
 	 * to a record of the corresponding type already persisted in the
 	 * database, with p_id as its primary key.
 	 *
 	 * @throws sqloxx::BadIdentifier if there is no record in the
-	 * database of type T that has p_id as its primary key. Note the
+	 * database of type \b T that has p_id as its primary key. Note the
 	 * validity of p_id is always checked in the physical database
 	 * by this function, regardless of whether the object has
 	 * yet to be cached in the IdentityMap. (It is possible in certain
@@ -349,17 +354,17 @@ private:
 	 * unlikely event of an error during execution thrown up by the underlying
 	 * SQLite API.
 	 *
-	 * <em>In addition</em>, any exceptions thrown from the T constructor
+	 * <em>In addition</em>, any exceptions thrown from the \b T constructor
 	 * may also be thrown from provide_pointer().
 	 *
-	 * <b>Exception safety</b> depends on the constructor of DynamicT of the form
-	 * DynamicT(IdentityMap&, Id, IdentityMap::Signature const&).
+	 * <b>Exception safety</b> depends on the constructor of \b DynamicT of the form
+	 * <b>DynamicT(IdentityMap&, Id, IdentityMap::Signature const&)</b>.
 	 * Provided this constructor offers at least the
 	 * <em>strong guarantee</em>, then provide_pointer() offers the
 	 * <em>strong guarantee</em> (although there may be some internal cache
 	 * state that is not rolled back but which does not affect client code).
 	 * For this guarantee to hold, it is also required that the destructor
-	 * of T not throw.
+	 * of \b T not throw.
 	 */
 	template <typename DynamicT>
 	DynamicT* provide_pointer(Id p_id);
@@ -367,14 +372,14 @@ private:
 	/**
 	 * Behaviour is exactly the same as provide_pointer(Id p_id), with the
 	 * sole difference that (a) the unchecked version is faster, and
-	 * (b) if a record of type DynamicT, with p_id as its primary key,
+	 * (b) if a record of type \b DynamicT, with p_id as its primary key,
 	 * does not exist in the database, then, rather than an exception
 	 * being thrown, behaviour is undefined. This function should \e never be
 	 * called unless you are \e sure p_id is an existing primary key.
 	 *
-	 * DynamicT must also be such that PersistenceTraits<T>::Base is the
-	 * same as T. DynamicT must also be, or be derived, from T.
-	 * If derived from T, then T must
+	 * \b DynamicT must also be such that PersistenceTraits<T>::Base is the
+	 * same as \b T. \b DynamicT must also be, or be derived, from \b T.
+	 * If derived from \b T, then \b T must
 	 * be a polymorphic base class. If these conditions fail, compilation
 	 * will fail.
 	 */
@@ -382,14 +387,14 @@ private:
 	DynamicT* unchecked_provide_pointer(Id p_id);
 
 	/**
-	 * Register id of newly saved instance of T. This function is
+	 * Register id of newly saved instance of \b T. This function is
 	 * intended only to be called from PersistentObject<T, Connection>.
 	 * This tells the cache the id of the object so that in future, it
 	 * can be looked up by its id as well as by its cache key.
 	 *
 	 * Precondition: there must be an object cached in the IdentityMap
 	 * with this p_cache_key;\and
-	 * The destructor of T must not throw.
+	 * The destructor of \b T must not throw.
 	 *
 	 * @param p_cache_key the cache key of the newly saved object
 	 *
@@ -399,24 +404,24 @@ private:
 	 * @throws std::bad_alloc in the very unlikely event of memory allocation
 	 * failure while registering the object's id in the cache.
 	 *
-	 * <b>Exception safety</b>: <em>strong guarantee</em>, providing the precondition
-	 * is met.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>, providing the
+	 * precondition is met.
 	 */
 	void register_id(CacheKey p_cache_key, Id p_id);
 
 	/**
-	 * Notify IdentityMap that an instance of T that previously had
+	 * Notify IdentityMap that an instance of \b T that previously had
 	 * an id p_id, no longer has any id. This function is
 	 * intended only to be called from PersistentObject<T, Connection>.
 	 *
-	 * @param p_id the id of the instance of T, corresponding to its
+	 * @param p_id the id of the instance of \b T, corresponding to its
 	 * primary key in the database.
 	 *
 	 * <b>Preconditions</b>:\n
-	 * It must be known of the instance of T in
+	 * It must be known of the instance of \b T in
 	 * question, that it is cached in the IdentityMap under p_id
 	 * (not as its cache key, but as its id); and\n
-	 * The destructor of T must be non-throwing.
+	 * The destructor of \b T must be non-throwing.
 	 *
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, providing the
 	 * preconditions are met.
@@ -430,7 +435,7 @@ private:
 	 * pointing to the object with p_cache_key.
 	 * 
 	 * <b>Preconditions</b>: (a) there must be an object cached in this
-	 * IdentityMap with this cache_key; and (b) the destructor of T must
+	 * IdentityMap with this cache_key; and (b) the destructor of \b T must
 	 * never throw.
 	 * 
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, provided the
@@ -442,7 +447,7 @@ private:
 	 * This should only be called by PersistentObject<T, Connection>.
 	 *
 	 * <b>Preconditions</b>:\n
-	 * The destructor of T must be nothrow; and\n
+	 * The destructor of \b T must be nothrow; and\n
 	 * There is an object cached under p_cache_key in the cache_key_map.
 	 *
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, provided
@@ -456,7 +461,7 @@ private:
 	 * with any in-database object.
 	 *
 	 * <b>Preconditions</b>:\n
-	 * The destructor of T must be nothrow; and\n
+	 * The destructor of \b T must be nothrow; and\n
 	 * There is an object cached under p_cache_key in the cache_key_map.
 	 *
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, provided preconditions

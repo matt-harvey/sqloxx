@@ -22,47 +22,47 @@ namespace sqloxx
 
 /**
  * Houses traits relevant for PersistentObject. Where you have
- * a particular instantiation of PersistentObject<T, Connection>,
- * specialize this template if you want non-default behaviour.
+ * a particular instantiation of <b>PersistentObject<T, Connection></b>,
+ * specialize this template if you want certain non-default behaviour.
  */
 template <typename T>
 struct PersistenceTraits
 {
 	/**
-	 * The Base is the type such that the primary key of
-	 * T is "ultimately" stored in the table given by
-	 * Base::exclusive_table_name(). That table is the
+	 * \b Base is the type such that the primary key of
+	 * \b T is "ultimately" stored in the table given by
+	 * \b Base::exclusive_table_name(). That table is the
 	 * table that maintains the incrementing primary key
-	 * sequence used both for instances of T and for instances of Base.
+	 * sequence used both for instances of \b T and for instances of \b Base.
 	 *
-	 * Usually, T and Base are one and the same class.
+	 * Usually, \b T and \b Base are one and the same class.
 	 * But in some cases, client code might contain a
-	 * hierarchy such that one class ("Super") inherits directly
-	 * from PersistentObject<Super, Connection>, and then
-	 * another class ("Sub") inherits, in turn, from Super.
-	 * Typically the "base table" both for Super and Sub will
-	 * be the table given by Super::exclusive_table_name().
-	 * In that case, PersistenceTraits<T> should be specialized such that
-	 * PersistenceTraits<T>::Base is a typedef for Super.
+	 * hierarchy such that one class (\b "Super") inherits directly
+	 * from <b>PersistentObject<Super, Connection></b>, and then
+	 * another class (\b "Sub") inherits, in turn, from \b Super.
+	 * Typically the "base table" both for \b Super and \b Sub will
+	 * be the table given by \b Super::exclusive_table_name().
+	 * In that case, \b PersistenceTraits<T> should be specialized such that
+	 * \b PersistenceTraits<T>::Base is a typedef for \b Super.
 	 *
-	 * The Base class must have the following functions
+	 * The \b Base class must have the following functions
 	 * defined:
 	 *
-	 * <em>static std::string exclusive_table_name();</em>.
+	 * <em>static std::string \b exclusive_table_name();</em>.
 	 * This must return the name of the table in which
-	 * the primary key of T is ultimately stored.
+	 * the primary key of \b T is ultimately stored.
 	 *
-	 * <em>static std::string primary_key_name();</em>
-	 * This must return the name of the primary key for T as it
-	 * appears in the table named by Base::exclusive_table_name(). This
-	 * must be a single-column integer primary key that is
+	 * <em>static std::string \b primary_key_name();</em>
+	 * This must return the name of the primary key for \b T as it
+	 * appears in the table named by \b Base::exclusive_table_name().
+	 * This must be a single-column integer primary key that is
 	 * auto-incrementing (using the SQLite "autoincrement" keyword).
 	 *
-	 * For an example of how this all works, see the classes ExampleB
-	 * and ExampleC in "sqloxx/tests/example.hpp" and
-	 * "sqloxx/tests/example.cpp". Here ExampleB is the Base class for
-	 * ExampleC, and this is reflected in the specialization for
-	 * PersistenceTraits<ExampleC> contained in "example.hpp".
+	 * For an example of how this all works, see the classes \b ExampleB
+	 * and \b ExampleC in "sqloxx/tests/example.hpp" and
+	 * "sqloxx/tests/example.cpp". Here \b ExampleB is the \b Base class for
+	 * \b ExampleC, and this is reflected in the specialization for
+	 * \b PersistenceTraits<ExampleC> contained in "example.hpp".
 	 */
 	typedef T Base;
 

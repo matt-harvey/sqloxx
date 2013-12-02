@@ -30,9 +30,9 @@ class Info
 public:
 	
 	/**
-	 * @returns a jewel::Version object representing the library version.
+	 * @returns a \b jewel::Version object representing the library version.
 	 *
-	 * Exception safetly: <em>nothrow guarantee</em>
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>
 	 */
 	static jewel::Version version();
 
