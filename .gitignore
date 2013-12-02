@@ -9,3 +9,4 @@ install_manifest.txt
 libsqloxx.a
 test_engine
 *tar.gz
+html/
