@@ -328,7 +328,7 @@ public:
 	 * changes to the in-memory object remain in the in-memory object and
 	 * are subsequently written to the database
 	 * when save() is called, you should always call load() as
-	 * the \e first statement in the implementation of any \e setter method in
+	 * the \e first statement in the implementation of any setter method in
 	 * the DerivedT class.
 	 * 
 	 * (2) <b>Object does not have id</b>
@@ -361,17 +361,17 @@ public:
 	 * the greatest primary key value already in the primary table for the
 	 * type DerivedT is
 	 * the maximum possible value for the type Id, so that another row
-	 * could not be inserted without overflow.
+	 * could not be inserted without overflow.\n
 	 * 
 	 * @throws std::bad_alloc in the unlikely event of memory allocation
-	 * failure during execution.
+	 * failure during execution.\n
 	 *
 	 * @throws TransactionNestingException if the maximum transaction
 	 * nesting level of the DatabaseConnection has been reached (extremely
-	 * unlikely). (May be thrown under either (1) or (2).)
+	 * unlikely).\n
 	 *
 	 * @throws InvalidConnection if the DatabaseConnection is
-	 * invalid. (May be thrown under either (1) or (2).)
+	 * invalid.\n
 	 *
 	 * @throws UnresolvedTransactionException if there is failure in
 	 * the process of committing the database transaction, or if there is
@@ -398,16 +398,14 @@ public:
 	 *  state;\n
 	 *  (c) If the object has an id, save() may fail and throw an
 	 *  exception but with the object left in a
-	 * ghost state.
+	 * ghost state.\n
 	 * In either (b) or (c), it is possible that failure may occur
-	 * with UnresolvedTransactionException being thrown. If this occurs,
+	 * with \b UnresolvedTransactionException being thrown. If this occurs,
 	 * it is recommended that the application session be gracefully
 	 * terminated.
 	 * Note that (b) and (c) are functionally equivalent to one another
 	 * as far as client
-	 * code is concerned, providing the preconditions are met, and in
-	 * particular, providing client DerivedT class always calls load() as
-	 * the first statement of any getter.
+	 * code is concerned, providing the preconditions are met.
 	 */
 	void save();
 
@@ -425,10 +423,10 @@ public:
 	 * by the class DerivedT, then the preconditions of \b do_remove()
 	 * must be satisfied (see separate documentation for \b do_remove());\n
 	 * If \b do_remove() is redefined by DerivedT, then it should offer the
-	 * strong guarantee, i.e. be atomic, in respect of the state of
+	 * <em>strong guarantee</em>, i.e. be atomic, in respect of the state of
 	 * the in-memory objects (but note, the base remove() method takes
 	 * care of wrapping the implementation as a SQL transaction, so
-	 * in general, \b do_removed() doesn't need to worry about atomicity
+	 * in general, \b do_remove() doesn't need to worry about atomicity
 	 * in regards to the database);\n
 	 * \b DerivedT::do_ghostify() should be defined so as to adhere to the
 	 * preconditions detailed in the documentation for ghostify();\n and
@@ -436,13 +434,13 @@ public:
 	 * first statement.
 	 *
 	 * @throws std::bad_alloc in the unlikely event of mememory allocation
-	 * failure during execution.
+	 * failure during execution.\n
 	 *
-	 * @throws InvalidConnection if the database connection is invalid.
+	 * @throws InvalidConnection if the database connection is invalid.\n
 	 *
 	 * @throws TransactionNestingException if the maximum transaction
 	 * nesting level of the DatabaseConnection has been reached (extremely
-	 * unlikely).
+	 * unlikely).\n
 	 *
 	 * @throws UnresolvedTransactionException if there is failure in
 	 * the process of committing the database transaction, or if there is
@@ -454,7 +452,7 @@ public:
 	 * same application session may jeopardize that situation.
 	 *
 	 * <b>Exception safety</b>: <em>basic guarantee</em>. If an exception other
-	 * than UnresolvedTransactionException is thrown, then the
+	 * than \b UnresolvedTransactionException is thrown, then the
 	 * application state will be effectively rolled back, and although the
 	 * object may be left in a ghost state, this should require no
 	 * special handling by the client code provided the preconditions are
@@ -469,7 +467,7 @@ public:
 	/**
 	 * @returns the id of the object, if it has one.
 	 *
-	 * @throws jewel::UninitializedOptionalException if the object doesn't
+	 * @throws \b jewel::UninitializedOptionalException if the object doesn't
 	 * have an id.
 	 * 
 	 * <b>Exception safety</b>: <em>strong guarantee</em>.
@@ -685,8 +683,8 @@ protected:
 	PersistentObject(PersistentObject const&) = default;
 
 	/**
-	 * Swap function. Does what you expect. This swaps the base part of
-	 * the object only.
+	 * Swap function. This swaps the base (sqloxx::PersistentObject) part of the
+	 * object only: it does not call down into any virtual functions.
 	 *
 	 * <b>Exception safety</b>: <em>nothrow guarantee</em>
 	 */
