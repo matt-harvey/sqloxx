@@ -134,7 +134,7 @@ public:
 	Handle(Connection& p_connection, Id p_id);
 
 	/**
-	 * Preconditions:\n
+	 * <b>Preconditions</b>:\n
 	 * the object must have been managed
 	 * throughout its life by (a single instance of) IdentityMap,
 	 * and must only have ever been

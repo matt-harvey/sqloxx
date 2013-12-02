@@ -46,12 +46,13 @@ class DatabaseConnection;
  * is cancelled i.e. rolled back (or, if nested, the transaction is
  * rolled back to the last savepoint and that savepoint is released).
  *
- * (c) is intended more as a safeguard against the programmer forgetting to
- * call cancel() manually, than as
- * than a way to avoid having calling cancel() manually. This is because
- * it is conceivable (though extremely unlikely), that the destructor
- * might fail to cancel the transaction - in which case std::terminate() is
- * called rather than throw an exception from the destructor.
+ * Note in regards to (c) that there it is possible - albeit extremely
+ * unlikely - for the destructor to fail to cancel the transaction. If
+ * this occurs, then rather than throw an exception from a destructor, the
+ * destructor will call std::terminate(). (The SQLite internals will then
+ * ensure the transaction is cancelled next time the database is opened.)
+ * If this possibility is unacceptable, client code should call cancel()
+ * manually as required.
  *
  * Note the facilities provided by DatabaseTransaction are importantly
  * limited. They provide transactionality/atomicity in respect of interactions
@@ -96,7 +97,7 @@ class DatabaseConnection;
  * if that code consists solely of a series of Sqloxx API calls such
  * as save(), remove() etc..
  *
- * Preconditions:\n
+ * <b>Preconditions</b>:\n
  * The management of database transactions must be managed entirely using
  * instances of the DatabaseTransaction class, rather than by executing
  * SQL commands "begin transaction", "savepoint" etc. directly.
@@ -109,7 +110,7 @@ class DatabaseTransaction
 public:
 
 	/**
-	 * Preconditions: see documentation for class.
+	 * <b>Preconditions</b>: see documentation for class.
 	 *
 	 * Creates an object serving as a sentry for a database transaction.
 	 * The constructor causes a transaction to be commenced - or, if there
@@ -141,7 +142,7 @@ public:
 	DatabaseTransaction& operator=(DatabaseTransaction&&) = delete;
 
 	/**
-	 * Preconditions: see documentation for class.
+	 * <b>Preconditions</b>: see documentation for class.
 	 *
 	 * Under normal circumstances, the destructor will cause the database
 	 * transaction to be cancelled, if it is still active, via a
@@ -163,7 +164,7 @@ public:
 	~DatabaseTransaction();
 
 	/**
-	 * Preconditions: see documentation for class. In addition, if
+	 * <b>Preconditions</b>: see documentation for class. In addition, if
 	 * UnresolvedTransactionException is thrown, the application must
 	 * exit without further commands being executed on the database
 	 * connection.
@@ -199,13 +200,13 @@ public:
 	 * the program exits without further SQL being executed on the
 	 * database connection.
 	 *
-	 * <b>Exception safety</b>: <em>strong guarantee</em>, provided the preconditions
-	 * are met.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>, provided the
+	 * preconditions are met.
 	 */
 	void commit();
 
 	/**
-	 * Preconditions: see documentation for class. In addition, if
+	 * <b>Preconditions</b>: see documentation for class. In addition, if
 	 * UnresolvedTransactionException is thrown, the application must
 	 * exit without further commands being executed on the database
 	 * connection.

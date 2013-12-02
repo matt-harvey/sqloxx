@@ -412,7 +412,7 @@ private:
 	 * @param p_id the id of the instance of T, corresponding to its
 	 * primary key in the database.
 	 *
-	 * Preconditions:\n
+	 * <b>Preconditions</b>:\n
 	 * It must be known of the instance of T in
 	 * question, that it is cached in the IdentityMap under p_id
 	 * (not as its cache key, but as its id); and\n
@@ -429,7 +429,7 @@ private:
 	 * Notify the IdentityMap that there are no handles left that are
 	 * pointing to the object with p_cache_key.
 	 * 
-	 * Preconditions: (a) there must be an object cached in this
+	 * <b>Preconditions</b>: (a) there must be an object cached in this
 	 * IdentityMap with this cache_key; and (b) the destructor of T must
 	 * never throw.
 	 * 
@@ -441,7 +441,7 @@ private:
 	/**
 	 * This should only be called by PersistentObject<T, Connection>.
 	 *
-	 * Preconditions:\n
+	 * <b>Preconditions</b>:\n
 	 * The destructor of T must be nothrow; and\n
 	 * There is an object cached under p_cache_key in the cache_key_map.
 	 *
@@ -455,7 +455,7 @@ private:
 	 * The object will be retained in the cache, but will not be identified
 	 * with any in-database object.
 	 *
-	 * Preconditions:\n
+	 * <b>Preconditions</b>:\n
 	 * The destructor of T must be nothrow; and\n
 	 * There is an object cached under p_cache_key in the cache_key_map.
 	 *
