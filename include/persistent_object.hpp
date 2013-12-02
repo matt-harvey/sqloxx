@@ -690,7 +690,7 @@ protected:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>
 	 */
-	virtual void swap(PersistentObject& rhs);
+	void swap(PersistentObject& rhs);
 
 	/**
 	 * @returns the id that would be assigned to this instance of
