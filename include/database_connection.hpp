@@ -70,7 +70,7 @@ public:
 	 * @throws SQLiteInitializationError if initialization fails
 	 * for any reason.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	explicit
 	DatabaseConnection(StatementCache::size_type p_cache_capacity = 300);
@@ -81,7 +81,7 @@ public:
 	DatabaseConnection& operator=(DatabaseConnection&&) = delete;
 
 	/**
-	 * Exception safety: <em>nothrow guarantee</em>. (Of course, the exception
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>. (Of course, the exception
 	 * safety of derived classes will depend on their own destructors.)
 	 */
 	virtual ~DatabaseConnection();
@@ -90,7 +90,7 @@ public:
 	 * @returns true if and only if the DatabaseConnection is currently
 	 * connected to a database file.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	virtual bool is_valid() const;
 
@@ -118,7 +118,7 @@ public:
 	 * not guaranteed, to be SQLiteCantOpen) if for some other reason the
 	 * connection cannot be opened.
 	 *
-	 * Exception safety: appears to offer the <em>basic guarantee</em>,
+	 * <b>Exception safety</b>: appears to offer the <em>basic guarantee</em>,
 	 * <em>however</em> this has not been properly tested. This wraps
 	 * a SQLite function for which the error-safety is not clear. If the
 	 * derived class overrides do_setup(), then this may affect exception
@@ -139,7 +139,7 @@ public:
 	 * 
 	 * @throws InvalidConnection if the database connection is invalid.
 	 * 
-	 * Exception safety: <em>basic guarantee</em>. (Possibly also offers
+	 * <b>Exception safety</b>: <em>basic guarantee</em>. (Possibly also offers
 	 * strong guarantee, but not certain.)
 	 */
 	void execute_sql(std::string const& str);
@@ -162,14 +162,14 @@ public:
 	 * is some other error setting up the table (should be rare). For example,
 	 * if the table has been set up already.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	void setup_boolean_table();
 
 	/**
 	 * @returns maximum level of transaction nesting.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	static int max_nesting();
 
@@ -280,7 +280,7 @@ private:
 	 * @throws std::bad_alloc in the extremely unlikely event of memory
 	 * allocation failure in execution.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	std::shared_ptr<detail::SQLStatementImpl> provide_sql_statement
 	(	std::string const& statement_text
@@ -307,7 +307,7 @@ private:
 	 * @throws std::bad_alloc in the extremely unlikely event of a memory
 	 * allocation error in execution.
 	 *
-	 * Exception safety: the <em>strong guarantee</em> is provided, on the
+	 * <b>Exception safety</b>: the <em>strong guarantee</em> is provided, on the
 	 * condition that the control of SQL transactions is managed
 	 * entirely by calls to begin_transaction(), end_transaction() and
 	 * canced_transaction(), rather than by executing the corresponding
@@ -331,7 +331,7 @@ private:
 	 * @throws std::bad_alloc in the extremely unlikely event of a memory
 	 * allocation error in execution.
 	 *
-	 * Exception safety: as per begin_transaction().
+	 * <b>Exception safety</b>: as per begin_transaction().
 	 */
 	void end_transaction();
 
@@ -351,7 +351,7 @@ private:
 	 * @throws std::bad_alloc in the very unlikely event of a memory
 	 * allocation failure in execution.
 	 *
-	 * Exception safety: as per begin_transaction().
+	 * <b>Exception safety</b>: as per begin_transaction().
 	 */
 	void cancel_transaction();
 

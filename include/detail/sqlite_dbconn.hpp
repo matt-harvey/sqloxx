@@ -148,7 +148,7 @@ public:
 	 *
 	 * @param a SQLite error code.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	void throw_on_failure(int errcode);
 

@@ -81,7 +81,7 @@ public:
 	 * @throws std::bad_alloc in the very unlikely event of a memory
 	 * allocation error in execution.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	SQLStatement
 	(	DatabaseConnection& p_database_connection,	
@@ -101,7 +101,7 @@ public:
 	 * same statement text. (Client code does not need to concern itself
 	 * with the details of this.)
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	~SQLStatement();
 	
@@ -130,7 +130,7 @@ public:
 	 *
 	 * @param x value to be bound to the named parameter.
 	 *
-	 * Exception safety: <em>basic guarantee</em>.
+	 * <b>Exception safety</b>: <em>basic guarantee</em>.
 	 */
 	template <typename T>
 	void bind(std::string const& parameter_name, T x);
@@ -157,7 +157,7 @@ public:
 	 * @throws ValueTypeException if the requested column contains a type that
 	 * is incompatible with T.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	template <typename T>
 	T extract(int index);
@@ -182,7 +182,7 @@ public:
 	 * corresponding exception class. If this occurs, the SQLStatement
 	 * will be reset and all bindings cleared.
 	 *
-	 * Exception safety: <em>basic guarantee</em>.
+	 * <b>Exception safety</b>: <em>basic guarantee</em>.
 	 */
 	bool step();
 
@@ -203,7 +203,7 @@ public:
 	 * is any other error in executing the statement. If this happens, the
 	 * statement will be reset and all bindings cleared.
 	 *
-	 * Exception safety: <em>basic guarantee</em>.
+	 * <b>Exception safety</b>: <em>basic guarantee</em>.
 	 */
 	void step_final();
 
@@ -212,7 +212,7 @@ public:
 	 * re-execution - but does not clear the bound parameters.
 	 * This is a wrapper for sqlite3_reset.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	void reset();
 
@@ -220,7 +220,7 @@ public:
 	 * Clears the parameter bindings from the statement, setting all
 	 * to NULL. This is a wrapper for sqlite3_clear_bindings.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	void clear_bindings();
 

@@ -80,7 +80,7 @@ namespace sqloxx
  *
  * @throws sqloxx::InvalidConnection if database connection is invalid.
  *
- * Exception safety: <em>strong guarantee</em>, provided client adheres to
+ * <b>Exception safety</b>: <em>strong guarantee</em>, provided client adheres to
  * the constraints described above.
  */
 template <typename Connection, typename KeyType>

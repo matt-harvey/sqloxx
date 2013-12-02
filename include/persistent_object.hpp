@@ -42,7 +42,8 @@ namespace sqloxx
  * Class template for creating objects persisted to a database. In client
  * code, this should be inherited by a derived class that defines certain
  * functions as detailed below. For an example of such a derived
- * client class, see the class sqloxx::tests::DerivedPO, in
+ * client class, see the classes sqloxx::tests::ExampleA,
+ * sqloxx::tests::ExampleB and sqloxx::tests::ExampleB, in
  * example.hpp and example.cpp.
  *
  * An instance of (a class deriving from an instantiation of)
@@ -87,7 +88,7 @@ namespace sqloxx
  * declared in that class, can be "lazy". This means that they are not
  * initialized in the derived object's constructor, but are rather only
  * initialized at a later time via a call to load(), which in turn calls
- * the virtual method do_load() (which needs to be defined in the
+ * the virtual method \b do_load() (which needs to be defined in the
  * derived class).
  *
  * In the derived class, implementations of getters
@@ -95,10 +96,10 @@ namespace sqloxx
  * other than those that are loaded immediately on construction, should
  * have \e load() as their first statement. (This means that getters in
  * DerivedT cannot
- * be const.) (See documentation for \e load().)
+ * be const.) (See documentation for load().)
  *
  * In addition, implementations of \e all setters in the
- * derived class should have \e load() as their first statement.
+ * derived class should have load() as their first statement.
  * Failure to adhere to these requirements will result in
  * in undefined behaviour.
  *
@@ -107,8 +108,8 @@ namespace sqloxx
  * attempt to access such an attribute before it has been initialized.
  *
  * DerivedT classes are free to initialize all attributes on construction of
- * an instance. This avoids the complications described above associated
- * with lazy loading, while giving up the potential runtime efficiencies
+ * an instance. This avoids the complications associated
+ * with lazy loading, while giving up the potential efficiencies
  * that lazy loading can provide.
  * 
  *
@@ -117,7 +118,7 @@ namespace sqloxx
  * The following functions need to be provided with definitions
  * provided in the DerivedT class:
  *
- * <em>static std::string exclusive_table_name();</em>\n
+ * <em>static std::string \b exclusive_table_name();</em>\n
  * Should return, without side effects, the name of table in which
  * instances of the derived class
  * are persisted in the database. If instances fields are persisted in
@@ -127,7 +128,7 @@ namespace sqloxx
  * occur (this generally corresponds to the derived class table, not
  * the base class table).
  *
- * <em>static std::string primary_key_name();</em>\n
+ * <em>static std::string \b primary_key_name();</em>\n
  * Should return, without side effects, the name of the primary
  * key column for DerivedT. This primary key column must appear in
  * the table named by \e exclusive_table_name(). The primary key
@@ -139,23 +140,23 @@ namespace sqloxx
  * be the same both in the table name by DerivedT::exclusive_table_name() and
  * Base::exclusive_table_name().
  *
- * <em>virtual void do_load() = 0;</em>\n
+ * <em>virtual void \b do_load() = 0;</em>\n
  * See documentation of \e load() function.
  *
- * <em>virtual void do_save_existing() = 0;</em>\n
+ * <em>virtual void \b do_save_existing() = 0;</em>\n
  * See documentation for \e save_existing() function.
  *
- * <em>virtual void do_save_new() = 0;</em>\n
+ * <em>virtual void \b do_save_new() = 0;</em>\n
  * See documentation for \e save_new() function.
  *
  * In addition the following functions \e may be provided with a definition
  * in the DerivedT class, although the PersistentObject base class provides
  * a default implementation which is suitable in many cases:
  *
- * <em>virtual void do_remove()</em>;\n
+ * <em>virtual void \b do_remove()</em>;\n
  * See documentation for \e remove() function.
  *
- * <em>virtual void do_ghostify()</em>;\n
+ * <em>virtual void \b do_ghostify()</em>;\n
  * See documentation for \e ghostify() function.
  *
  * <b>Template parameters</b>
@@ -176,7 +177,7 @@ namespace sqloxx
  *
  * Care needs to be taken when different PersistentObject instances
  * hold references or Handles to each other. For more on this issue, see the
- * documentation for <em>IdentityMap::~IdentityMap</em>.
+ * documentation for IdentityMap::~IdentityMap.
  */
 template <typename DerivedT, typename ConnectionT>
 class PersistentObject
@@ -197,7 +198,7 @@ public:
 	 * this instance of PersistentObject is associated. This is where the
 	 * object will be loaded from or saved to, as the case may be.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	ConnectionT& database_connection() const;
 
@@ -210,7 +211,7 @@ public:
 	/**
 	 * Destructor.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	virtual ~PersistentObject();
 
@@ -225,13 +226,13 @@ public:
 	static std::string primary_table_name();
 	
 	/**
-	 * @returns true if and only if an object with p_id as its
+	 * @returns \e true if and only if a record with \e p_id as its
 	 * primary key exists in
-	 * the database to which p_database_connection is connected,
+	 * the database to which \e p_database_connection is connected,
 	 * in the "exclusive table" for T (i.e. the table with the
-	 * name returned by "exclusive table name").
+	 * name returned by exclusive_table_name()).
 	 * Note the database is always checked, not the
-	 * cache.
+	 * IdentityMap.
 	 *
 	 * @throws InvalidConnection if the database connecton is
 	 * invalid.
@@ -244,15 +245,14 @@ public:
 	 * execution. (This is extremely unlikely, but cannot be entirely
 	 * ruled out.)
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	static bool exists(ConnectionT& p_database_connection, Id p_id);
 
 	/**
-	 * @returns true if and only if there are no objects of type DerivedT
+	 * @returns \e true if and only if there are no objects of type DerivedT
 	 * saved in the database.
-	 * Note the database is always checked, not the
-	 * cache.
+	 * Note the database is always checked, not the IdentityMap.
 	 *
 	 * @throws InvalidConnection if the database connecton is
 	 * invalid.
@@ -265,12 +265,12 @@ public:
 	 * execution. (This is extremely unlikely, but cannot be entirely
 	 * ruled out.)
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	static bool none_saved(ConnectionT& p_database_connection);
 
 	/**
-	 * Preconditions:\n
+	 * <b>Preconditions</b>:\n
 	 * The destructor of DerivedT must be non-throwing;\n
 	 * We have handled this object only via a Handle, with
 	 * the Handle having been copied or assigned from another
@@ -278,18 +278,18 @@ public:
 	 * constructors or factory functions;\n
 	 * If the object has an id, the id corresponds to the primary
 	 * key of an object of this type that exists in the database;\n
-	 * do_save_existing() and do_save_new() must be defined in such
+	 * \b do_save_existing() and \b do_save_new() must be defined in such
 	 * a way that they do not change the logical state of the object being
 	 * saved, or of any other objects, but have side-effects only
 	 * in respect of the database;\n
-	 * do_save_existing() and do_save_new() must be been defined so that
+	 * \b do_save_existing() and \b do_save_new() must be been defined so that
 	 * if they fail, they throw std::exception or an exception derived
 	 * therefrom;\n
 	 * Every setter and getter method defined in the DerivedT class must have
 	 * a call to load() as its first statement (see below for
 	 * explanation);\n
-	 * DerivedT::do_ghostify() must be defined so as to be non-throwing;\n
-	 * DerivedT::do_load() preconditions must be met (see documentation
+	 * \b DerivedT::do_ghostify() must be defined so as to be non-throwing;\n
+	 * \b DerivedT::do_load() preconditions must be met (see documentation
 	 * for load());
 	 * 
 	 * The result of calling save() depends on whether the in-memory
@@ -303,12 +303,12 @@ public:
 	 * with
 	 * the state of the current in-memory object.
 	 * This is done by a call
-	 * to virtual function do_save_existing(), which much be defined
+	 * to virtual function \b do_save_existing(), which much be defined
 	 * in the class DerivedT. The base method save() takes care of wrapping
-	 * the call to do_save_existing() as a single SQL transaction by calling
+	 * the call to \b do_save_existing() as a single SQL transaction by calling
 	 * begin_transaction() and end_transaction() on the database connection.
 	 * 
-	 * <em>Important:</em> Before calling do_save_existing(), and before
+	 * <em>Important:</em> Before calling \b do_save_existing(), and before
 	 * beginning the
 	 * SQL transaction, the base save() method first ensures that the object
 	 * is in a fully loaded state (as we don't want to save a partial
@@ -339,7 +339,7 @@ public:
 	 * database as an additional item, rather than overwriting existing data.
 	 * In other words, a new record will be created in the database.
 	 * This is done
-	 * via a call to virtual function do_save_new(), which must be defined in
+	 * via a call to virtual function \b do_save_new(), which must be defined in
 	 * the class DerivedT. The base save() function takes care of wrapping
 	 * this call as a SQL transaction. The base function also takes care of:
 	 * assigning an id to the newly saved object in the database; recording
@@ -351,8 +351,8 @@ public:
 	 * object is marked internally as being in a fully loaded, i.e.
 	 * "complete" state.
 	 *
-	 * In defining do_save_new(), the class DerivedT should ensure that a call
-	 * to do_save_new() results in a \e complete object of its type being
+	 * In defining \b do_save_new(), the class DerivedT should ensure that a call
+	 * to \b do_save_new() results in a \e complete object of its type being
 	 * inserted into the database. The semantics of save() here only make
 	 * sense if this is the case. The Sqloxx framework does not provide for
 	 * the saving of objects "a bit at a time".
@@ -388,10 +388,10 @@ public:
 	 * case of a corrupt database, or a memory allocation error (very
 	 * unlikely).
 	 *
-	 * May also throw exceptions from do_save_new() and/or do_save_exising(),
+	 * May also throw exceptions from \b do_save_new() and/or \b do_save_exising(),
 	 * depending on how those functions are defined in the derived class.
 	 *
-	 * Exception safety: <em>basic guarantee</em>. Possible outcomes
+	 * <b>Exception safety</b>: <em>basic guarantee</em>. Possible outcomes
 	 * from calling save() are as follows -\n
 	 *  (a) Complete success;\n
 	 *  (b) Failure with exception thrown and no effect on program
@@ -417,20 +417,20 @@ public:
 	 * object is cached, and the cache will update itself accordingly.
 	 * After calling remove(), the object will no longer have an id;
 	 * however its other attributes will be unaltered (assuming the
-	 * DerivedT class doesn't define do_remove() in such a way as to
+	 * DerivedT class doesn't define \b do_remove() in such a way as to
 	 * alter them - see below).
 	 *
-	 * Preconditions:\n
-	 * If the default implementation of do_remove() is not redefined
-	 * by the class DerivedT, then the preconditions of do_remove()
-	 * must be satisfied (see separate documentation for do_remove());\n
-	 * If do_remove() is redefined by DerivedT, then it should offer the
+	 * <b>Preconditions</b>:\n
+	 * If the default implementation of \b do_remove() is not redefined
+	 * by the class DerivedT, then the preconditions of \b do_remove()
+	 * must be satisfied (see separate documentation for \b do_remove());\n
+	 * If \b do_remove() is redefined by DerivedT, then it should offer the
 	 * strong guarantee, i.e. be atomic, in respect of the state of
 	 * the in-memory objects (but note, the base remove() method takes
 	 * care of wrapping the implementation as a SQL transaction, so
-	 * in general, do_removed() doesn't need to worry about atomicity
+	 * in general, \b do_removed() doesn't need to worry about atomicity
 	 * in regards to the database);\n
-	 * DerivedT::do_ghostify() should be defined so as to adhere to the
+	 * \b DerivedT::do_ghostify() should be defined so as to adhere to the
 	 * preconditions detailed in the documentation for ghostify();\n and
 	 * Getters and setters in DerivedT should always call load() as their
 	 * first statement.
@@ -453,7 +453,7 @@ public:
 	 * \e will be fully rolled back, but further transaction during the
 	 * same application session may jeopardize that situation.
 	 *
-	 * Exception safety:<em>basic guarantee</em>. If an exception other
+	 * <b>Exception safety</b>: <em>basic guarantee</em>. If an exception other
 	 * than UnresolvedTransactionException is thrown, then the
 	 * application state will be effectively rolled back, and although the
 	 * object may be left in a ghost state, this should require no
@@ -472,16 +472,16 @@ public:
 	 * @throws jewel::UninitializedOptionalException if the object doesn't
 	 * have an id.
 	 * 
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	Id id() const;
 
 	/**
 	 * @returns \e true if and only if this instance of PersistentObject has
-	 * a valid id; otherwise returns \e false. Note valid id is merely one
+	 * a valid id; otherwise returns \e false. Note a valid id is merely one
 	 * that has been initialised. It need not actually exist in the database.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	bool has_id() const;
 
@@ -489,28 +489,28 @@ public:
 	 * Reverts the object to a "ghost state". This is a state in
 	 * which only certain member variables (typically, only the id)
 	 * are initialized. This is done by calling the private virtual
-	 * function do_ghostify(). This may be redefined by class DerivedT,
-	 * but by default, do_ghostify() has an empty body.
+	 * function \b do_ghostify(). This may be redefined by class DerivedT,
+	 * but by default, \b do_ghostify() has an empty body.
 	 * Then, the base ghostify() method marks the object as being in a
 	 * "ghost" state.
 	 *
-	 * DerivedT::do_ghostify() should be defined in such a way that,
+	 * \b DerivedT::do_ghostify() should be defined in such a way that,
 	 * when executed, the object is put into such a state that, the
 	 * next time load() is called, the object can be fully reloaded to
 	 * a valid loaded state without any issues of duplication or etc.
 	 * For example, if one of the member variables of DerivedT is a
 	 * vector, and if loading the object involves pushing elements
-	 * onto the vector, then do_ghostify() should ensure that the
+	 * onto the vector, then \b do_ghostify() should ensure that the
 	 * vector is emptied, so that after load() is called next, the
 	 * object contains only one lot of elements.
 	 *
-	 * <em>do_ghostify() should be defined
+	 * <em>\b do_ghostify() should be defined
 	 * such as to provide the nothrow guarantee. This makes it much
 	 * easier for certain other functions to maintain exception-safety.
 	 * </em>
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>, provided the
-	 * DerivedT::do_ghostify() method is non-throwing.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, provided the
+	 * \b DerivedT::do_ghostify() method is non-throwing.
 	 */
 	void ghostify();
 
@@ -582,18 +582,18 @@ protected:
 	 * @param p_id the id of the object as it exists in the database. This
 	 * presumably will be, or correspond directly to, the primary key.
 	 *
-	 * Preconditions:\n
+	 * <b>Preconditions</b>:\n
 	 * Note that even if there is no corresponding object in the database for
-	 * the given value p_id, this constructor will still proceed without
+	 * the given value \e p_id, this constructor will still proceed without
 	 * complaint. The constructor does not actually perform any checks on the
-	 * validity either of p_database_connection or of p_id. The caller should
+	 * validity either of the DatabaseConnection or of \e p_id. The caller should
 	 * be sure, before calling this function, that there exists in the
-	 * database a row representing an instance of the DerivedT type, with p_id
+	 * database a row representing an instance of the DerivedT type, with \e p_id
 	 * as it primary key. If no such row exists, then UNDEFINED BEHAVIOUR will
 	 * result, including the possibility of silent or delayed corruption of
 	 * data.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	PersistentObject(IdentityMap& p_identity_map, Id p_id);
 
@@ -606,52 +606,52 @@ protected:
 	 * @param p_identity_map IdentityMap with which the
 	 * PersistentObject is to be associated.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	explicit PersistentObject(IdentityMap& p_identity_map);
 
 	/**
 	 * Calls the derived class's implementation
-	 * of do_load(), if and only if the object is not already
+	 * of \b do_load(), if and only if the object is not already
 	 * loaded. If the object is already loaded, it does nothing.
 	 * Also if the object does not have an id,
 	 * then this function does nothing, since there would be nothing
 	 * to load.
 	 *
-	 * Preconditions:\n
-	 * In defining do_load(), the DerivedT class should throw an instance
-	 * of std::exception (which may be an instance of any exception class
+	 * <b>Preconditions</b>:\n
+	 * In defining \b do_load(), the DerivedT class should throw an instance
+	 * of \b std::exception (which may be an instance of any exception class
 	 * derived therefrom) in the event that the load fails;\n
-	 * do_load() should not perform any write operations on the database;\n
-	 * do_load() should be such that if it fails, ghostify() can safely be
+	 * \b do_load() should not perform any write operations on the database;\n
+	 * \b do_load() should be such that if it fails, ghostify() can safely be
 	 * called on the object;\n
-	 * do_load() should be such that if it fails, any external state
+	 * \b do_load() should be such that if it fails, any external state
 	 * (outside of the object itself) will then be just
 	 * as it was prior to the unsuccessful call to load();\n
-	 * The DerivedT class should define do_ghostify() according to the
+	 * The DerivedT class should define \b do_ghostify() according to the
 	 * preconditions specified in the documentaton of ghostify(); and\n
 	 * The destructor of DerivedT must be non-throwing.
 	 *
 	 * Note the implementation is wrapped as a transaction
-	 * by calls to begin_transaction and end_transaction
-	 * methods of the DatabaseConnection. This is taken care of by the
-	 * base \e load method.
+	 * by calls to DatabaseConnection::begin_transaction() and \b
+	 * DatabaseConnection::end_transaction().
+	 * This is taken care of by the base load() method.
 	 *
 	 * The following exceptions may be thrown regardless of how
-	 * do_load() is defined:
+	 * \b do_load() is defined:
 	 *
 	 * @throws TransactionNestingException in the event that the maximum
 	 * level of transaction nesting for the database connection has been
 	 * reached. (This is extremely unlikely.) If this occurs \e before
-	 * do_load() is entered, the object will be as it was before the
-	 * function was called.
+	 * \b do_load() is entered, the object will be as it was before the
+	 * function was called.\n
 	 * 
 	 * @throws InvalidConnection in the event that the database connection is
 	 * invalid at the point the \e load function is entered. If this occurs,
-	 * the object will be as it was before this function was called.
+	 * the object will be as it was before this function was called.\n
 	 *
 	 * @throws std::bad_alloc in the event of memory allocation failure
-	 * during execution.
+	 * during execution.\n
 	 *
 	 * @throws UnresolvedTransactionException if there is failure in
 	 * the process of committing the database transaction, or if there is
@@ -662,7 +662,7 @@ protected:
 	 * \e will be fully rolled back, but attempting further transactions
 	 * during the same application session may jeopardize that situation.
 	 *
-	 * Exception safety: <em>basic guarantee</em>, provided the
+	 * <b>Exception safety</b>: <em>basic guarantee</em>, provided the
 	 * preconditions are met. Either there will be complete success,
 	 * or the object will be left in a ghost state, functionally
 	 * equivalent, as far as client code is concerned, to the state
@@ -679,7 +679,7 @@ protected:
 	 * unique id. However we provide it to derived classes, who may wish
 	 * to use it in, for example, copy-and-swap operations.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em> (though derived classes'
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em> (though derived classes'
 	 * copy constructors might, of course, throw).
 	 */
 	PersistentObject(PersistentObject const&) = default;
@@ -688,7 +688,7 @@ protected:
 	 * Swap function. Does what you expect. This swaps the base part of
 	 * the object only.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>
 	 */
 	void swap(PersistentObject& rhs);
 
@@ -698,15 +698,15 @@ protected:
 	 * built-in auto-incrementing primary key.
 	 *
 	 * @throws sqloxx::LogicError in the event this instance already has
-	 * an id.
+	 * an id.\n
 	 *
 	 * @throws sqloxx::TableSizeException if the greatest primary key value
 	 * already in the table (i.e. the table into which this instance of
 	 * PersistentObject would be persisted) is the maximum value for the
-	 * type \e Id, so that another row could not be inserted without overflow.
+	 * type \e Id, so that another row could not be inserted without overflow.\n
 	 *
 	 * @throws std::bad_alloc is the unlikely event that memory allocation
-	 * fails during execution.
+	 * fails during execution.\n
 	 *
 	 * @throws sqloxx::DatabaseException, or a derivative therefrom, may
 	 * be thrown if there is some other
@@ -718,17 +718,17 @@ protected:
 	 * on the type of error, e.g. InvalidConnection will be thrown
 	 * in the event of an invalid database connection.
 	 *
-	 * Exception safety: the default implementation offers the
+	 * <b>Exception safety</b>: the default implementation offers the
 	 * <em>strong guarantee</em>.
 	 */
 	Id prospective_key() const;
 
 	/**
 	 * This function is called by remove(). For that function, and the
-	 * role of do_remove() within that function, see the separate
+	 * role of \b do_remove() within that function, see the separate
 	 * documentation for remove().
 	 *
-	 * The following relates the default implementation of do_remove()
+	 * The following relates the default implementation of \b do_remove()
 	 * provided by PersistentObject<DerivedT, ConnectionT>.
 	 *
 	 * The default implementation of this function will simply delete
@@ -740,7 +740,7 @@ protected:
 	 * @throws std::bad_alloc in the unlikely event of a memory
 	 * allocation failure in execution.
 	 *
-	 * Exception safety:<em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	virtual void do_remove();
 
@@ -756,18 +756,18 @@ private:
 	virtual void do_ghostify();
 
 	/**
-	 * @returns true if and only if there are no Handle
+	 * @returns \e true if and only if there are no Handle
 	 * instances pointing to this object.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	bool is_orphaned() const;
 	
 	/**
-	 * @returns true if and only if we are dangerously close to reaching
+	 * @returns \e true if and only if we are dangerously close to reaching
 	 * the maximum value of HandleCounter.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	bool has_high_handle_count() const;
 
@@ -780,14 +780,14 @@ private:
 	 * cannot be safely counted. On the default type for HandleCounter,
 	 * this should be extremely unlikely.
 	 *
-	 * Exception safety: <em>strong guarantee</em>
+	 * <b>Exception safety</b>: <em>strong guarantee</em>
 	 */
 	void increment_handle_counter();
 	
 	/**
 	 * Called by Handle via to decrement reference count.
 	 *
-	 * Preconditions:\n
+	 * <b>Preconditions</b>:\n
 	 * This function should only be called from Handle.
 	 * This instance of DerivedT must have been handled throughout
 	 * its life only via instances of Handle, that have been obtained
@@ -796,7 +796,7 @@ private:
 	 * instances of Handle; and\n
 	 * The destructor of derived must be non-throwing.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em> is offered, providing
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em> is offered, providing
 	 * the preconditions are met.
 	 */
 	void decrement_handle_counter();
@@ -808,7 +808,7 @@ private:
 	 * identify the object in its internal cache. Every object created by
 	 * the IdentityMap will have a cache key, even if it doesn't have an id.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	void set_cache_key(Id p_cache_key);
 

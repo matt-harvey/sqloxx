@@ -127,7 +127,7 @@ public:
 	 * @throws std::bad_alloc in the extremely unlikely event of a memory
 	 * allocation error in execution.
 	 *
-	 * Exception safety: the <em>strong guarantee</em> is provided, on the
+	 * <b>Exception safety</b>: the <em>strong guarantee</em> is provided, on the
 	 * condition that the control of database transactions is managed
 	 * entirely via the DatabaseTransaction class, rather than by
 	 * executing the SQL commands ("begin transaction", "end transaction"
@@ -157,7 +157,7 @@ public:
 	 * cancel() explicitly. The destructor is rather a balwark against
 	 * the programmer forgetting to call cancel() manually.
 	 *
-	 * Exception safety: <em>nothrow guarantee, but might call
+	 * <b>Exception safety</b>: <em>nothrow guarantee, but might call
 	 * std::terminate()</em>.
 	 */
 	~DatabaseTransaction();
@@ -199,7 +199,7 @@ public:
 	 * the program exits without further SQL being executed on the
 	 * database connection.
 	 *
-	 * Exception safety: <em>strong guarantee</em>, provided the preconditions
+	 * <b>Exception safety</b>: <em>strong guarantee</em>, provided the preconditions
 	 * are met.
 	 */
 	void commit();
@@ -241,7 +241,7 @@ public:
 	 * the program exits without further SQL being executed on the
 	 * database connection.
 	 *
-	 * Exception safety: <em>strong guarantee</em>, provided the preconditions
+	 * <b>Exception safety</b>: <em>strong guarantee</em>, provided the preconditions
 	 * are met.
 	 */
 	void cancel();

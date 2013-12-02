@@ -77,7 +77,7 @@ public:
 	 * TableIterator will become "null" once it has
 	 * read all the records in the table.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	TableIterator();
 
@@ -124,7 +124,7 @@ public:
 	 * function is invoked to initialize the iterator's internal instance
 	 * of T from the first row of the SQL result set.
 	 *
-	 * Exception safety: <em>strong guarantee</em>, providing that the
+	 * <b>Exception safety</b>: <em>strong guarantee</em>, providing that the
 	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em> also
 	 * offers at least the strong guarantee.
 	 */
@@ -157,7 +157,7 @@ public:
 	 *
 	 * Exceptions are the same as for the two-parameter constructor.
 	 *
-	 * Exception safety: <em>strong guarantee</em>, providing that the
+	 * <b>Exception safety</b>: <em>strong guarantee</em>, providing that the
 	 * copy constructor for T offers at least the strong guarantee.
 	 */
 	TableIterator(TableIterator const&);
@@ -174,7 +174,7 @@ public:
 	 * Note destructor is virtual, TableIterator should not be used as a
 	 * polymorphic base class.
 	 *
-	 * Exception safety: will never throw, assuming the destructor for T will
+	 * <b>Exception safety</b>: will never throw, assuming the destructor for T will
 	 * never throw.
 	 */
 	~TableIterator();
@@ -192,7 +192,7 @@ public:
 	 * is null if and only if it compares equal with a TableIterator
 	 * constructed with the default constructor.)
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>, providing precondition
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, providing precondition
 	 * is met.
 	 */
 	T const& operator*() const;
@@ -209,7 +209,7 @@ public:
 	 * is null if and only if it compares equal with a TableIterator
 	 * constructed with the default constructor.)
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>, providing precondition
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, providing precondition
 	 * is met.
 	 */
 	T const* operator->() const;
@@ -243,7 +243,7 @@ public:
 	 * (Via application of the copy constructor, multiple
 	 * TableIterators may reference the same SQLStatement.)
 	 *
-	 * Exception safety: <em>basic guarantee</em>, providing that the
+	 * <b>Exception safety</b>: <em>basic guarantee</em>, providing that the
 	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em> also
 	 * offers at least the basic guarantee.
 	 */
@@ -275,7 +275,7 @@ public:
 	 * (Via application of the copy constructor, multiple
 	 * TableIterators may reference the same SQLStatement.)
 	 *
-	 * Exception safety: <em>basic guarantee</em>, providing that the
+	 * <b>Exception safety</b>: <em>basic guarantee</em>, providing that the
 	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em>, as
 	 * well as the copy constructor for T, also offer the basic
 	 * guarantee.
@@ -289,7 +289,7 @@ public:
 	 * default constructor), to see if it has read the last object in the
 	 * result set.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	bool operator==(TableIterator const& rhs) const;
 
@@ -298,7 +298,7 @@ public:
 	 * using the equality operator. See documentation for the equality
 	 * operator.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	bool operator!=(TableIterator const& rhs) const;
 

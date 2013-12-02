@@ -101,7 +101,7 @@ public:
 	 * @throws std::bad_alloc in the case of memory allocation
 	 * failure. (This is very unlikely.)
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	IdentityMap(Connection& p_connection);
 
@@ -140,7 +140,7 @@ public:
 	 * references or Handles during the IdentityMap destruction
 	 * process.
 	 *
-	 * Exception safety: the <em>nothrow guarantee</em> is provided,
+	 * <b>Exception safety</b>: the <em>nothrow guarantee</em> is provided,
 	 * providing the destructor of T does not throw.
 	 */
 	~IdentityMap() = default;
@@ -154,7 +154,7 @@ public:
 	 *
 	 * Caching is off by default.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	void enable_caching();
 
@@ -169,7 +169,7 @@ public:
 	 *
 	 * Caching is off by default.
 	 * 
-	 * Exception safety: <em>nothrow guarantee</em>, providing the
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, providing the
 	 * destructor of T does not throw.
 	 */
 	void disable_caching();
@@ -178,7 +178,7 @@ public:
 	 * @returns a reference to the database connection associated with
 	 * this IdentityMap.
 	 * 
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	Connection& connection();
 
@@ -298,7 +298,7 @@ private:
 	 * constructor may also
 	 * be thrown from provide_pointer().
 	 *
-	 * Exception safety depends on the constructor of DerivedT of the form
+	 * <b>Exception safety</b> depends on the constructor of DerivedT of the form
 	 * DynamicT(IdentityMap&, IdentityMap::Signature const&).
 	 * Provided this constructor offers at
 	 * least the <em>strong guarantee</em>, then provide_pointer() offers the
@@ -352,7 +352,7 @@ private:
 	 * <em>In addition</em>, any exceptions thrown from the T constructor
 	 * may also be thrown from provide_pointer().
 	 *
-	 * Exception safety depends on the constructor of DynamicT of the form
+	 * <b>Exception safety</b> depends on the constructor of DynamicT of the form
 	 * DynamicT(IdentityMap&, Id, IdentityMap::Signature const&).
 	 * Provided this constructor offers at least the
 	 * <em>strong guarantee</em>, then provide_pointer() offers the
@@ -399,7 +399,7 @@ private:
 	 * @throws std::bad_alloc in the very unlikely event of memory allocation
 	 * failure while registering the object's id in the cache.
 	 *
-	 * Exception safety: <em>strong guarantee</em>, providing the precondition
+	 * <b>Exception safety</b>: <em>strong guarantee</em>, providing the precondition
 	 * is met.
 	 */
 	void register_id(CacheKey p_cache_key, Id p_id);
@@ -418,7 +418,7 @@ private:
 	 * (not as its cache key, but as its id); and\n
 	 * The destructor of T must be non-throwing.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>, providing the
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, providing the
 	 * preconditions are met.
 	 */
 	void deregister_id(Id p_id);
@@ -433,7 +433,7 @@ private:
 	 * IdentityMap with this cache_key; and (b) the destructor of T must
 	 * never throw.
 	 * 
-	 * Exception safety: <em>nothrow guarantee</em>, provided the
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, provided the
 	 * preconditions are met.
 	 */
 	void notify_nil_handles(CacheKey p_cache_key);
@@ -445,7 +445,7 @@ private:
 	 * The destructor of T must be nothrow; and\n
 	 * There is an object cached under p_cache_key in the cache_key_map.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>, provided
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, provided
 	 * preconditions are met.
 	 */
 	void uncache_object(CacheKey p_cache_key);
@@ -459,7 +459,7 @@ private:
 	 * The destructor of T must be nothrow; and\n
 	 * There is an object cached under p_cache_key in the cache_key_map.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>, provided preconditions
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, provided preconditions
 	 * are met.
 	 */
 	void partially_uncache_object(CacheKey p_cache_key);
@@ -470,7 +470,7 @@ private:
 	 * @throws sqloxx::OverflowException if the cache has reached
 	 * its maximum size (extremely unlikely).
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	CacheKey provide_cache_key();
 

@@ -66,7 +66,7 @@ public:
 	 * Construct a null Handle, i.e. a Handle to which no instance
 	 * of T is bound.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	Handle();
 
@@ -89,7 +89,7 @@ public:
 	 * of the form T(IdentityMap<T>&) may also be thrown
 	 * from this Handle constructor.
 	 *
-	 * Exception safety: depends on the constructor for T. If this constructor
+	 * <b>Exception safety</b>: depends on the constructor for T. If this constructor
 	 * offers the strong guarantee, then the Handle constructor will also
 	 * offer the <em>strong guarantee</em> (although in case of an
 	 * exception, the internal state of the IdentityMap may be altered in a
@@ -123,7 +123,7 @@ public:
 	 * of the form T(IdentityMap<T>&) may also be thrown
 	 * from this Handle constructor.
 	 *
-	 * Exception safety: depends on the constructor for T. If this constructor
+	 * <b>Exception safety</b>: depends on the constructor for T. If this constructor
 	 * offers the strong guarantee, then the Handle constructor will also
 	 * offer the <em>strong guarantee</em> (although in case of an
 	 * exception, the internal state of the IdentityMap may be altered in a
@@ -141,7 +141,7 @@ public:
 	 * accessed via instances of Handle<Derived>; and\n
 	 * The destructor of Derived must be non-throwing.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>, provided the
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, provided the
 	 * preconditions are met.
 	 */
 	~Handle();
@@ -179,7 +179,7 @@ public:
 	 * <em>In addition</em>, any exceptions thrown from the T constructor
 	 * may also be thrown by this function.
 	 *
-	 * Exception safety depends on the constructor of T of the form
+	 * <b>Exception safety</b> depends on the constructor of T of the form
 	 * T(IdentityMapT&, Id, IdentityMap::Signature const&).
 	 * Provided this constructor offers at least the
 	 * <em>strong guarantee</em>, then create_unchecked() offers the
@@ -198,7 +198,7 @@ public:
 	 * underlying instance of T is too large to be safely counted
 	 * by the type PersistentObject<T, Connection>::HandleCounter.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	Handle(Handle const& rhs);
 	
@@ -208,19 +208,19 @@ public:
 	 * underlying instance of T is too large to be safely counted
 	 * by the type PersistentObject<T, Connection>::HandleCounter.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	Handle& operator=(Handle const& rhs);
 
 	/** Move constructor.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	Handle(Handle&& rhs) noexcept;
 
 	/** Move assignment.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	Handle& operator=(Handle&&) noexcept;
 
@@ -228,7 +228,7 @@ public:
 	 * @returns \e true if this Handle<T> is bound to some instance
 	 * of T; otherwise returns \e false.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	explicit operator bool() const;
 
@@ -238,7 +238,7 @@ public:
 	 * @throws UnboundHandleException if there is no instance of
 	 * T bound to this Handle.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	T& operator*() const;
 
@@ -249,7 +249,7 @@ public:
 	 * @throws UnboundHandleException if there is no instance
 	 * of T bound to this Handle.
 	 *
-	 * Exception safety: <em>strong guarantee</em>.
+	 * <b>Exception safety</b>: <em>strong guarantee</em>.
 	 */
 	T* operator->() const;
 
@@ -257,7 +257,7 @@ public:
 	 * Handles are equal if and only if they are handling the same
 	 * underlying object.
 	 * 
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	bool operator==(Handle const& rhs) const;
 
@@ -265,7 +265,7 @@ public:
 	 * Handles are unequal if an only if they are handling distinct
 	 * underlying objects.
 	 *
-	 * Exception safety: <em>nothrow guarantee</em>.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>.
 	 */
 	bool operator!=(Handle const& rhs) const;
 
@@ -304,7 +304,7 @@ private:
  * underlying instance of T is too large to be safely counted
  * by the type PersistentObject<T, Connection>::HandleCounter.
  *
- * Exception safety: <em>strong guarantee</em>.
+ * <b>Exception safety</b>: <em>strong guarantee</em>.
  */
 template <typename L, typename R>
 Handle<L>
