@@ -690,7 +690,7 @@ protected:
 	 *
 	 * Exception safety: <em>nothrow guarantee</em>
 	 */
-	void swap_base_internals(PersistentObject& rhs);
+	virtual void swap(PersistentObject& rhs);
 
 	/**
 	 * @returns the id that would be assigned to this instance of
@@ -1220,7 +1220,7 @@ ghostify()
 template
 <typename DerivedT, typename ConnectionT>
 void
-PersistentObject<DerivedT, ConnectionT>::swap_base_internals
+PersistentObject<DerivedT, ConnectionT>::swap
 (	PersistentObject& rhs
 )
 {
