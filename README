@@ -42,7 +42,8 @@ and install the library, you will need:
 	
 	- UnitTest++ (known to work with version 1.4)
 
-	- A Tcl interpreter (known to work with version 8.6) (to run the test driver)
+	- A Tcl interpreter (known to work with version 8.6) (to run the test
+	  driver)
 
 To build the API documentation, you will need:
 
@@ -61,8 +62,6 @@ locations:
 Sqloxx also depends on SQLite; however the Sqloxx source distribution includes
 the SQLite C source files directly, so it is not necessary to install SQLite
 separately.
-
-!!!TODO: WHAT ABOUT THE LIBRARIES REQUIRED FOR LINKING WITH SQLITE???
 
 
 *** HOW TO BUILD, TEST AND INSTALL THE LIBRARY ***
