@@ -32,27 +32,28 @@ namespace sqloxx
 {
 
 /**
- * Provides an input iterator interface for traversing a SQLite database
- * table from which instances of some type T can be extracted by reference
+ * Provides a standard input iterator interface for traversing a SQLite database
+ * table from which instances of some type \b T can be extracted by reference
  * to a column in the table.
  *
- * The template parameter T should be an instantiation of sqloxx::Handle<R>
- * for some R.
+ * The template parameter \b T should be an instantiation of \b
+ * sqloxx::Handle<R> for some \b R.
  *
- * The API is similar to \e std::istream_iterator. For example, suppose
- * \e Connection is some class derived from sqloxx::DatabaseConnection.
+ * The API is very similar to \b std::istream_iterator. For example, suppose
+ * \b Connection is some class derived from DatabaseConnection, we might
+ * use TableIterator as follows:
  *
  * <tt>
  *
- *  using sqloxx::Handle;
- * 	Connection dbc;
- * 	dbc.open("animals.db");
- * 	std::vector<Handle<Dog> > vec;
- * 	std::copy
- * 	(	TableIterator<Handle<Dog> >(dbc, "select dog_id from dogs"),
- * 		(TableIterator<Handle<Dog> >()),
- * 		std::back_inserter(vec)
- * 	);
+ *  using sqloxx::Handle;\n
+ * 	Connection dbc;\n
+ * 	dbc.open("animals.db");\n
+ * 	std::vector<Handle<Dog> > vec;\n
+ * 	std::copy\n
+ * 	(	TableIterator<Handle<Dog> >(dbc, "select dog_id from dogs"),\n
+ * 		(TableIterator<Handle<Dog> >()),\n
+ * 		std::back_inserter(vec)\n
+ * 	);\n
  *
  * </tt>
  */
@@ -89,8 +90,8 @@ public:
 	 * passes a custom statement to \e p_statement_text, it should be
 	 * a SELECT statement, and only the first column of results will
 	 * be relevant, where the first column should contain the primary
-	 * key for T, of type sqloxx::Id. See class-level documentation of
-	 * TableIterator for further requirements on T.
+	 * key for \b T, of type sqloxx::Id. See class-level documentation of
+	 * TableIterator for further requirements on \b T.
 	 *
 	 * When first constructed, the TableIterator will be "pointing" to
 	 * the first object it reads from the database table; dereferencing
@@ -99,22 +100,22 @@ public:
 	 * will immediately be null (and deferencing it will yield undefined
 	 * behaviour).
 	 *
-	 * @throws InvalidConnection if p_database_connection is an
-	 * invalid database connection (i.e. if p_database_connection.is_valid()
-	 * returns false).
+	 * @throws InvalidConnection if \e p_database_connection is an
+	 * invalid database connection (i.e. if \e p_database_connection.is_valid()
+	 * returns \e false).\n
 	 *
 	 * @throws SQLiteException or an exception derived therefrom, if there
 	 * is some problem with the SQL statement, that results in a SQLite error
 	 * code being returned, either in trying to construct a SQLStatement
-	 * from p_statement_text, or in stepping into the first row of the
-	 * result set.
+	 * from \e p_statement_text, or in stepping into the first row of the
+	 * result set.\n
 	 *
 	 * @throws std::bad_alloc in the unlikely event of a memory allocation
-	 * failure.
+	 * failure.\n
 	 * 
 	 * @throws TooManyStatements if the first purported SQL statement
-	 * in p_selector is syntactically acceptable to SQLite, <em>but</em> there
-	 * are characters in p_selector after this statement,
+	 * in \e p_selector is syntactically acceptable to SQLite, <em>but</em>
+	 * there are characters in p_selector after this statement,
 	 * other than ';' and ' '.
 	 * This includes the case where there are further syntactically
 	 * acceptable SQL statements after the first one.
@@ -140,25 +141,25 @@ public:
 	 * Copy constructor.
 	 *
 	 * The newly created TableIterator will have its own instance
-	 * of T copied from the one held in \e rhs, or else will be
-	 * "null" (i.e. hold no instance of T) if rhs is null.
+	 * of \b T copied from the one held in \e rhs, or else will be
+	 * "null" (i.e. hold no instance of \b T) if rhs is null.
 	 *
 	 * If \e rhs is referencing a SQLStatement
 	 * (i.e. was not created with the default constructor),
 	 * then the newly created TableIterator will be referencing the
 	 * same underlying SQLStatement. This means that if either
 	 * TableIterator is incremented, then this will advance the
-	 * implicit \e next position of \e both TableIterators in the result
-	 * set. The lhs will continue to hold the same instance of T
+	 * implicit \e next position of \e both \b TableIterators in the result
+	 * set. The \e lhs will continue to hold the same instance of T
 	 * as when it was constructed, but when incremented next, it will
 	 * go to whichever is the \e next position for the underlying
 	 * SQLStatement. This seems odd but is exactly analogous to the
-	 * behaviour of \e std::istream_iterator.
+	 * behaviour of \b std::istream_iterator.
 	 *
 	 * Exceptions are the same as for the two-parameter constructor.
 	 *
 	 * <b>Exception safety</b>: <em>strong guarantee</em>, providing that the
-	 * copy constructor for T offers at least the strong guarantee.
+	 * copy constructor for \b T offers at least the strong guarantee.
 	 */
 	TableIterator(TableIterator const&);
 
@@ -174,15 +175,15 @@ public:
 	 * Note destructor is virtual, TableIterator should not be used as a
 	 * polymorphic base class.
 	 *
-	 * <b>Exception safety</b>: will never throw, assuming the destructor for T will
-	 * never throw.
+	 * <b>Exception safety</b>: will never throw, assuming the destructor for \b T
+	 * will never throw.
 	 */
 	~TableIterator();
 
 	/**
-	 * @returns a constant reference to the instance of T that is currently
+	 * @returns a constant reference to the instance of \b T that is currently
 	 * "pointed to" or "contained" within this TableIterator, i.e. the
-	 * instance of T that is stored at the database table row that it
+	 * instance of \b T that is stored at the database table row that it
 	 * is currently "at".
 	 *
 	 * Dereferencing a null iterator will result in undefined
@@ -199,7 +200,7 @@ public:
 
 	/**
 	 * Use this to access a member of the instance of
-	 * T that is currently "pointed to" or "contained" within the
+	 * \b T that is currently "pointed to" or "contained" within the
 	 * TableIterator.
 	 *
 	 * Dereferencing a null iterator will result in undefined
@@ -209,8 +210,8 @@ public:
 	 * is null if and only if it compares equal with a TableIterator
 	 * constructed with the default constructor.)
 	 *
-	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, providing precondition
-	 * is met.
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>, providing
+	 * precondition is met.
 	 */
 	T const* operator->() const;
 
@@ -241,7 +242,7 @@ public:
 	 * should not be used again, and neither should any other
 	 * TableIterator referencing the same underlying SQLStatement.
 	 * (Via application of the copy constructor, multiple
-	 * TableIterators may reference the same SQLStatement.)
+	 * \b TableIterators may reference the same SQLStatement.)
 	 *
 	 * <b>Exception safety</b>: <em>basic guarantee</em>, providing that the
 	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em> also
@@ -261,12 +262,12 @@ public:
 	 * \e position in that result set (which has now been advanced
 	 * by one), which will be the starting position next time
 	 * \e either iterator is called. This sounds odd but is exactly analogous
-	 * to the behaviour of \e std::istream_iterator.
+	 * to the behaviour of \b std::istream_iterator.
 	 *
 	 * Exceptions are the same as for the previous
 	 * increment operator, however, this postfix operator, as well
 	 * as calling <em>T::create_unchecked(Connection&, sqloxx::Id)</em>,
-	 * also calls the copy constructor for T, so might also throw any
+	 * also calls the copy constructor for \b T, so might also throw any
 	 * exceptions that are thrown by that copy constructor.
 	 *
 	 * If an exception is thrown, the TableIterator
@@ -277,7 +278,7 @@ public:
 	 *
 	 * <b>Exception safety</b>: <em>basic guarantee</em>, providing that the
 	 * function <em>T::create_unchecked(Connection&, sqloxx::Id)</em>, as
-	 * well as the copy constructor for T, also offer the basic
+	 * well as the copy constructor for \b T, also offer the basic
 	 * guarantee.
 	 */
 	TableIterator operator++(int);
