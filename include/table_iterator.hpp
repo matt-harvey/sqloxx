@@ -36,8 +36,8 @@ namespace sqloxx
  * table from which instances of some type \b T can be extracted by reference
  * to a column in the table.
  *
- * The template parameter \b T should be an instantiation of \b
- * sqloxx::Handle<R> for some \b R.
+ * <b>The template parameter \b T should be an instantiation of \b
+ * sqloxx::Handle<R> for some \b R.</b>
  *
  * The API is very similar to \b std::istream_iterator. For example, suppose
  * \b Connection is some class derived from DatabaseConnection, we might
