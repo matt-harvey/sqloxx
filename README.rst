@@ -79,7 +79,7 @@ generator, or else run ``cmake-gui.exe .``. See CMake documentation for further
 details.)
 
 You will be prompted with ``Would you like to see the advanced options? [No]:``.
-Answer ``n`` Then follow the prompts.
+Answer ``n``, then follow the prompts.
 
 (If you run into trouble with the build or have atypical requirements, you can
 return to this step and answer ``y`` to configure more detailed build options.)
