@@ -128,12 +128,10 @@ SQLiteDBConn::throw_on_failure(int errcode)
 	}
 	switch (errcode)
 	{
-	case SQLITE_OK:
-	case SQLITE_DONE:
-	case SQLITE_ROW:
-		return;
-	default:
-		break;
+	case SQLITE_OK:             return;
+	case SQLITE_DONE:           return;
+	case SQLITE_ROW:            return;
+	default:                    break;
 	}
 	if (errcode != sqlite3_errcode(m_connection))
 	{
@@ -150,96 +148,46 @@ SQLiteDBConn::throw_on_failure(int errcode)
 	{
 		JEWEL_THROW(SQLiteException, "");  // Keep it minimal in this case.
 	}
-	JEWEL_ASSERT (msg != 0);
+	JEWEL_ASSERT (msg != nullptr);
 	JEWEL_ASSERT (errcode == sqlite3_errcode(m_connection));
 	switch (errcode)
 	{
-	// Redundant "breaks" here are retained deliberately out of "respect".
-	case SQLITE_ERROR:
-		JEWEL_THROW(SQLiteError, msg);
-		break;
-	case SQLITE_INTERNAL:
-		JEWEL_THROW(SQLiteInternal, msg);
-		break;
-	case SQLITE_PERM:
-		JEWEL_THROW(SQLitePerm, msg);
-		break;
-	case SQLITE_ABORT:
-		JEWEL_THROW(SQLiteAbort, msg);
-		break;
-	case SQLITE_BUSY:
-		JEWEL_THROW(SQLiteBusy, msg);
-		break;
-	case SQLITE_LOCKED:
-		JEWEL_THROW(SQLiteLocked, msg);
-		break;
-	case SQLITE_NOMEM:
-		JEWEL_THROW(SQLiteNoMem, msg);
-		break;
-	case SQLITE_READONLY:
-		JEWEL_THROW(SQLiteReadOnly, msg);
-		break;
-	case SQLITE_INTERRUPT:
-		JEWEL_THROW(SQLiteInterrupt, msg);
-		break;
-	case SQLITE_IOERR:
-		JEWEL_THROW(SQLiteIOErr, msg);
-		break;
-	case SQLITE_CORRUPT:
-		JEWEL_THROW(SQLiteCorrupt, msg);
-		break;
-	case SQLITE_FULL:
-		JEWEL_THROW(SQLiteFull, msg);
-		break;
-	case SQLITE_CANTOPEN:
-		JEWEL_THROW(SQLiteCantOpen, msg);
-		break;
-	case SQLITE_EMPTY:
-		JEWEL_THROW(SQLiteEmpty, msg);
-		break;
-	case SQLITE_SCHEMA:
-		JEWEL_THROW(SQLiteSchema, msg);
-		break;
-	case SQLITE_TOOBIG:
-		JEWEL_THROW(SQLiteTooBig, msg);
-		break;
-	case SQLITE_CONSTRAINT:
-		JEWEL_THROW(SQLiteConstraint, msg);
-		break;
-	case SQLITE_MISMATCH:
-		JEWEL_THROW(SQLiteMismatch, msg);
-		break;
-	case SQLITE_MISUSE:
-		JEWEL_THROW(SQLiteMisuse, msg);
-		break;
-	case SQLITE_NOLFS:
-		JEWEL_THROW(SQLiteNoLFS, msg);
-		break;
-	case SQLITE_AUTH:
-		JEWEL_THROW(SQLiteAuth, msg);
-		break;
-	case SQLITE_FORMAT:
-		JEWEL_THROW(SQLiteFormat, msg);
-		break;
-	case SQLITE_RANGE:
-		JEWEL_THROW(SQLiteRange, msg);
-		break;
-	case SQLITE_NOTADB:
-		JEWEL_THROW(SQLiteNotADB, msg);
-		break;
+	case SQLITE_ERROR:         JEWEL_THROW(SQLiteError, msg);
+	case SQLITE_INTERNAL:      JEWEL_THROW(SQLiteInternal, msg);
+	case SQLITE_PERM:          JEWEL_THROW(SQLitePerm, msg);
+	case SQLITE_ABORT:         JEWEL_THROW(SQLiteAbort, msg);
+	case SQLITE_BUSY:          JEWEL_THROW(SQLiteBusy, msg);
+	case SQLITE_LOCKED:        JEWEL_THROW(SQLiteLocked, msg);
+	case SQLITE_NOMEM:         JEWEL_THROW(SQLiteNoMem, msg);
+	case SQLITE_READONLY:      JEWEL_THROW(SQLiteReadOnly, msg);
+	case SQLITE_INTERRUPT:     JEWEL_THROW(SQLiteInterrupt, msg);
+	case SQLITE_IOERR:         JEWEL_THROW(SQLiteIOErr, msg);
+	case SQLITE_CORRUPT:       JEWEL_THROW(SQLiteCorrupt, msg);
+	case SQLITE_NOTFOUND:      JEWEL_THROW(SQLiteNotFound, msg);
+	case SQLITE_FULL:          JEWEL_THROW(SQLiteFull, msg);
+	case SQLITE_CANTOPEN:      JEWEL_THROW(SQLiteCantOpen, msg);
+	case SQLITE_PROTOCOL:      JEWEL_THROW(SQLiteProtocol, msg);
+	case SQLITE_EMPTY:         JEWEL_THROW(SQLiteEmpty, msg);
+	case SQLITE_SCHEMA:        JEWEL_THROW(SQLiteSchema, msg);
+	case SQLITE_TOOBIG:        JEWEL_THROW(SQLiteTooBig, msg);
+	case SQLITE_CONSTRAINT:    JEWEL_THROW(SQLiteConstraint, msg);
+	case SQLITE_MISMATCH:      JEWEL_THROW(SQLiteMismatch, msg);
+	case SQLITE_MISUSE:        JEWEL_THROW(SQLiteMisuse, msg);
+	case SQLITE_NOLFS:         JEWEL_THROW(SQLiteNoLFS, msg);
+	case SQLITE_AUTH:          JEWEL_THROW(SQLiteAuth, msg);
+	case SQLITE_FORMAT:        JEWEL_THROW(SQLiteFormat, msg);
+	case SQLITE_RANGE:         JEWEL_THROW(SQLiteRange, msg);
+	case SQLITE_NOTADB:        JEWEL_THROW(SQLiteNotADB, msg);
 
-	#ifndef NDEBUG
-		case SQLITE_OK:
-		case SQLITE_ROW:
-		case SQLITE_DONE:
-			JEWEL_HARD_ASSERT (false);  // Should never reach here
-	#endif
+#	ifndef NDEBUG
+		case SQLITE_OK:        JEWEL_HARD_ASSERT (false);
+		case SQLITE_ROW:       JEWEL_HARD_ASSERT (false);
+		case SQLITE_DONE:      JEWEL_HARD_ASSERT (false);
+#	endif
 
-	default:
-		JEWEL_THROW(SQLiteUnknownErrorCode, msg);
+	default:                   JEWEL_THROW(SQLiteUnknownErrorCode, msg);
 	}
 	JEWEL_HARD_ASSERT (false);  // Execution should never reach here.
-	return;
 }
 
 
