@@ -38,12 +38,10 @@ using std::set;
 using std::shared_ptr;
 using std::string;
 
-
 namespace sqloxx
 {
 namespace tests
 {
-
 
 // Test DatabaseConnection default constructor, and open function. A one-off
 // database file is created and then destroyed in this test.
@@ -107,8 +105,6 @@ TEST_FIXTURE(DatabaseConnectionFixture, test_is_valid)
 	DatabaseConnection dbc2;
 	CHECK(!dbc2.is_valid());
 }
-
-
 
 TEST(test_execute_sql_01)
 {
@@ -177,10 +173,6 @@ TEST_FIXTURE(DatabaseConnectionFixture, self_test)
 	// Tests max_nesting()
 	CHECK_EQUAL(pdbc->self_test(), 0);
 }
-
-
-
-
 
 }  // namespace tests
 }  // namespace sqloxx
