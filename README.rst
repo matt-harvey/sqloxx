@@ -146,10 +146,10 @@ HTML documentation will then be generated in the project root directory,
 under ``html`` and can be browsed by opening the following file in your
 web browser::
 
-	[project root]/html/index.html
+	html/index.html
 
 Almost all of the Doxygen markup is contained in the
-C++ headers; so an alternative source of information on the Jewel API, is
+C++ headers; so an alternative source of information on the Sqloxx API, is
 simply to examine the headers directly.
 
 Other build targets
