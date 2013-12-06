@@ -148,9 +148,9 @@ web browser::
 
 	html/index.html
 
-Almost all of the Doxygen markup is contained in the
-C++ headers; so an alternative source of information on the Sqloxx API, is
-simply to examine the headers directly.
+Almost all of the documentation is generated from Doxygen markup in the
+C++ headers themselves; so an alternative source of information on the Sqloxx
+API, is simply to examine the headers directly.
 
 Other build targets
 ===================
