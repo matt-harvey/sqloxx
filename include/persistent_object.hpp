@@ -169,7 +169,7 @@ namespace sqloxx
  * instances of DerivedT will be persisted to the database. ConnectionT
  * should be a class derived from sqloxx::DatabaseConnection.
  *
- * @todo LOW PRIORITY Have a single location for documenting use of Sqloxx
+ * TODO LOW PRIORITY Have a single location for documenting use of Sqloxx
  * holistically, perhaps with an extended example (but see "tests/example.hpp"
  * and "tests/example.cpp" already done).
  * 

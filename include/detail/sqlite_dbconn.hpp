@@ -63,7 +63,7 @@ namespace detail
  * Sqloxx, as well as a range of convenience functions that are not
  * provided by this lower-level class.
  *
- * @todo MEDIUM PRIORITY Supply public member functions to close
+ * TODO MEDIUM PRIORITY Supply public member functions to close
  * any database connections and to shut down SQLite3. Current this is done
  * in the destructor, but destructors should not throw, so the destructor
  * calls std::terminate() if close or shut-down fails.
