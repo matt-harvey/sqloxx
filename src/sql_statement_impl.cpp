@@ -35,7 +35,7 @@ SQLStatementImpl::SQLStatementImpl
 (	SQLiteDBConn& p_sqlite_dbconn,
 	string const& str
 ):
-	m_statement(0),
+	m_statement(nullptr),
 	m_sqlite_dbconn(p_sqlite_dbconn),
 	m_is_locked(false)
 {
@@ -70,7 +70,7 @@ SQLStatementImpl::SQLStatementImpl
 		default:
 			// The character is bad.
 			sqlite3_finalize(m_statement);  // Always succeeds.
-			m_statement = 0;
+			m_statement = nullptr;
 			// Note this will have thrown already if first statement is
 			// ungrammatical.
 			JEWEL_THROW
@@ -89,7 +89,7 @@ SQLStatementImpl::~SQLStatementImpl()
 	if (m_statement)
 	{
 		sqlite3_finalize(m_statement);
-		m_statement = 0;
+		m_statement = nullptr;
 	}
 }
 

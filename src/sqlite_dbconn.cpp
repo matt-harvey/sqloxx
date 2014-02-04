@@ -51,7 +51,7 @@ namespace detail
 
 
 SQLiteDBConn::SQLiteDBConn():
-	m_connection(0)
+	m_connection(nullptr)
 {
 	// Initialize SQLite3
 	if (sqlite3_initialize() != SQLITE_OK)
@@ -85,7 +85,7 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 		(	filepath.generic_string().c_str(),
 			&m_connection,
 			SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,
-			0
+			nullptr
 		)
 	);
 	execute_sql("pragma foreign_keys = on;");
@@ -116,7 +116,7 @@ SQLiteDBConn::~SQLiteDBConn()
 bool
 SQLiteDBConn::is_valid() const
 {
-	return m_connection != 0;
+	return m_connection != nullptr;
 }
 
 void
@@ -194,7 +194,9 @@ SQLiteDBConn::throw_on_failure(int errcode)
 void
 SQLiteDBConn::execute_sql(string const& str)
 {
-	throw_on_failure(sqlite3_exec(m_connection, str.c_str(), 0, 0, 0));
+	throw_on_failure
+	(	sqlite3_exec(m_connection,str.c_str(), nullptr, nullptr, nullptr)
+	);
 	return;
 }
 
