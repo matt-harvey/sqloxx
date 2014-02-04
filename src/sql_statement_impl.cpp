@@ -158,10 +158,8 @@ SQLStatementImpl::step()
 		#endif
 
 		return false;
-		JEWEL_HARD_ASSERT (false);  // Execution never reaches here
 	case SQLITE_ROW:
 		return true;
-		JEWEL_HARD_ASSERT (false);  // Execution never reaches here
 	default:
 		;
 		// Do nothing
@@ -189,8 +187,7 @@ SQLStatementImpl::step_final()
 int
 SQLStatementImpl::parameter_index
 (	string const& parameter_name
-)
-const
+) const
 {
 	int const ret = sqlite3_bind_parameter_index
 	(	m_statement,
@@ -198,12 +195,6 @@ const
 	);
 	if (ret == 0) 
 	{
-		try
-		{
-		}
-		catch (...)
-		{
-		}
 		JEWEL_THROW(SQLiteException, "Could not find parameter index.");
 	}
 	JEWEL_ASSERT (ret > 0);
