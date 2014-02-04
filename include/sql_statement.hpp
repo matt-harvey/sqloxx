@@ -22,10 +22,8 @@
 #include <memory>
 #include <string>
 
-
 namespace sqloxx
 {
-
 
 /** Represents an SQL statement.
  *

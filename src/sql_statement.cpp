@@ -25,11 +25,8 @@ using std::shared_ptr;
 using std::endl;
 using std::string;
 
-
 namespace sqloxx
 {
-
-
 
 SQLStatement::~SQLStatement()
 {
