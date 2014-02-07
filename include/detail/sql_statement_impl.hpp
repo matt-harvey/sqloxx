@@ -20,13 +20,9 @@
 // Hide from Doxygen
 /// @cond
 
-/** \file sql_statement_impl.hpp
+/** @file
  *
- * \brief Header file pertaining to SQLStatementImpl class.
- *
- * \author Matthew Harvey
- * \date 04 July 2012.
- *
+ * @brief Header file pertaining to SQLStatementImpl class.
  */
 
 #include "sqlite3.h"  // Compiling directly into build

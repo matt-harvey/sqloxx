@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-/** \file test.cpp
+/** @file
  *
- * \brief Executes tests.
+ * @brief Executes tests.
  *
  * This executable compiled from this file should not be directly executed.
  * Rather, it is designed to be executed from the Tcl script in test.tcl.
@@ -24,10 +24,6 @@
  * SQL transaction handling via the DatabaseConnection class. This is
  * facilitated by having an "external" script control the execution and
  * recovery process.
- *
- * \author Matthew Harvey
- * \date 29 Sep 2012.
- *
  */
 
 

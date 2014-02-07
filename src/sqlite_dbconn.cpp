@@ -14,15 +14,6 @@
  * limitations under the License.
  */
 
-/** \file sqlite_dbconn.cpp
- *
- * \brief Source file pertaining to SQLiteDBConn class.
- *
- * \author Matthew Harvey
- * \date 04 July 2012.
- *
- */
-
 #include "sqloxx_exceptions.hpp"
 #include "detail/sqlite_dbconn.hpp"
 #include "detail/sqlite3.h" // Compiling directly into build

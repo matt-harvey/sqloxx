@@ -20,12 +20,9 @@
 // Hide from Doxygen
 /// @cond
 
-/** \file sqlite_dbconn.hpp
+/** @file
  *
- * \brief Header file pertaining to SQLiteDBConn class.
- *
- * \author Matthew Harvey
- * \date 04 July 2012.
+ * @brief Header file pertaining to SQLiteDBConn class.
  */
 
 
