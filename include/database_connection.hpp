@@ -53,8 +53,8 @@ public:
 		StatementCache;
 	
 	/**
-	 * Initializes SQLite3 and creates a database connection initially
-	 * set to null, i.e. not connected to any file.
+	 * Initializes SQLite3 if not already initialized, and creates a database
+	 * connection initially set to null, i.e. not connected to any file.
 	 *
 	 * @param p_cache_capacity indicates the number of SQLStatementImpl
 	 * instances to
@@ -75,8 +75,9 @@ public:
 	DatabaseConnection& operator=(DatabaseConnection&&) = delete;
 
 	/**
-	 * <b>Exception safety</b>: <em>nothrow guarantee</em>. (Of course, the exception
-	 * safety of derived classes will depend on their own destructors.)
+	 * <b>Exception safety</b>: <em>nothrow guarantee</em>. (Of course, the
+	 * exception safety of derived classes will depend on their own
+	 * destructors.)
 	 */
 	virtual ~DatabaseConnection();
 
