@@ -84,13 +84,13 @@ public:
 	/**
 	 * Closes any open SQLite3 database connection.
 	 *
-	 * Does not throw. If SQLite3 connection fails, the application is aborted
-	 * with a diagnostic message written to std::clog.
+	 * Does not throw. If SQLite3 connection closure fails, the application is
+	 * aborted with a diagnostic message written to std::clog.
 	 */
 	~SQLiteDBConn();
 
 	/**
-	 * Returns \c true iff the SQLiteDBConn is currently connected to a 
+	 * Returns \e true iff the SQLiteDBConn is currently connected to a 
 	 * database file. Does not throw.
 	 */
 	bool is_valid() const;
