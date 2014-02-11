@@ -34,15 +34,12 @@ using std::runtime_error;
 using std::string;
 using std::vector;
 
-
 namespace sqloxx
 {
 namespace detail
 {
 
-
-SQLiteDBConn::SQLiteDBConn():
-	m_connection(nullptr)
+SQLiteDBConn::SQLiteDBConn(): m_connection(nullptr)
 {
 	// Initialize SQLite3
 	if (sqlite3_initialize() != SQLITE_OK)
@@ -52,7 +49,6 @@ SQLiteDBConn::SQLiteDBConn():
 			"SQLite could not be initialized."
 		);
 	}
-
 }
 
 void
@@ -65,10 +61,7 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 	// Throw if already connected or if filename is empty
 	if (m_connection)
 	{
-		JEWEL_THROW
-		(	MultipleConnectionException,
-			"Database already connected."
-		);
+		JEWEL_THROW(MultipleConnectionException, "Database already connected.");
 	}
 	// Open the connection
 	throw_on_failure	
@@ -85,7 +78,6 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 
 SQLiteDBConn::~SQLiteDBConn()
 {
-
 	if (m_connection)
 	{
 		if (sqlite3_close(m_connection) != SQLITE_OK)
@@ -181,7 +173,6 @@ SQLiteDBConn::throw_on_failure(int errcode)
 	JEWEL_HARD_ASSERT (false);  // Execution should never reach here.
 }
 
-
 void
 SQLiteDBConn::execute_sql(string const& str)
 {
@@ -190,8 +181,6 @@ SQLiteDBConn::execute_sql(string const& str)
 	);
 	return;
 }
-
-
 
 }  // namespace detail
 }  // namespace sqloxx

@@ -25,7 +25,6 @@
  * @brief Header file pertaining to SQLiteDBConn class.
  */
 
-
 #include "../sqloxx_exceptions.hpp"
 #include "sql_statement_impl.hpp"
 #include <jewel/checked_arithmetic.hpp>
@@ -35,13 +34,10 @@
 #include <string>
 #include <vector>
 
-
 namespace sqloxx
 {
 namespace detail
 {
-
-
 
 /**
  * @class SQLiteDBConn
@@ -70,7 +66,6 @@ class SQLiteDBConn
 	friend class SQLStatementImpl;
 
 public:
-
 
 	/**
 	 * Initializes SQLite3 and creates a database connection
