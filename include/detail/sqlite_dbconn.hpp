@@ -60,11 +60,6 @@ namespace detail
  * any database connections and to shut down SQLite3. Current this is done
  * in the destructor, but destructors should not throw, so the destructor
  * calls std::terminate() if close or shut-down fails.
- *
- * @todo HIGH PRIORITY sqlite3_initialize() and sqlite3_shutdown()
- * functions should probably be managed such that they are called automatically
- * only by the first SQLiteDBConn to be created globally, and the last
- * SQLiteDBConn to be destructed globally, respectively.
  */
 class SQLiteDBConn
 {
@@ -73,8 +68,8 @@ class SQLiteDBConn
 public:
 
 	/**
-	 * Initializes SQLite3 and creates a database connection
-	 * initially set to null.
+	 * Initializes SQLite3, if not already iniitialized, and creates a database
+	 * connection initially set to null.
 	 *
 	 * @throws SQLiteInitializationError if initialization fails
 	 * for any reason.
@@ -87,8 +82,7 @@ public:
 	SQLiteDBConn& operator=(SQLiteDBConn&&) = delete;
 
 	/**
-	 * Closes any open SQLite3 database connection, and also
-	 * shuts down SQLite3.
+	 * Closes any open SQLite3 database connection.
 	 *
 	 * Does not throw. If SQLite3 connection closure or shutdown fails,
 	 * the application is aborted with a diagnostic message written to

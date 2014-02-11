@@ -39,16 +39,71 @@ namespace sqloxx
 namespace detail
 {
 
+namespace
+{
+	// Ensures sqlite3_initialize() is called exacltly once and
+	// sqlite3_shutdown() is called exactly once.
+	class SQLiteController
+	{
+	private:
+		SQLiteController()
+		{
+			JEWEL_LOG_TRACE();
+			if (sqlite3_initialize() != SQLITE_OK)
+			{
+				JEWEL_LOG_TRACE();
+				JEWEL_THROW
+				(	SQLiteInitializationError,
+					"SQLite could not be initialized."
+				);
+			}
+			JEWEL_LOG_TRACE();
+		}
+		~SQLiteController()
+		{
+			JEWEL_LOG_TRACE();
+			if (sqlite3_shutdown() != SQLITE_OK)
+			{
+				JEWEL_LOG_TRACE();
+				clog << "SQLite3 shutdown failed." << endl;
+				terminate();
+			}
+			JEWEL_LOG_TRACE();
+		}
+	public:
+		static void register_connection()
+		{
+			// This is thread-safe when compiled with C++11
+			static SQLiteController dummy;
+			(void)dummy;  // silence compiler re. unused variable
+		}
+	};
+
+}  // end anonymous namespace
+
 SQLiteDBConn::SQLiteDBConn(): m_connection(nullptr)
 {
-	// Initialize SQLite3
-	if (sqlite3_initialize() != SQLITE_OK)
+	SQLiteController::register_connection();
+}
+
+SQLiteDBConn::~SQLiteDBConn()
+{
+	if (m_connection)
 	{
-		JEWEL_THROW
-		(	SQLiteInitializationError,
-			"SQLite could not be initialized."
-		);
+		if (sqlite3_close(m_connection) != SQLITE_OK)
+		{
+			clog << "SQLite3 database connection could not be "
+			             "successfully "
+			             "closed in SQLiteDBConn destructor. " << endl;
+			terminate();
+		}
 	}
+}
+
+bool
+SQLiteDBConn::is_valid() const
+{
+	return m_connection != nullptr;
 }
 
 void
@@ -74,32 +129,6 @@ SQLiteDBConn::open(boost::filesystem::path const& filepath)
 	);
 	execute_sql("pragma foreign_keys = on;");
 	return;
-}
-
-SQLiteDBConn::~SQLiteDBConn()
-{
-	if (m_connection)
-	{
-		if (sqlite3_close(m_connection) != SQLITE_OK)
-		{
-			clog << "SQLite3 database connection could not be "
-			             "successfully "
-			             "closed in SQLiteDBConn destructor. " << endl;
-			terminate();
-		}
-	}
-	if (sqlite3_shutdown() != SQLITE_OK)
-	{
-		clog << "SQLite3 shutdown failed in SQLiteDBConn destructor."
-		     << endl;
-		terminate();
-	}
-}
-
-bool
-SQLiteDBConn::is_valid() const
-{
-	return m_connection != nullptr;
 }
 
 void
