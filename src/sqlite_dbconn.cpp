@@ -41,7 +41,7 @@ namespace detail
 
 namespace
 {
-	// Ensures sqlite3_initialize() is called exacltly once and
+	// Ensures sqlite3_initialize() is called exactly once and
 	// sqlite3_shutdown() is called exactly once.
 	class SQLiteController
 	{

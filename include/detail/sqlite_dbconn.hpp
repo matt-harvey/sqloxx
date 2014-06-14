@@ -68,7 +68,7 @@ class SQLiteDBConn
 public:
 
 	/**
-	 * Initializes SQLite3, if not already iniitialized, and creates a database
+	 * Initializes SQLite3, if not already initialized, and creates a database
 	 * connection initially set to null.
 	 *
 	 * @throws SQLiteInitializationError if initialization fails
