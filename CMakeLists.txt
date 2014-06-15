@@ -23,7 +23,7 @@ cmake_minimum_required (VERSION 2.8)
 project (sqloxx)
 set (version_major 1)
 set (version_minor 0)
-set (version_patch 1)
+set (version_patch 2)
 
 # Custom configuration options
 
