@@ -12,3 +12,7 @@ v1.0.1:
   once, and shut down no more than once, during the course of execution of a
   client application.
 - Minor tidy-ups in comments and documentation.
+
+v1.0.2:
+
+- Upgrade to SQLite version 3.8.5.
