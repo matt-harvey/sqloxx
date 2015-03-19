@@ -1184,7 +1184,7 @@ PersistentObject<DerivedT, ConnectionT>::has_id() const
 {
 	// Relies on the fact that m_id is a boost::optional<Id>, and
 	// will convert to true if and only if it has been initialized.
-	return m_id;
+	return static_cast<bool>(m_id);
 }
 
 template <typename DerivedT, typename ConnectionT>
