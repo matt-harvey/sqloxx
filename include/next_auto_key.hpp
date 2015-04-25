@@ -84,7 +84,7 @@ namespace sqloxx
  * the constraints described above.
  */
 template <typename Connection, typename KeyType>
-KeyType next_auto_key(Connection& dbc, std::string const& table_name);	
+KeyType next_auto_key(Connection& dbc, std::string const& table_name);    
 
 
 // Definition
@@ -92,41 +92,41 @@ template <typename Connection, typename KeyType>
 KeyType
 next_auto_key(Connection& dbc, std::string const& table_name)
 {
-	try
-	{
-		SQLStatement statement
-		(	dbc,
-			"select seq from sqlite_sequence where name = :p"
-		);
-		statement.bind(":p", table_name);
-		if (!statement.step())
-		{
-			return 1;
-		}
-		KeyType const max_key = statement.extract<KeyType>(0);
-		if (max_key == std::numeric_limits<KeyType>::max())
-		{
-			JEWEL_THROW
-			(	TableSizeException,
-				"Key cannot be safely incremented with given type."
-			);
-		}
-		return max_key + 1;
-	}
-	catch (SQLiteError&)
-	{
-		// Catches case where there is no sqlite_sequence table
-		SQLStatement sequence_finder
-		(	dbc,
-			"select name from sqlite_master where type = 'table' and "
-			"name = 'sqlite_sequence';"
-		);
-		if (!sequence_finder.step())
-		{
-			return 1;
-		}
-		throw;
-	}
+    try
+    {
+        SQLStatement statement
+        (   dbc,
+            "select seq from sqlite_sequence where name = :p"
+        );
+        statement.bind(":p", table_name);
+        if (!statement.step())
+        {
+            return 1;
+        }
+        KeyType const max_key = statement.extract<KeyType>(0);
+        if (max_key == std::numeric_limits<KeyType>::max())
+        {
+            JEWEL_THROW
+            (   TableSizeException,
+                "Key cannot be safely incremented with given type."
+            );
+        }
+        return max_key + 1;
+    }
+    catch (SQLiteError&)
+    {
+        // Catches case where there is no sqlite_sequence table
+        SQLStatement sequence_finder
+        (   dbc,
+            "select name from sqlite_master where type = 'table' and "
+            "name = 'sqlite_sequence';"
+        );
+        if (!sequence_finder.step())
+        {
+            return 1;
+        }
+        throw;
+    }
 }
 
 

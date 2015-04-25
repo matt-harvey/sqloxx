@@ -36,9 +36,9 @@
 set filename testfile9182734123.db
 
 if {[file exists $filename] || [file exists ${filename}-journal]} {
-	puts "File named $filename and/or ${filename}-journal already exists. "
-	puts "Test aborted as unsafe to proceed."
-	exit 1
+    puts "File named $filename and/or ${filename}-journal already exists. "
+    puts "Test aborted as unsafe to proceed."
+    exit 1
 }
 
 puts "Running atomicity test..."

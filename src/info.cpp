@@ -25,11 +25,11 @@ namespace sqloxx
 Version
 Info::version()
 {
-	return Version
-	(	SQLOXX_VERSION_MAJOR,
-		SQLOXX_VERSION_MINOR,
-		SQLOXX_VERSION_PATCH
-	);
+    return Version
+    (   SQLOXX_VERSION_MAJOR,
+        SQLOXX_VERSION_MINOR,
+        SQLOXX_VERSION_PATCH
+    );
 }
 
 }  // namespace sqloxx

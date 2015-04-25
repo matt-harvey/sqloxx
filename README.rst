@@ -53,13 +53,13 @@ To build the API documentation, you will need:
 
 At the time of writing, these dependencies can be obtained from the following
 locations:
-	
-:CMake: 	 http://www.cmake.org
-:Boost:		 http://www.boost.org
+    
+:CMake:      http://www.cmake.org
+:Boost:         http://www.boost.org
 :Jewel:      https://github.com/skybaboon/jewel
 :UnitTest++: http://unittest-cpp.sourceforge.net
 :Tcl:        http://tcl.tk
-:Doxygen:	 http://www.stack.nl/~dimitri/doxygen
+:Doxygen:     http://www.stack.nl/~dimitri/doxygen
 
 Sqloxx also depends on SQLite; however the Sqloxx source distribution includes
 the SQLite C source files directly, so it is not necessary to install SQLite
@@ -72,7 +72,7 @@ Open a command line and ``cd`` to the project root.
 
 On Unix-like systems, enter::
 
-	cmake -i
+    cmake -i
 
 (On Windows, you will need to use the ``-G`` option to choose a Makefile
 generator, or else run ``cmake-gui.exe .``. See CMake documentation for further
@@ -99,12 +99,12 @@ To build, test and install in one go
 ====================================
 
 At the project root, enter::
-	
-	make install
+    
+    make install
 
 If on a Unix-like system, you may need to run this as root, i.e.::
 
-	sudo make install
+    sudo make install
 
 This will cause the library and tests to be built (if not built already), and
 will cause the tests to be run, with the results output to the console.
@@ -140,13 +140,13 @@ To generate the documentation
 If you have Doxygen installed and want to generate the API documentation, then
 enter the following at the project root::
 
-	make docs
+    make docs
 
 HTML documentation will then be generated in the project root directory,
 under ``html`` and can be browsed by opening the following file in your
 web browser::
 
-	html/index.html
+    html/index.html
 
 Almost all of the documentation is generated from Doxygen markup in the
 C++ headers themselves; so an alternative source of information on the Sqloxx
@@ -160,7 +160,7 @@ To clean build
 
 Go to the project root and enter::
 
-	make clean
+    make clean
 
 This will clean all build targets from the project root, including
 the source tarball (see below) if present, but *not* including the
@@ -175,7 +175,7 @@ To build the library without installing or testing
 
 At the project root, enter::
 
-	make sqloxx
+    make sqloxx
 
 
 To build and run the test suite without installing
@@ -183,7 +183,7 @@ To build and run the test suite without installing
 
 At the project root, enter::
 
-	make test
+    make test
 
 After the test driver executable is built, the tests will automatically be run
 and the results displayed.
@@ -199,8 +199,8 @@ To build a source package for distribution
 If you are running a Unix-like system, and have a ``tar`` program installed,
 you can build a tarball of the library sources by entering the following
 at the project root::
-	
-	make package
+    
+    make package
 
 The tarball will appear in the project root directory, and will overwrite any
 existing tarball with the same name.
@@ -215,7 +215,7 @@ To build multiple targets in one go
 To build the library, build the tests and run the tests with one command, go to
 the project root, and enter::
 
-	make
+    make
 
 Note this will *not* install the library, will *not* generate the documentation
 and will *not* build a source tarball.

@@ -47,89 +47,89 @@ namespace tests
 class ExampleA: public PersistentObject<ExampleA, DerivedDatabaseConnection>
 {
 public:
-	typedef PersistentObject<ExampleA, DerivedDatabaseConnection>
-		DPersistentObject;
+    typedef PersistentObject<ExampleA, DerivedDatabaseConnection>
+        DPersistentObject;
 
-	static void setup_tables(DatabaseConnection& dbc);
+    static void setup_tables(DatabaseConnection& dbc);
 
-	ExampleA
-	(	IdentityMap& p_identity_map,
-		IdentityMap::Signature const& p_sig
-	);
+    ExampleA
+    (   IdentityMap& p_identity_map,
+        IdentityMap::Signature const& p_sig
+    );
 
-	ExampleA
-	(	IdentityMap& p_identity_map,
-		Id p_id,
-		IdentityMap::Signature const& p_sig
-	);
+    ExampleA
+    (   IdentityMap& p_identity_map,
+        Id p_id,
+        IdentityMap::Signature const& p_sig
+    );
 
-	// Move constructor deliberately undefined
-	
-	ExampleA& operator=(ExampleA const&) = delete;
-	ExampleA& operator=(ExampleA&&) = delete;
+    // Move constructor deliberately undefined
+    
+    ExampleA& operator=(ExampleA const&) = delete;
+    ExampleA& operator=(ExampleA&&) = delete;
 
-	~ExampleA() = default;
+    ~ExampleA() = default;
 
-	int x();
-	double y();
-	void set_x(int p_x);
-	void set_y(double p_y);
-	
-	// To test protected functions of PersistentObject. Returns number
-	// of failing checks in test.
-	static int self_test();	
+    int x();
+    double y();
+    void set_x(int p_x);
+    void set_y(double p_y);
+    
+    // To test protected functions of PersistentObject. Returns number
+    // of failing checks in test.
+    static int self_test();    
 
-	static std::string exclusive_table_name();
-	static std::string primary_key_name();
+    static std::string exclusive_table_name();
+    static std::string primary_key_name();
 
 private:
-	void do_load() override;
-	// Uses default version of do_calculate_prospective_key
-	void do_save_existing() override;
-	void do_save_new() override;
-	// Uses default version of do_ghostify
-	int m_x;
-	double m_y;
+    void do_load() override;
+    // Uses default version of do_calculate_prospective_key
+    void do_save_existing() override;
+    void do_save_new() override;
+    // Uses default version of do_ghostify
+    int m_x;
+    double m_y;
 };
 
 
 class ExampleB: public PersistentObject<ExampleB, DerivedDatabaseConnection>
 {
 public:
-	typedef PersistentObject<ExampleB, DerivedDatabaseConnection>
-		DPersistentObject;
-	
-	static void setup_tables(DatabaseConnection& dbc);
+    typedef PersistentObject<ExampleB, DerivedDatabaseConnection>
+        DPersistentObject;
+    
+    static void setup_tables(DatabaseConnection& dbc);
 
-	ExampleB
-	(	IdentityMap& p_identity_map,
-		IdentityMap::Signature const& p_sig
-	);
-	
-	ExampleB
-	(	IdentityMap& p_identity_map,
-		Id p_id,
-		IdentityMap::Signature const& p_sig
-	);
+    ExampleB
+    (   IdentityMap& p_identity_map,
+        IdentityMap::Signature const& p_sig
+    );
+    
+    ExampleB
+    (   IdentityMap& p_identity_map,
+        Id p_id,
+        IdentityMap::Signature const& p_sig
+    );
 
-	ExampleB& operator=(ExampleB const&) = delete;
-	ExampleB& operator=(ExampleB&&) = delete;
+    ExampleB& operator=(ExampleB const&) = delete;
+    ExampleB& operator=(ExampleB&&) = delete;
 
-	std::string s();
-	void set_s(std::string const& p_s);
+    std::string s();
+    void set_s(std::string const& p_s);
 
-	virtual ~ExampleB();
-	
-	static std::string exclusive_table_name();
-	static std::string primary_key_name();
+    virtual ~ExampleB();
+    
+    static std::string exclusive_table_name();
+    static std::string primary_key_name();
 
 protected:
-	void load_core();
-	void save_existing_core();
-	Id save_new_core();
+    void load_core();
+    void save_existing_core();
+    Id save_new_core();
 
 private:
-	std::string m_s;
+    std::string m_s;
 };
 
 
@@ -146,7 +146,7 @@ class ExampleC;
 // be done in the sqloxx namespace.
 template <> struct PersistenceTraits<tests::ExampleC>
 {
-	typedef tests::ExampleB Base;
+    typedef tests::ExampleB Base;
 };
 
 
@@ -156,38 +156,38 @@ namespace tests
 class ExampleC: public ExampleB
 {
 public:
-	
-	static void setup_tables(DatabaseConnection& dbc);
+    
+    static void setup_tables(DatabaseConnection& dbc);
 
-	ExampleC
-	(	IdentityMap& p_identity_map,
-		IdentityMap::Signature const& p_sig
-	);
-	
-	ExampleC
-	(	IdentityMap& p_identity_map,
-		Id p_id,
-		IdentityMap::Signature const& p_sig
-	);
+    ExampleC
+    (   IdentityMap& p_identity_map,
+        IdentityMap::Signature const& p_sig
+    );
+    
+    ExampleC
+    (   IdentityMap& p_identity_map,
+        Id p_id,
+        IdentityMap::Signature const& p_sig
+    );
 
-	ExampleC& operator=(ExampleC const&) = delete;
-	ExampleC& operator=(ExampleC&&) = delete;
-	~ExampleC() = default;
+    ExampleC& operator=(ExampleC const&) = delete;
+    ExampleC& operator=(ExampleC&&) = delete;
+    ~ExampleC() = default;
 
-	int p();
-	int q();
-	void set_p(int p_p);
-	void set_q(int p_q);
+    int p();
+    int q();
+    void set_p(int p_p);
+    void set_q(int p_q);
 
-	static std::string exclusive_table_name();
+    static std::string exclusive_table_name();
 
 private:
-	void do_load() override;
-	void do_save_existing() override;
-	void do_save_new() override;
-	void do_remove() override;
-	int m_p;
-	int m_q;
+    void do_load() override;
+    void do_save_existing() override;
+    void do_save_new() override;
+    void do_remove() override;
+    int m_p;
+    int m_q;
 };
 
 
@@ -198,15 +198,15 @@ class DerivedDatabaseConnection: public DatabaseConnection
 {
 public:
 
-	DerivedDatabaseConnection();
+    DerivedDatabaseConnection();
 
-	template <typename T>
-	IdentityMap<T>& identity_map();
+    template <typename T>
+    IdentityMap<T>& identity_map();
 
 private:
 
-	IdentityMap<ExampleA> m_example_a_map;
-	IdentityMap<ExampleB> m_example_b_map;
+    IdentityMap<ExampleA> m_example_a_map;
+    IdentityMap<ExampleB> m_example_b_map;
 };
 
 
@@ -215,7 +215,7 @@ inline
 IdentityMap<ExampleA>&
 DerivedDatabaseConnection::identity_map<ExampleA>()
 {
-	return m_example_a_map;
+    return m_example_a_map;
 }
 
 template <>
@@ -223,7 +223,7 @@ inline
 IdentityMap<ExampleB>&
 DerivedDatabaseConnection::identity_map<ExampleB>()
 {
-	return m_example_b_map;
+    return m_example_b_map;
 }
 
 

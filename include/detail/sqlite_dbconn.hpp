@@ -63,96 +63,96 @@ namespace detail
  */
 class SQLiteDBConn
 {
-	friend class SQLStatementImpl;
+    friend class SQLStatementImpl;
 
 public:
 
-	/**
-	 * Initializes SQLite3, if not already initialized, and creates a database
-	 * connection initially set to null.
-	 *
-	 * @throws SQLiteInitializationError if initialization fails
-	 * for any reason.
-	 */
-	SQLiteDBConn();
+    /**
+     * Initializes SQLite3, if not already initialized, and creates a database
+     * connection initially set to null.
+     *
+     * @throws SQLiteInitializationError if initialization fails
+     * for any reason.
+     */
+    SQLiteDBConn();
 
-	SQLiteDBConn(SQLiteDBConn const&) = delete;
-	SQLiteDBConn(SQLiteDBConn&&) = delete;
-	SQLiteDBConn& operator=(SQLiteDBConn const&) = delete;
-	SQLiteDBConn& operator=(SQLiteDBConn&&) = delete;
+    SQLiteDBConn(SQLiteDBConn const&) = delete;
+    SQLiteDBConn(SQLiteDBConn&&) = delete;
+    SQLiteDBConn& operator=(SQLiteDBConn const&) = delete;
+    SQLiteDBConn& operator=(SQLiteDBConn&&) = delete;
 
-	/**
-	 * Closes any open SQLite3 database connection.
-	 *
-	 * Does not throw. If SQLite3 connection closure fails, the application is
-	 * aborted with a diagnostic message written to std::clog.
-	 */
-	~SQLiteDBConn();
+    /**
+     * Closes any open SQLite3 database connection.
+     *
+     * Does not throw. If SQLite3 connection closure fails, the application is
+     * aborted with a diagnostic message written to std::clog.
+     */
+    ~SQLiteDBConn();
 
-	/**
-	 * Returns \e true iff the SQLiteDBConn is currently connected to a 
-	 * database file. Does not throw.
-	 */
-	bool is_valid() const;
+    /**
+     * Returns \e true iff the SQLiteDBConn is currently connected to a 
+     * database file. Does not throw.
+     */
+    bool is_valid() const;
 
-	/**
-	 * Implements DatabaseConnection::open.
-	 */
-	void open(boost::filesystem::path const& filepath);	
+    /**
+     * Implements DatabaseConnection::open.
+     */
+    void open(boost::filesystem::path const& filepath);    
 
-	/**
-	 * Implements DatabaseConnection::execute_sql
-	 */
-	void execute_sql(std::string const& str);
+    /**
+     * Implements DatabaseConnection::execute_sql
+     */
+    void execute_sql(std::string const& str);
 
-	/**
-	 * At this point this function does not fully support SQLite extended
-	 * error codes; only the basic error codes. If errcode is an extended
-	 * error code that is not also a basic error code, and is not
-	 * SQLITE_OK, SQLITE_DONE or SQLITE_ROW, then the function will
-	 * throw SQLiteUnknownErrorCode. If errcode is a basic error code that
-	 * is not SQLITE_OK, SQLITE_DONE or SQLITE_ROW, then it will throw an
-	 * exception derived from
-	 * SQLiteException, with the exception thrown corresponding to the
-	 * error code (see sqloxx_exceptions.hpp) and the error message returned
-	 * by called what() on the exception corresponding to the error message
-	 * produced by SQLite.
-	 *
-	 * If the database connection is invalid (in particular, if the connection
-	 * is not open), then InvalidConnection will always be thrown, regardless
-	 * of the value of errcode.
-	 *
-	 * errcode should be the return value of an operation just executed on
-	 * the SQLite API on this database connection. The function assumes that
-	 * no other operation has been executed on the API since the operation
-	 * that produced errcode.
-	 *
-	 * @throws InvalidConnection if the database connection is invalid. This
-	 * takes precedence over other exceptions that might be thrown.
-	 *
-	 * @throws an exception derived from SQLiteException if and only if
-	 * errcode is something other than SQLITE_OK, BUT
-	 *
-	 * @throws std::logic_error if errcode is not the latest error code
-	 * produced by a call to the SQLite API on this database connection.
-	 *
-	 * @param a SQLite error code.
-	 *
-	 * <b>Exception safety</b>: <em>strong guarantee</em>.
-	 */
-	void throw_on_failure(int errcode);
+    /**
+     * At this point this function does not fully support SQLite extended
+     * error codes; only the basic error codes. If errcode is an extended
+     * error code that is not also a basic error code, and is not
+     * SQLITE_OK, SQLITE_DONE or SQLITE_ROW, then the function will
+     * throw SQLiteUnknownErrorCode. If errcode is a basic error code that
+     * is not SQLITE_OK, SQLITE_DONE or SQLITE_ROW, then it will throw an
+     * exception derived from
+     * SQLiteException, with the exception thrown corresponding to the
+     * error code (see sqloxx_exceptions.hpp) and the error message returned
+     * by called what() on the exception corresponding to the error message
+     * produced by SQLite.
+     *
+     * If the database connection is invalid (in particular, if the connection
+     * is not open), then InvalidConnection will always be thrown, regardless
+     * of the value of errcode.
+     *
+     * errcode should be the return value of an operation just executed on
+     * the SQLite API on this database connection. The function assumes that
+     * no other operation has been executed on the API since the operation
+     * that produced errcode.
+     *
+     * @throws InvalidConnection if the database connection is invalid. This
+     * takes precedence over other exceptions that might be thrown.
+     *
+     * @throws an exception derived from SQLiteException if and only if
+     * errcode is something other than SQLITE_OK, BUT
+     *
+     * @throws std::logic_error if errcode is not the latest error code
+     * produced by a call to the SQLite API on this database connection.
+     *
+     * @param a SQLite error code.
+     *
+     * <b>Exception safety</b>: <em>strong guarantee</em>.
+     */
+    void throw_on_failure(int errcode);
 
 private:
 
-	
-	/**
-	 * A connection to a SQLite3 database file.
-	 *
-	 * (Note this is a raw pointer not a smart pointer
-	 * to facilitate more straightforward interaction with the SQLite
-	 * C API.)
-	 */
-	sqlite3* m_connection;
+    
+    /**
+     * A connection to a SQLite3 database file.
+     *
+     * (Note this is a raw pointer not a smart pointer
+     * to facilitate more straightforward interaction with the SQLite
+     * C API.)
+     */
+    sqlite3* m_connection;
 
 
 };

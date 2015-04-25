@@ -30,9 +30,9 @@ namespace sqloxx
 
 SQLStatement::~SQLStatement()
 {
-	m_sql_statement->reset();
-	m_sql_statement->clear_bindings();
-	m_sql_statement->unlock();
+    m_sql_statement->reset();
+    m_sql_statement->clear_bindings();
+    m_sql_statement->unlock();
 }
 
 
@@ -41,7 +41,7 @@ template <>
 int
 SQLStatement::extract<int>(int index)
 {
-	return m_sql_statement->extract<int>(index);
+    return m_sql_statement->extract<int>(index);
 }
 
 
@@ -49,14 +49,14 @@ template <>
 long
 SQLStatement::extract<long>(int index)
 {
-	return m_sql_statement->extract<long>(index);
+    return m_sql_statement->extract<long>(index);
 }
 
 template <>
 long long
 SQLStatement::extract<long long>(int index)
 {
-	return m_sql_statement->extract<long long>(index);
+    return m_sql_statement->extract<long long>(index);
 }
 
 
@@ -68,7 +68,7 @@ template <>
 double
 SQLStatement::extract<double>(int index)
 {
-	return m_sql_statement->extract<double>(index);
+    return m_sql_statement->extract<double>(index);
 }
 
 
@@ -76,37 +76,37 @@ template <>
 string
 SQLStatement::extract<string>(int index)
 {
-	return m_sql_statement->extract<string>(index);
+    return m_sql_statement->extract<string>(index);
 }
 
 bool
 SQLStatement::step()
 {
-	return m_sql_statement->step();
+    return m_sql_statement->step();
 }
 
 
 void
 SQLStatement::step_final()
 {
-	m_sql_statement->step_final();
-	return;
+    m_sql_statement->step_final();
+    return;
 }
 
 
 void
 SQLStatement::reset()
 {
-	m_sql_statement->reset();
-	return;
+    m_sql_statement->reset();
+    return;
 }
 
 
 void
 SQLStatement::clear_bindings()
 {
-	m_sql_statement->clear_bindings();
-	return;
+    m_sql_statement->clear_bindings();
+    return;
 }
 
 

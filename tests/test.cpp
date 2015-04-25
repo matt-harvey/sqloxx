@@ -44,22 +44,22 @@ using std::terminate;
 
 int main(int argc, char** argv)
 {
-	(void)argc;  // silence compiler warning re. unused parameter
-	try
-	{
-		// do_speed_test();
-		int failures = 0;
-		failures += do_atomicity_test(argv[1]);
-		cout << "Now running various unit tests using UnitTest++..."
-		     << endl;
-		failures += UnitTest::RunAllTests();
-		cout << "There were " << failures << " failed tests." << endl;
-		return failures;
-	}
-	// This seems pointless but is necessary to guarantee the stack is
-	// fully unwound if an exception is thrown.
-	catch (...)
-	{
-		throw;
-	}
+    (void)argc;  // silence compiler warning re. unused parameter
+    try
+    {
+        // do_speed_test();
+        int failures = 0;
+        failures += do_atomicity_test(argv[1]);
+        cout << "Now running various unit tests using UnitTest++..."
+             << endl;
+        failures += UnitTest::RunAllTests();
+        cout << "There were " << failures << " failed tests." << endl;
+        return failures;
+    }
+    // This seems pointless but is necessary to guarantee the stack is
+    // fully unwound if an exception is thrown.
+    catch (...)
+    {
+        throw;
+    }
 }

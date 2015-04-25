@@ -32,34 +32,34 @@ namespace tests
 
 TEST_FIXTURE(ExampleFixture, identity_map_after_object_removal)
 {
-	DerivedDatabaseConnection& dbc = *pdbc;
-	Handle<ExampleA> dpo1(dbc);
-	dpo1->set_x(10);
-	dpo1->set_y(-1298);
-	dpo1->save();
-	Handle<ExampleA> dpo1b(dbc, 1);  // OK
-	dpo1->remove();
-	bool ok = false;
-	try
-	{
-		Handle<ExampleA> dpo1c(*pdbc, 1);
-	}
-	catch (BadIdentifier&)
-	{
-		ok = true;
-	}
-	CHECK(ok);
-	// But this doesn't throw
-	Handle<ExampleA> dpo1d
-	(	Handle<ExampleA>::create_unchecked(dbc, 1)
-	);
+    DerivedDatabaseConnection& dbc = *pdbc;
+    Handle<ExampleA> dpo1(dbc);
+    dpo1->set_x(10);
+    dpo1->set_y(-1298);
+    dpo1->save();
+    Handle<ExampleA> dpo1b(dbc, 1);  // OK
+    dpo1->remove();
+    bool ok = false;
+    try
+    {
+        Handle<ExampleA> dpo1c(*pdbc, 1);
+    }
+    catch (BadIdentifier&)
+    {
+        ok = true;
+    }
+    CHECK(ok);
+    // But this doesn't throw
+    Handle<ExampleA> dpo1d
+    (   Handle<ExampleA>::create_unchecked(dbc, 1)
+    );
 }
 
 TEST_FIXTURE(ExampleFixture, identity_map_connection)
 {
-	DerivedDatabaseConnection& dbc = *pdbc;
-	IdentityMap<ExampleA> idm(dbc);
-	CHECK_EQUAL(&(idm.connection()), &dbc);
+    DerivedDatabaseConnection& dbc = *pdbc;
+    IdentityMap<ExampleA> idm(dbc);
+    CHECK_EQUAL(&(idm.connection()), &dbc);
 }
 
 

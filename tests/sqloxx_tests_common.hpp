@@ -55,17 +55,17 @@ void do_speed_test();
 // reuse in tests.
 struct DatabaseConnectionFixture
 {
-	// setup
-	DatabaseConnectionFixture();
+    // setup
+    DatabaseConnectionFixture();
 
-	// teardown
-	~DatabaseConnectionFixture();
+    // teardown
+    ~DatabaseConnectionFixture();
 
-	// Database filepath
-	boost::filesystem::path db_filepath;
+    // Database filepath
+    boost::filesystem::path db_filepath;
 
-	// The connection to the database
-	DatabaseConnection* pdbc;
+    // The connection to the database
+    DatabaseConnection* pdbc;
 };
 
 
@@ -73,17 +73,17 @@ class DerivedDatabaseConnection;  // fwd decl
 
 struct ExampleFixture
 {
-	// setup
-	ExampleFixture();
+    // setup
+    ExampleFixture();
 
-	// teardown
-	~ExampleFixture();
+    // teardown
+    ~ExampleFixture();
 
-	// Database filepath
-	boost::filesystem::path db_filepath;
+    // Database filepath
+    boost::filesystem::path db_filepath;
 
-	// The connection to the database
-	DerivedDatabaseConnection* pdbc;
+    // The connection to the database
+    DerivedDatabaseConnection* pdbc;
 };
 
 

@@ -28,20 +28,20 @@ namespace sqloxx
 class Info
 {
 public:
-	
-	/**
-	 * @returns a \b jewel::Version object representing the library version.
-	 *
-	 * <b>Exception safety</b>: <em>nothrow guarantee</em>
-	 */
-	static jewel::Version version();
+    
+    /**
+     * @returns a \b jewel::Version object representing the library version.
+     *
+     * <b>Exception safety</b>: <em>nothrow guarantee</em>
+     */
+    static jewel::Version version();
 
-	Info() = delete;
-	Info(Info const& rhs) = delete;
-	Info(Info&& rhs) = delete;
-	Info& operator=(Info const& rhs) = delete;
-	Info& operator=(Info&& rhs) = delete;
-	~Info() = delete;
+    Info() = delete;
+    Info(Info const& rhs) = delete;
+    Info(Info&& rhs) = delete;
+    Info& operator=(Info const& rhs) = delete;
+    Info& operator=(Info&& rhs) = delete;
+    ~Info() = delete;
 
 };  // class Info
 
