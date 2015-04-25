@@ -26,7 +26,7 @@
 
 
 #ifdef JEWEL_ON_WINDOWS
-#    include <windows.h>  // for Sleep
+#   include <windows.h>  // for Sleep
 #endif
 
 #include <jewel/assert.hpp>
@@ -54,7 +54,7 @@ namespace
 {
     void windows_friendly_remove(string const& fp)
     {
-#        ifdef JEWEL_ON_WINDOWS
+#       ifdef JEWEL_ON_WINDOWS
             int const max_tries = 10000;
             int const delay = 100;
             char const* filename = fp.c_str();
@@ -74,9 +74,9 @@ namespace
                      << endl;
                 terminate();
             }
-#        else
+#       else
             filesystem::remove(fp);
-#        endif
+#       endif
         JEWEL_ASSERT (!filesystem::exists(fp));
         return;
     }

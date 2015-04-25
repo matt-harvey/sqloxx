@@ -360,7 +360,7 @@ SQLStatementImpl::unlock()
     void
     SQLStatementImpl::do_bind(std::string const& parameter_name, int x)
     {
-#        if INT_MAX <= 2147483647
+#       if INT_MAX <= 2147483647
             JEWEL_ASSERT (CHAR_BIT * sizeof(x) <= 32);
             throw_on_failure
             (   sqlite3_bind_int
@@ -369,7 +369,7 @@ SQLStatementImpl::unlock()
                     x
                 )
             );
-#        else
+#       else
             JEWEL_ASSERT (CHAR_BIT * sizeof(x) <= 64);
             throw_on_failure
             (   sqlite3_bind_int64
@@ -378,7 +378,7 @@ SQLStatementImpl::unlock()
                     x
                 )
             );
-#        endif
+#       endif
         return;
 }
 #endif
@@ -389,7 +389,7 @@ SQLStatementImpl::unlock()
     void
     SQLStatementImpl::do_bind(std::string const& parameter_name, long x)
     {
-#        if LONG_MAX <= 2147483647
+#       if LONG_MAX <= 2147483647
             JEWEL_ASSERT (CHAR_BIT * sizeof(x) <= 32);
             throw_on_failure
             (   sqlite3_bind_int
@@ -398,7 +398,7 @@ SQLStatementImpl::unlock()
                     x
                 )
             );
-#        else
+#       else
             JEWEL_ASSERT (CHAR_BIT * sizeof(x) <= 64);
             throw_on_failure
             (   sqlite3_bind_int64
@@ -407,7 +407,7 @@ SQLStatementImpl::unlock()
                     x
                 )
             );
-#        endif
+#       endif
         return;
     }
 #endif

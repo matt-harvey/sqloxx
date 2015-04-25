@@ -191,11 +191,11 @@ SQLiteDBConn::throw_on_failure(int errcode)
     case SQLITE_RANGE:         JEWEL_THROW(SQLiteRange, msg);
     case SQLITE_NOTADB:        JEWEL_THROW(SQLiteNotADB, msg);
 
-#    ifndef NDEBUG
+#   ifndef NDEBUG
         case SQLITE_OK:        JEWEL_HARD_ASSERT (false);
         case SQLITE_ROW:       JEWEL_HARD_ASSERT (false);
         case SQLITE_DONE:      JEWEL_HARD_ASSERT (false);
-#    endif
+#   endif
 
     default:                   JEWEL_THROW(SQLiteUnknownErrorCode, msg);
     }
