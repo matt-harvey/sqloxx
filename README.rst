@@ -56,7 +56,7 @@ locations:
     
 :CMake:      http://www.cmake.org
 :Boost:         http://www.boost.org
-:Jewel:      https://github.com/skybaboon/jewel
+:Jewel:      https://github.com/matt-harvey/jewel
 :UnitTest++: http://unittest-cpp.sourceforge.net
 :Tcl:        http://tcl.tk
 :Doxygen:     http://www.stack.nl/~dimitri/doxygen
